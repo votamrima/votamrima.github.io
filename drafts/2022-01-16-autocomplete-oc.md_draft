@@ -1,0 +1,84 @@
+---
+layout: single
+title: "Activate autocomplete for the Openshift cli (oc)"
+subtitle: ""
+date: 2022-01-16 18:00:00 +0100
+background: '/image/01.jpg'
+tags: ['openshift']
+---
+
+
+In this post is described the commands for activating autocompletion for oc.
+
+## Download and prepare cli tool
+
+Download Command-line interface (CLI) tools from [here](https://console.redhat.com/openshift/downloads#tool-ocm-api-token)
+
+Unpack downloaded file (openshift-client-linux.tar.gz):
+
+````bash
+[seymur@workstation oc]$ tar xvzf openshift-client-linux.tar.gz 
+README.md
+oc
+kubectl
+[seymur@workstation oc]$ 
+````
+
+Copy unpacked files to ``/usr/bin/`` and change owner to root
+
+````bash
+[seymur@workstation oc]$ sudo sudo cp kubectl oc /usr/bin/
+[seymur@workstation oc]$ 
+[seymur@workstation oc]$ 
+[seymur@workstation oc]$ sudo chown root:seymur /usr/bin/{kubectl,oc}
+[seymur@workstation oc]$ ll /usr/bin/{kubectl,oc}
+-rwxr-xr-x. 1 root seymur 122849344 Feb 11 20:21 /usr/bin/kubectl
+-rwxr-xr-x. 1 root seymur 122849344 Feb 11 20:21 /usr/bin/oc
+[seymur@workstation oc]$ 
+````
+
+## Activate autocomplete in oc
+
+
+
+````bash
+[seymur@workstation ~]$ oc completion bash > oc_bash_completion
+````
+
+
+````bash
+
+
+````
+
+
+````bash
+
+````
+
+
+````bash
+
+````
+
+
+````bash
+
+````
+
+
+Save bash completion code to a file
+oc completion bash > oc_bash_completion
+
+Save it in secured place. In my case it is /var/tmp/openshift/oc_bash_completion
+cp oc_bash_completion /var/tmp/openshift/oc_bash_completion
+Run a code from ~/.bashrc:
+source /var/tmp/openshift/oc_bash_completion
+In some cases you can receive following error:
+oc stbash: _get_comp_words_by_ref: command not found
+To solve this issue, install bash-completion package:
+sudo yum install -y bash-completion
+Rebuild current application:
+oc start-build echo
+
+

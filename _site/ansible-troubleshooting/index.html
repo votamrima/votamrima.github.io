@@ -1,0 +1,687 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Troubleshooting in Ansible - notes</title>
+<meta name="description" content="">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="notes">
+<meta property="og:title" content="Troubleshooting in Ansible">
+<meta property="og:url" content="http://localhost:4000/site/ansible-troubleshooting/">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-04-23T09:00:00+02:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/site/ansible-troubleshooting/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "",
+      "url": "http://localhost:4000/site/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/site/feed.xml" type="application/atom+xml" rel="alternate" title="notes Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/site/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/site/">
+          notes
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/site/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Troubleshooting in Ansible</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          <a href="/site/"><span class="nav__sub-title">Start page</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/tags/"><span class="nav__sub-title">Tags</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/year-archive/"><span class="nav__sub-title">Archive</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/_pages/about/"><span class="nav__sub-title">About</span></a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+
+    
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Troubleshooting in Ansible">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2022-04-23T09:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/site/ansible-troubleshooting/" class="u-url" itemprop="url">Troubleshooting in Ansible
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-04-23T09:00:00+02:00">April 23, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#log-file-configuration">Log file configuration</a></li><li><a href="#managing-problems">Managing problems</a></li><li><a href="#troubleshooting-using-modules">Troubleshooting using modules</a></li><li><a href="#reference">Reference:</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+<p>In this post I am about troubleshooting of ansible playbooks. Ansible provides several ways of managing playbook. Some of them are: log configuration, defining some options such as <code class="language-plaintext highlighter-rouge">--step</code>, <code class="language-plaintext highlighter-rouge">-v</code> and defining running management in playbook using such modules as <code class="language-plaintext highlighter-rouge">fail</code> or <code class="language-plaintext highlighter-rouge">assert</code></p>
+
+<h2 id="log-file-configuration">Log file configuration</h2>
+
+<p>Unfortunatelly, logging is not configured in Ansible by default. However, we can configure it.</p>
+
+<p>There are two ways to activate logging:</p>
+
+<ul>
+  <li>Set <code class="language-plaintext highlighter-rouge">log_path</code> parameter in <code class="language-plaintext highlighter-rouge">default</code> section of <code class="language-plaintext highlighter-rouge">ansible.cfg</code> file</li>
+</ul>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">cat</span> <span class="err">ansible.cfg</span>
+<span class="nn">[default]</span>
+<span class="py">log_path</span> <span class="p">=</span> <span class="s">/var/log/ansible-logs/ansible.log</span>
+</code></pre></div></div>
+
+<p>It is recommended to use <code class="language-plaintext highlighter-rouge">logrotate</code> to manage the logs if they will be written in /var/log directory.</p>
+
+<ul>
+  <li>set environment variable <code class="language-plaintext highlighter-rouge">$ANSIBLE_LOG_PATH</code></li>
+</ul>
+
+<h2 id="managing-problems">Managing problems</h2>
+
+<p><code class="language-plaintext highlighter-rouge">--syntax-check</code> - checks the syntax in the playbook</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook myplay.yml <span class="nt">--syntax-check</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">--step</code> - using this option we can step to a specific task in a playbook</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook myplay.yml <span class="nt">--step</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">--start-at-task</code> - with this option we can start execution of a playbook from a specific task</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook myplay.yml <span class="nt">--start-at-task</span>
+</code></pre></div></div>
+
+<p>We can debug execution of a playbook using <code class="language-plaintext highlighter-rouge">-v</code> parameter. There are 4 levels of verbosity: <code class="language-plaintext highlighter-rouge">-v</code>, <code class="language-plaintext highlighter-rouge">--vv</code>, <code class="language-plaintext highlighter-rouge">--vvv</code>, <code class="language-plaintext highlighter-rouge">--vvvv</code></p>
+
+<p><code class="language-plaintext highlighter-rouge">--check</code> - option executes a playbook without making changes to the managed host. This option we can define by typing <code class="language-plaintext highlighter-rouge">-C</code> too.</p>
+
+<p>Moreover, we can control <code class="language-plaintext highlighter-rouge">--check</code> option individually.</p>
+
+<ul>
+  <li>This task will be alway run in checking mode:</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">always run in check mode</span>
+  <span class="na">shell</span><span class="pi">:</span> <span class="s">hostname</span>
+  <span class="na">check_mode</span><span class="pi">:</span> <span class="s">yes</span>
+</code></pre></div></div>
+
+<ul>
+  <li>This task will not run in check mode even if <code class="language-plaintext highlighter-rouge">--check</code> option is defined in ansible-playbook command</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">always run in check mode</span>
+  <span class="na">shell</span><span class="pi">:</span> <span class="s">hostname</span>
+  <span class="na">check_mode</span><span class="pi">:</span> <span class="s">no</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">--diff</code> - option shows changes made to template files.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook myplay.yml <span class="nt">--check</span> <span class="nt">--diff</span>
+
+</code></pre></div></div>
+
+<h2 id="troubleshooting-using-modules">Troubleshooting using modules</h2>
+
+<p><code class="language-plaintext highlighter-rouge">script</code> module executes a script against managed hosts. This script have to locate on the control node. Executing fails if script ends with the non-zero code.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+  <span class="na">tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run my script</span> 
+      <span class="na">script</span><span class="pi">:</span> <span class="s">run_my_script</span>
+
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">uri</code> module helps to check some http services</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+  <span class="na">tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">check my API</span>
+      <span class="na">uri</span><span class="pi">:</span>
+        <span class="na">url</span><span class="pi">:</span> <span class="s">http://myapi.home.lab</span>
+        <span class="na">return_content</span><span class="pi">:</span> <span class="s">yes</span>
+      <span class="na">register</span><span class="pi">:</span> <span class="s">answer</span>
+
+    <span class="pi">-</span> <span class="na">fail</span><span class="pi">:</span>
+        <span class="na">msg</span><span class="pi">:</span> <span class="s1">'</span><span class="s">Service</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">up'</span>
+      <span class="na">when</span><span class="pi">:</span> <span class="s2">"</span><span class="s">'UP'</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">answer.content"</span>
+
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">stat</code> - collects information about files and folders</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+  <span class="na">tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Check if /opt/app/hello.py file exists</span>
+      <span class="na">stat</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">/opt/app/hello.py</span>
+      <span class="na">register</span><span class="pi">:</span> <span class="s">answer</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">hello.py file does not exist</span>
+      <span class="na">fail</span><span class="pi">:</span>
+      <span class="na">when</span><span class="pi">:</span> <span class="s">answer.stat.exists</span>
+
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">assert</code> module we can use alternatively to the <code class="language-plaintext highlighter-rouge">fail</code> module. Here, in order to customize the message we can use either <code class="language-plaintext highlighter-rouge">success_msg</code> or <code class="language-plaintext highlighter-rouge">fail_msg</code> options.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+  <span class="na">tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Check if /opt/app/hello.py file exists</span>
+      <span class="na">stat</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">/opt/app/hello.py</span>
+      <span class="na">register</span><span class="pi">:</span> <span class="s">answer</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">hello.py file does not exist</span>
+      <span class="na">assert</span><span class="pi">:</span>
+        <span class="na">that</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s">not answer.stat.exists</span>
+
+</code></pre></div></div>
+
+<h2 id="reference">Reference:</h2>
+<ul>
+  <li><a href="https://docs.ansible.com/ansible/2.9/reference_appendices/test_strategies.html">https://docs.ansible.com/ansible/2.9/reference_appendices/test_strategies.html</a></li>
+  <li><a href="https://docs.ansible.com/ansible/2.9/user_guide/playbooks_checkmode.html">https://docs.ansible.com/ansible/2.9/user_guide/playbooks_checkmode.html</a></li>
+  <li><a href="https://google.com">Google</a></li>
+</ul>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/site/tags/#ansible" class="page__taxonomy-item p-category" rel="tag">ansible</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-04-23T09:00:00+02:00">April 23, 2022</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/site/private-container-registry/" class="pagination--pager" title="Private container registry on podman
+">Previous</a>
+    
+    
+      <a href="/site/ansible-jinja2-templates/" class="pagination--pager" title="Ansible Jinj2 templates
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-collections/" rel="permalink">Basics of Ansible collections
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-18T09:00:00+02:00">May 18, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-basic-storage-management/" rel="permalink">Basics of storage management using Ansible
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-15T14:00:00+02:00">May 15, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/kubernets-install/" rel="permalink">Kubernetes installation. (Not finished)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-10T09:00:00+02:00">May 10, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-jinja2-templates/" rel="permalink">Ansible Jinj2 templates
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-05T20:00:00+02:00">May 5, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/site/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 notes. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/site/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/site/assets/js/lunr/lunr.min.js"></script>
+<script src="/site/assets/js/lunr/lunr-store.js"></script>
+<script src="/site/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

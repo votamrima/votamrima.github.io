@@ -1,0 +1,671 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Deploy MySQL and PostgreSQL database systems on Podman with regular (non-root) user - notes</title>
+<meta name="description" content="">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="notes">
+<meta property="og:title" content="Deploy MySQL and PostgreSQL database systems on Podman with regular (non-root) user">
+<meta property="og:url" content="http://localhost:4000/site/running-database-on-podman/">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-11-28T16:30:00+01:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/site/running-database-on-podman/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "",
+      "url": "http://localhost:4000/site/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/site/feed.xml" type="application/atom+xml" rel="alternate" title="notes Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/site/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/site/">
+          notes
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/site/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Deploy MySQL and PostgreSQL database systems on Podman with regular (non-root) user</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          <a href="/site/"><span class="nav__sub-title">Start page</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/tags/"><span class="nav__sub-title">Tags</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/year-archive/"><span class="nav__sub-title">Archive</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/_pages/about/"><span class="nav__sub-title">About</span></a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+
+    
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Deploy MySQL and PostgreSQL database systems on Podman with regular (non-root) user">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2021-11-28T16:30:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/site/running-database-on-podman/" class="u-url" itemprop="url">Deploy MySQL and PostgreSQL database systems on Podman with regular (non-root) user
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-11-28T16:30:00+01:00">November 28, 2021</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#mysql">MySQL</a></li><li><a href="#postgresql">PostgreSQL</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+<h2 id="mysql">MySQL</h2>
+<p>Install mysql client:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo yum install mysql
+</code></pre></div></div>
+
+<p>Create a folder on the local host for storing databases and configure SELinux option:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir /opt/homelab_projects/mysql_db_dir_noroot
+
+[admin@workstation homelab_projects]$ sudo semanage fcontext -a -t container_file_t '/opt/homelab_projects/mysql_db_dir_noroot(/*)'
+[admin@workstation homelab_projects]$ restorecon -v 'mysql_db_dir_noroot'
+[admin@workstation homelab_projects]$ ll -Z 
+total 56
+.........
+drwxrwxr-x.  2 admin admin unconfined_u:object_r:container_file_t:s0  4096 Nov 28 17:30 mysql_db_dir_noroot
+...........
+[admin@workstation homelab_projects]$ 
+
+</code></pre></div></div>
+
+<p>Run mysql container. Here I set additionally environment variables, port mapping and folders for sharing database :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@workstation homelab_projects]$ podman run -d --name mysql-db -e MYSQL_USER=admin -e MYSQL_PASSWORD=mysql -e MYSQL_DATABASE=words -e MYSQL_ROOT_PASSWORD=mysql -p 33306:3306 -v /opt/homelab_projects/mysql_db_dir_noroot:/var/lib/mysql/data rhscl/mysql-57-rhel7
+0fb7b0ad8de7f00acccf7ddd3ccd296836da24ef575727e99bc63a2c0cdbe11e
+[admin@workstation homelab_projects]$ 
+[admin@workstation homelab_projects]$ 
+[admin@workstation homelab_projects]$ podman ps -a
+CONTAINER ID  IMAGE                                                                                                      COMMAND         CREATED        STATUS            PORTS                    NAMES
+0fb7b0ad8de7  registry.access.redhat.com/rhscl/mysql-57-rhel7:latest                                                     run-mysqld      5 seconds ago  Up 4 seconds ago  0.0.0.0:33306-&gt;3306/tcp  mysql-db
+.........
+[admin@workstation homelab_projects]$ 
+
+</code></pre></div></div>
+
+<p>Let’s check if the database has been created:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@workstation homelab_projects]$ mysql -h 127.0.0.1 -uadmin -pmysql -P 33306
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.7.24 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| words              |
++--------------------+
+2 rows in set (0.001 sec)
+
+MySQL [(none)]&gt; 
+</code></pre></div></div>
+
+<p>Deploy dump of the db:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@workstation homelab_projects]$ mysql -h 127.0.0.1 -uadmin -pmysql -P 33306 words &lt; db.sql 
+</code></pre></div></div>
+
+<h2 id="postgresql">PostgreSQL</h2>
+<p>Installation of rootless PosgreSQL on Podman is quite similar with MySQL. Here below I going to describe it in nutshell with most important commands.</p>
+
+<ol>
+  <li>Firstly I have created a local folder which will be mounted to container as volume. Here will be stored the database and all system files of the postgresql. Additionally, it is necessary to set required selinux file-context for the folder:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@workstation opt]<span class="nv">$ </span><span class="nb">mkdir</span> <span class="nt">-pv</span> /opt/podman/postgresql13
+<span class="nb">mkdir</span>: created directory <span class="s1">'/opt/podman'</span>
+<span class="nb">mkdir</span>: created directory <span class="s1">'/opt/podman/postgresql13'</span>
+
+<span class="o">[</span>admin@workstation opt]<span class="nv">$ </span><span class="nb">sudo </span>semanage fcontext <span class="nt">-a</span> <span class="nt">-t</span> container_file_t <span class="s2">"/opt/podman/postgresql13(/.*)?"</span>
+<span class="o">[</span><span class="nb">sudo</span><span class="o">]</span> password <span class="k">for </span>admin: 
+<span class="o">[</span>admin@workstation opt]<span class="nv">$ </span>
+<span class="o">[</span>admin@workstation opt]<span class="nv">$ </span><span class="nb">sudo </span>restorecon <span class="nt">-R</span> <span class="nt">-v</span> podman/postgresql13
+Relabeled /opt/podman/postgresql13 from unconfined_u:object_r:usr_t:s0 to unconfined_u:object_r:container_file_t:s0
+<span class="o">[</span>admin@workstation opt]<span class="nv">$ </span>
+</code></pre></div></div>
+
+<ol>
+  <li>Plan which local port will be used. You can left a default postgres port <code class="language-plaintext highlighter-rouge">5432</code>, but I decided to use another port - <code class="language-plaintext highlighter-rouge">54321</code>. Therefore, we need to define the new port in Selinux.</li>
+</ol>
+
+<p>Check what is the name of SELinux port type and if the port already defined:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>seymur@workstation ~]<span class="nv">$ </span><span class="nb">sudo </span>semanage port <span class="nt">-l</span> | <span class="nb">grep </span>postgres
+postgresql_port_t              tcp      5432, 9898
+<span class="o">[</span>seymur@workstation ~]<span class="nv">$ </span>
+</code></pre></div></div>
+
+<p>Define custom port in Selinux:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>semanage port <span class="nt">-a</span> <span class="nt">-t</span> postgresql_port_t <span class="nt">-p</span> tcp 54321
+</code></pre></div></div>
+
+<ol>
+  <li>Next, deploy Posgresql with the required parameters:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>seymur@workstation ~]<span class="nv">$ </span>podman run <span class="nt">-d</span> <span class="nt">--name</span> postgresql_database <span class="nt">-e</span> <span class="nv">POSTGRESQL_USER</span><span class="o">=</span>user <span class="nt">-e</span> <span class="nv">POSTGRESQL_PASSWORD</span><span class="o">=</span>pass <span class="nt">-e</span> <span class="nv">POSTGRESQL_DATABASE</span><span class="o">=</span>db <span class="nt">-p</span> 54321:5432 <span class="nt">-v</span> /opt/podman/postgresql13:/var/lib/pgsql/data registry.fedoraproject.org/f33/postgresql
+732837a2fbe88033a26760c25c06cfc80d823578a57e227083820604c6a4b186
+<span class="o">[</span>seymur@workstation ~]<span class="nv">$ </span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>Here <code class="language-plaintext highlighter-rouge">POSTGRESQL_USER=user</code> - is a database user, <code class="language-plaintext highlighter-rouge">POSTGRESQL_PASSWORD=pass</code> - password for user, <code class="language-plaintext highlighter-rouge">POSTGRESQL_DATABASE=db</code> - name of database. Parameter <code class="language-plaintext highlighter-rouge">-v /opt/podman/postgresql13:/var/lib/pgsql/data</code> mounts local folder <code class="language-plaintext highlighter-rouge">/opt/podman/postgresql13</code> to the <code class="language-plaintext highlighter-rouge">/var/lib/pgsql/data</code>.</p>
+
+<ol>
+  <li>Check application runs:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>seymur@workstation ~]<span class="nv">$ </span>podman ps <span class="nt">-a</span>
+CONTAINER ID    IMAGE                                          COMMAND               CREATED       STATUS                   PORTS                    NAMES
+732837a2fbe8    registry.fedoraproject.org/f33/postgresql      run-postgresql        2 hours ago   Up 2 hours ago           0.0.0.0:54321-&gt;5432/tcp  postgresql_database
+...
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/site/tags/#database" class="page__taxonomy-item p-category" rel="tag">database</a><span class="sep">, </span>
+    
+      <a href="/site/tags/#podman" class="page__taxonomy-item p-category" rel="tag">podman</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-11-28T16:30:00+01:00">November 28, 2021</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/site/create-openshift-oauth-users/" class="pagination--pager" title="Basic user management in Openshift
+">Previous</a>
+    
+    
+      <a href="/site/deploy-application-on-podman/" class="pagination--pager" title="Deploy a python application using podman. Deploy rootless container and connect podmanized database container
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-collections/" rel="permalink">Basics of Ansible collections
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-18T09:00:00+02:00">May 18, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-basic-storage-management/" rel="permalink">Basics of storage management using Ansible
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-15T14:00:00+02:00">May 15, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/kubernets-install/" rel="permalink">Kubernetes installation. (Not finished)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-10T09:00:00+02:00">May 10, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-jinja2-templates/" rel="permalink">Ansible Jinj2 templates
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-05T20:00:00+02:00">May 5, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/site/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 notes. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/site/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/site/assets/js/lunr/lunr.min.js"></script>
+<script src="/site/assets/js/lunr/lunr-store.js"></script>
+<script src="/site/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

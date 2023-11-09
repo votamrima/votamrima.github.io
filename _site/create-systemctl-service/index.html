@@ -1,0 +1,669 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Creating systemd tasks for applications and podman rootless containers - notes</title>
+<meta name="description" content="">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="notes">
+<meta property="og:title" content="Creating systemd tasks for applications and podman rootless containers">
+<meta property="og:url" content="http://localhost:4000/site/create-systemctl-service/">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-12-15T07:15:00+01:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/site/create-systemctl-service/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "",
+      "url": "http://localhost:4000/site/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/site/feed.xml" type="application/atom+xml" rel="alternate" title="notes Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/site/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/site/">
+          notes
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/site/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Creating systemd tasks for applications and podman rootless containers</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          <a href="/site/"><span class="nav__sub-title">Start page</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/tags/"><span class="nav__sub-title">Tags</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/year-archive/"><span class="nav__sub-title">Archive</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/_pages/about/"><span class="nav__sub-title">About</span></a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+
+    
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Creating systemd tasks for applications and podman rootless containers">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2021-12-15T07:15:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/site/create-systemctl-service/" class="u-url" itemprop="url">Creating systemd tasks for applications and podman rootless containers
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-12-15T07:15:00+01:00">December 15, 2021</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#sample-systemd-file">Sample systemd file</a></li><li><a href="#running-and-activating-tasks">Running and activating tasks</a></li><li><a href="#running-rootless-containers">Running rootless containers</a></li><li><a href="#reference">Reference</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+<p>Here I describe a procees of creating a simple service startup job at linux.</p>
+
+<h2 id="sample-systemd-file">Sample systemd file</h2>
+
+<p>Here below is shown a sample service file for systemctl</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
+<span class="nv">Description</span><span class="o">=</span>Description <span class="k">for </span>application
+<span class="nv">After</span><span class="o">=</span>network.target
+
+<span class="o">[</span>Service]
+<span class="nv">User</span><span class="o">=</span>&lt;user&gt;
+<span class="nv">Group</span><span class="o">=</span>&lt;group&gt;
+<span class="nv">WorkingDirectory</span><span class="o">=</span>&lt;path where running file is located&gt;
+<span class="nv">Environment</span><span class="o">=</span>&lt;path with environment variable PATH <span class="s2">"PATH=/location"</span><span class="o">&gt;</span>
+<span class="nv">EnvironmentFile</span><span class="o">=</span>&lt;path to environment file&gt;
+<span class="nv">ExecStart</span><span class="o">=</span>&lt;a <span class="nb">command </span>with necessary parameters to start application&gt;
+
+<span class="o">[</span>Install]
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</code></pre></div></div>
+
+<h2 id="running-and-activating-tasks">Running and activating tasks</h2>
+
+<p>A service file should be located under <code class="language-plaintext highlighter-rouge">/etc/systemd/system</code> folder. A service file can be named anyhow, but extension of the file should be ended with <code class="language-plaintext highlighter-rouge">.service</code>. For instance: <code class="language-plaintext highlighter-rouge">/etc/systemd/system/testapp.service</code>.</p>
+
+<p>When file is created reload daemon:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl daemon-reload
+</code></pre></div></div>
+
+<p>And start application:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl start testapp.service
+</code></pre></div></div>
+
+<p>If application has to be started automatically, do not do not forget to enable it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>testapp.service
+</code></pre></div></div>
+
+<h2 id="running-rootless-containers">Running rootless containers</h2>
+
+<p>In order to automate starting and stopping a rootless container on podman I followed these steps:</p>
+
+<ol>
+  <li>Generating systemd unit file using and update it:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">[</span>admin@podman ~]<span class="nv">$ </span>podman generate systemd <span class="nt">--new</span> <span class="nt">--files</span> <span class="nt">--name</span> registry
+/home/admin/container-registry.service
+
+</code></pre></div></div>
+
+<p>After update file looks like as following:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="se">\#</span> container-registry2.service
+
+<span class="se">\#</span> autogenerated by Podman 4.0.2
+
+<span class="se">\#</span> Mon Jun  6 19:38:56 CEST 2022
+
+<span class="o">[</span>Unit]
+<span class="nv">Description</span><span class="o">=</span>Podman container-registry2.service
+<span class="nv">Documentation</span><span class="o">=</span>man:podman-generate-systemd<span class="o">(</span>1<span class="o">)</span>
+<span class="nv">Wants</span><span class="o">=</span>network-online.target
+<span class="nv">After</span><span class="o">=</span>network-online.target
+<span class="nv">RequiresMountsFor</span><span class="o">=</span>%t/containers
+
+<span class="o">[</span>Service]
+<span class="nv">Environment</span><span class="o">=</span><span class="nv">PODMAN_SYSTEMD_UNIT</span><span class="o">=</span>%n
+<span class="nv">Restart</span><span class="o">=</span>on-failure
+<span class="nv">TimeoutStopSec</span><span class="o">=</span>70
+<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm <span class="nt">-f</span> %t/%n.ctr-id
+<span class="nv">ExecStart</span><span class="o">=</span>/usr/bin/podman start registry2
+<span class="nv">ExecStop</span><span class="o">=</span>/usr/bin/podman stop registry2
+<span class="nv">Type</span><span class="o">=</span>notify
+<span class="nv">NotifyAccess</span><span class="o">=</span>all
+
+<span class="o">[</span>Install]
+<span class="nv">WantedBy</span><span class="o">=</span>default.target
+
+</code></pre></div></div>
+
+<ol>
+  <li>Installation generated unit file</li>
+</ol>
+
+<p>For rootless container I need to store the unit file in <code class="language-plaintext highlighter-rouge">~/.config/systemd/user/</code>. For the root container copy the file to <code class="language-plaintext highlighter-rouge">/etc/systemd/system/</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp </span>container-registry.service ~/.config/systemd/user/registry.service
+</code></pre></div></div>
+
+<p>Then, for running the user services placed in $HOME/.config/systemd/user, enable service using <code class="language-plaintext highlighter-rouge">--user</code> parameter:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@podman ~]<span class="nv">$ </span>systemctl <span class="nt">--user</span> <span class="nb">enable </span>registry.service
+</code></pre></div></div>
+
+<p>Activate controlling the systemd login for admin:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@podman ~]<span class="nv">$ </span>loginctl enable-linger admin
+</code></pre></div></div>
+
+<p>That’s it.</p>
+
+<h2 id="reference">Reference</h2>
+<ul>
+  <li><a href="https://docs.podman.io/en/latest/markdown/podman-generate-systemd.1.html">podman generate systemd</a></li>
+  <li>other resources</li>
+</ul>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/site/tags/#container" class="page__taxonomy-item p-category" rel="tag">container</a><span class="sep">, </span>
+    
+      <a href="/site/tags/#linux" class="page__taxonomy-item p-category" rel="tag">linux</a><span class="sep">, </span>
+    
+      <a href="/site/tags/#podman" class="page__taxonomy-item p-category" rel="tag">podman</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-12-15T07:15:00+01:00">December 15, 2021</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/site/regex-help/" class="pagination--pager" title="A short help for regular expressions
+">Previous</a>
+    
+    
+      <a href="/site/windows11-requirements-error/" class="pagination--pager" title="Fixing “Cannot Install Windows 11” error during installation
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-collections/" rel="permalink">Basics of Ansible collections
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-18T09:00:00+02:00">May 18, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-basic-storage-management/" rel="permalink">Basics of storage management using Ansible
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-15T14:00:00+02:00">May 15, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/kubernets-install/" rel="permalink">Kubernetes installation. (Not finished)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-10T09:00:00+02:00">May 10, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-jinja2-templates/" rel="permalink">Ansible Jinj2 templates
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-05T20:00:00+02:00">May 5, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/site/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 notes. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/site/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/site/assets/js/lunr/lunr.min.js"></script>
+<script src="/site/assets/js/lunr/lunr-store.js"></script>
+<script src="/site/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

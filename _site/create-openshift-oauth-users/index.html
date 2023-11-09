@@ -1,0 +1,784 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Basic user management in Openshift - notes</title>
+<meta name="description" content="">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="notes">
+<meta property="og:title" content="Basic user management in Openshift">
+<meta property="og:url" content="http://localhost:4000/site/create-openshift-oauth-users/">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-11-19T18:30:00+01:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/site/create-openshift-oauth-users/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "",
+      "url": "http://localhost:4000/site/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/site/feed.xml" type="application/atom+xml" rel="alternate" title="notes Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/site/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/site/">
+          notes
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/site/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Basic user management in Openshift</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          <a href="/site/"><span class="nav__sub-title">Start page</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/tags/"><span class="nav__sub-title">Tags</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/year-archive/"><span class="nav__sub-title">Archive</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/_pages/about/"><span class="nav__sub-title">About</span></a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+
+    
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Basic user management in Openshift">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2021-11-19T18:30:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/site/create-openshift-oauth-users/" class="u-url" itemprop="url">Basic user management in Openshift
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-11-19T18:30:00+01:00">November 19, 2021</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#kubeadmin-user">kubeadmin user</a></li><li><a href="#oauth-and-identity-providers">OAuth and identity providers</a></li><li><a href="#configuring-htpasswd-identity-provider">Configuring HTPasswd identity provider</a><ul><li><a href="#creating-htpasswd-file">Creating htpasswd file</a></li><li><a href="#apply-htpasswd-file">Apply htpasswd file</a></li></ul></li><li><a href="#assigning-privileges">Assigning privileges</a></li><li><a href="#remove-project-creation-privileges">Remove project creation privileges</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+<p>In this post I shortly describe how to create users for Openshift using HTPasswd provider. More about authentication providers are able to find in <a href="https://docs.openshift.com/container-platform/4.9/authentication/understanding-authentication.html">official documentation</a></p>
+
+<h2 id="kubeadmin-user">kubeadmin user</h2>
+
+<p>During installation Openshift creates default <em>kubeadmin</em> with a automatically generated password. Password you can find in installation folder: <code class="language-plaintext highlighter-rouge">&lt;installation_folder&gt;/auth/kubeadmin-password</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ cat install_dir/auth/kubeadmin-password 
+bVM5i-CxeZI-NDvoS-d9wtV[admin@ocp4 try]$ 
+</code></pre></div></div>
+
+<p><em>kubeconfig</em> locates in <code class="language-plaintext highlighter-rouge">&lt;installation_folder&gt;/auth/</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ oc --kubeconfig install_dir/auth/kubeconfig get node
+NAME                                 STATUS     ROLES    AGE   VERSION
+etcd-2.okd4.home.lab                 Ready      master   35d   v1.20.0+558d959-1089
+etcd-3.okd4.home.lab                 Ready      master   28d   v1.20.0+558d959-1089
+okd4-compute-1.okd4.home.lab         Ready      worker   35d   v1.20.0+558d959-1089
+okd4-control-plane-1.okd4.home.lab   Ready      master   35d   v1.20.0+558d959-1089
+</code></pre></div></div>
+
+<p>You can set kubeconfig to KUBECONFIG environment variable:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export KUBECONFIG=/opt/install_dir/auth/kubeconfig
+</code></pre></div></div>
+
+<h2 id="oauth-and-identity-providers">OAuth and identity providers</h2>
+
+<p>Authentication in Openshift is supported by Authentication Operator which runs on OAuth server. Users attempt to authenticate to the Opeshift API using using OAuth access tokens.</p>
+
+<p>In order to use OAuth server it should be enabled and configured as well. Using kubeadmin user I specifed <code class="language-plaintext highlighter-rouge">HTPasswd</code> identity provider. Generally, the following list of identity providers are able to configure and use in Openshift: HTPasswd, Keystone, LDAP, Basic authentication, Request header, GitHub or GitHub Enterprise, GitLab, Google, OpenID Connect. More in detail about each of the provider is given in <a href="https://docs.openshift.com/container-platform/4.7/authentication/understanding-identity-provider.html">Openhift Documentation</a></p>
+
+<h2 id="configuring-htpasswd-identity-provider">Configuring HTPasswd identity provider</h2>
+
+<h3 id="creating-htpasswd-file">Creating htpasswd file</h3>
+
+<p>Basic format for creating HTPasswd authentitation file looks like this: <code class="language-plaintext highlighter-rouge">htpasswd -c -b -B &lt;filename&gt; &lt;username&gt; &lt;password&gt;</code>. Here <code class="language-plaintext highlighter-rouge">-c</code> parameter creates file, <code class="language-plaintext highlighter-rouge">-b</code> uses a password which is given in command from the command line. <code class="language-plaintext highlighter-rouge">-B</code> - Force bcrypt encryption of the password</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ htpasswd -c -b -B my_ocp_users admin admin
+Adding password for user admin
+[admin@ocp4 try]$ 
+</code></pre></div></div>
+
+<p>Check content of the created file:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ cat my_ocp_users 
+admin:$2y$05$XteSEzWTBX8HlzqHQv2ryecUY5On/7DBfTSnCjWfyCFlDhaDdufcq
+[admin@ocp4 try]$ 
+</code></pre></div></div>
+
+<p>Create another user. Do not use <code class="language-plaintext highlighter-rouge">-c</code> parameter. In this case you create a file again with the new content.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ htpasswd -b -B my_ocp_users developer developer
+Adding password for user developer
+[admin@ocp4 try]$ cat my_ocp_users 
+admin:$2y$05$XteSEzWTBX8HlzqHQv2ryecUY5On/7DBfTSnCjWfyCFlDhaDdufcq
+developer:$2y$05$Ab1TxMQV0T7te6NmKXaALOX/6XsFHsV06LYcaZHwIdIDpkJiObN2m
+[admin@ocp4 try]$ 
+</code></pre></div></div>
+
+<h3 id="apply-htpasswd-file">Apply htpasswd file</h3>
+
+<p>In order to apply a httpasswd file for Openshift, first of should be created a secret in openshift-config namespace. In the following command I described how I did. Here, it is important to define <em>htpasswd</em> as a type of appling secret.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ oc create secret generic myusers --from-file htpasswd=my_ocp_users -n openshift-config
+secret/localusers created
+[admin@ocp4 try]$ 
+</code></pre></div></div>
+
+<p>Checking out created secret:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ oc get secrets -n openshift-config
+NAME                      TYPE                     DATA   AGE
+......
+myusers                   Opaque                   1      27s
+.......
+[admin@ocp4 try]$ 
+
+</code></pre></div></div>
+
+<p>On next step I modified OAuth custom resource. It was able to create a new file and apply it using <code class="language-plaintext highlighter-rouge">oc create -f &lt;resource_file&gt;.yml</code> as it shown in openshift documentation. But I prefer to export the existing oauth custom resource, modify <code class="language-plaintext highlighter-rouge">spec</code> section and apply the modified one:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ oc get oauth cluster -o yaml &gt; oauth_modify.yml
+</code></pre></div></div>
+
+<p>Edit exported file:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ vim oauth_modify.yml 
+apiVersion: config.openshift.io/v1
+kind: OAuth
+.........
+spec:
+  identityProviders:
+  - htpasswd:
+      fileData:
+        name: myusers
+    mappingMethod: claim
+    name: myusers
+    type: HTPasswd
+</code></pre></div></div>
+
+<p>Apply new oauth file:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ oc replace -f oauth_modify.yml 
+oauth.config.openshift.io/cluster replaced
+[admin@ocp4 try]$ 
+</code></pre></div></div>
+
+<p>And check if pods of openshift-authentication namespaces are being recreated:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ oc get pods -n openshift-authentication
+NAME                               READY   STATUS        RESTARTS   AGE
+oauth-openshift-647d98d4db-pmtx6   0/1     Terminating   0          26d
+oauth-openshift-777bfcd76c-v2xzl   1/1     Running       0          49s
+oauth-openshift-777bfcd76c-wpqsq   1/1     Running       0          41s
+</code></pre></div></div>
+
+<p>If the pods are not being recreated, remove them. In this case, Openshift will re-deploy new pods with the updated configuration.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@ocp4 htpasswd]<span class="nv">$ </span>oc delete pods <span class="nt">-n</span> openshift-authentication <span class="nt">--all</span> <span class="nt">--force</span>
+warning: Immediate deletion does not <span class="nb">wait </span><span class="k">for </span>confirmation that the running resource has been terminated. The resource may <span class="k">continue </span>to run on the cluster indefinitely.
+pod <span class="s2">"oauth-openshift-7f55497fcd-s56qd"</span> force deleted
+pod <span class="s2">"oauth-openshift-7f55497fcd-z7d9c"</span> force deleted
+<span class="o">[</span>admin@ocp4 htpasswd]<span class="nv">$ </span>oc get pods <span class="nt">-n</span> openshift-authentication
+NAME                               READY   STATUS              RESTARTS   AGE
+oauth-openshift-7f55497fcd-9v4zl   0/1     ContainerCreating   0          3s
+oauth-openshift-7f55497fcd-h7x8m   0/1     ContainerCreating   0          3s
+<span class="o">[</span>admin@ocp4 htpasswd]<span class="nv">$ </span>oc get pods <span class="nt">-n</span> openshift-authentication
+NAME                               READY   STATUS    RESTARTS   AGE
+oauth-openshift-5c6444d496-hj52l   1/1     Running   0          9m35s
+oauth-openshift-5c6444d496-hvf2m   1/1     Running   0          9m31s
+<span class="o">[</span>admin@ocp4 htpasswd]<span class="nv">$ </span>
+</code></pre></div></div>
+
+<h2 id="assigning-privileges">Assigning privileges</h2>
+
+<p>Here I shortly show how has been assigned <code class="language-plaintext highlighter-rouge">cluster-admin</code> role to <code class="language-plaintext highlighter-rouge">admin</code> user. For admin user I want to give full access to the openshift cluster. Therefore, it should applied <code class="language-plaintext highlighter-rouge">cluster-admin</code> role. Developer user will be granted to create new projects.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 try]$ oc adm policy add-cluster-role-to-user cluster-admin admin
+Warning: User 'admin' not found
+clusterrole.rbac.authorization.k8s.io/cluster-admin added: "admin"
+[admin@ocp4 try]$ 
+[admin@ocp4 ~]$ oc login -u admin -p admin oauth-openshift.okd4.home.lab:6443
+Login successful.
+
+You have access to 63 projects, the list has been suppressed. You can list all projects with 'oc projects'
+
+Using project "default".
+[admin@ocp4 ~]$ 
+[admin@ocp4 ~]$ oc whoami 
+admin
+</code></pre></div></div>
+
+<h2 id="remove-project-creation-privileges">Remove project creation privileges</h2>
+
+<p>One of important points of user managment is vemove project creation privileges from all users by default. By default, this option is active for all users.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 ~]$ oc get clusterrolebinding | grep self-prov
+self-provisioners                        ClusterRole/self-provisioner             36d
+[admin@ocp4 ~]$ 
+</code></pre></div></div>
+
+<p>Describe a self-provisioners rolebinding. Check out the name of the cluster role and group to which it was assgned by default.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 ~]$ oc describe clusterrolebinding self-provisioners
+Name:         self-provisioners
+Labels:       &lt;none&gt;
+Annotations:  rbac.authorization.kubernetes.io/autoupdate: true
+Role:
+  Kind:  ClusterRole
+  Name:  self-provisioner
+Subjects:
+  Kind   Name                        Namespace
+  ----   ----                        ---------
+  Group  system:authenticated:oauth  
+[admin@ocp4 ~]$ 
+</code></pre></div></div>
+
+<p>And remove the <code class="language-plaintext highlighter-rouge">self-provisioner</code> role from the <code class="language-plaintext highlighter-rouge">system:authenticated:oauth</code> group</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@ocp4 ~]<span class="nv">$ </span>oc adm policy remove-cluster-role-from-group self-provisioner system:authenticated:oauth
+Warning: Your changes may get lost whenever a master is restarted, unless you prevent reconciliation of this rolebinding using the following <span class="nb">command</span>: 
+oc annotate clusterrolebinding.rbac self-provisioners <span class="s1">'rbac.authorization.kubernetes.io/autoupdate=false'</span> <span class="nt">--overwrite</span>
+clusterrole.rbac.authorization.k8s.io/self-provisioner removed: <span class="s2">"system:authenticated:oauth"</span>
+<span class="o">[</span>admin@ocp4 ~]<span class="nv">$ </span>
+</code></pre></div></div>
+
+<p>Thus will be removed self-provisioners rolebinding and will be disabled priviledge to create projects for all users.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@ocp4 ~]<span class="nv">$ </span>oc get clusterrolebinding | <span class="nb">grep </span>self-prov
+<span class="o">[</span>admin@ocp4 ~]<span class="nv">$ </span>
+</code></pre></div></div>
+
+<p>And granting self-provisioner cluster role to developer user.</p>
+
+<p>Created a group for developer user and add the user into the group</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 ~]$ oc adm groups new developers
+group.user.openshift.io/developers created
+[admin@ocp4 ~]$ 
+[admin@ocp4 ~]$ oc adm groups add-users developers developer
+group.user.openshift.io/developers added: "developer"
+[admin@ocp4 ~]$ 
+</code></pre></div></div>
+
+<p>Assigned self-provisioner role to developers group:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 ~]$ oc adm policy add-cluster-role-to-user --rolebinding-name self-provisioning-admin self-provisioner admin
+clusterrole.rbac.authorization.k8s.io/self-provisioner added: "admin"
+[admin@ocp4 ~]$ 
+</code></pre></div></div>
+
+<p>Verified result:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[admin@ocp4 ~]$ oc login -u developer -p developer
+Login successful.
+
+You have one project on this server: "default"
+
+Using project "default".
+[admin@ocp4 ~]$ oc new-project test
+Now using project "test" on server "https://localhost:6443".
+
+You can add applications to this project with the 'new-app' command. For example, try:
+
+    oc new-app rails-postgresql-example
+
+to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
+
+    kubectl create deployment hello-node --image=k8s.gcr.io/serve_hostname
+
+[admin@ocp4 ~]$
+</code></pre></div></div>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/site/tags/#openshift" class="page__taxonomy-item p-category" rel="tag">openshift</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-11-19T18:30:00+01:00">November 19, 2021</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/site/create-persistence-storage-for-openshift/" class="pagination--pager" title="Create persistance storage for openshift
+">Previous</a>
+    
+    
+      <a href="/site/running-database-on-podman/" class="pagination--pager" title="Deploy MySQL and PostgreSQL database systems on Podman with regular (non-root) user
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-collections/" rel="permalink">Basics of Ansible collections
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-18T09:00:00+02:00">May 18, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-basic-storage-management/" rel="permalink">Basics of storage management using Ansible
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-15T14:00:00+02:00">May 15, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/kubernets-install/" rel="permalink">Kubernetes installation. (Not finished)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-10T09:00:00+02:00">May 10, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-jinja2-templates/" rel="permalink">Ansible Jinj2 templates
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-05T20:00:00+02:00">May 5, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/site/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 notes. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/site/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/site/assets/js/lunr/lunr.min.js"></script>
+<script src="/site/assets/js/lunr/lunr-store.js"></script>
+<script src="/site/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

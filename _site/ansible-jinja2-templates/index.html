@@ -1,0 +1,617 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Ansible Jinj2 templates - notes</title>
+<meta name="description" content="">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="notes">
+<meta property="og:title" content="Ansible Jinj2 templates">
+<meta property="og:url" content="http://localhost:4000/site/ansible-jinja2-templates/">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-05-05T20:00:00+02:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/site/ansible-jinja2-templates/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "",
+      "url": "http://localhost:4000/site/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/site/feed.xml" type="application/atom+xml" rel="alternate" title="notes Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/site/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/site/">
+          notes
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/site/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Ansible Jinj2 templates</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          <a href="/site/"><span class="nav__sub-title">Start page</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/tags/"><span class="nav__sub-title">Tags</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/year-archive/"><span class="nav__sub-title">Archive</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/_pages/about/"><span class="nav__sub-title">About</span></a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+
+    
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Ansible Jinj2 templates">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2022-05-05T20:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/site/ansible-jinja2-templates/" class="u-url" itemprop="url">Ansible Jinj2 templates
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-05T20:00:00+02:00">May 5, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#using-loops">Using Loops</a></li><li><a href="#using-condition">Using condition:</a></li><li><a href="#reference">Reference</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+<p>Jinja templating helps to standartize and to template files such as config and system roles. Here is basic syntax.</p>
+
+<p>Using template module:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy hello.html</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">src</span><span class="pi">:</span> <span class="s">templates/hello.html.j2</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">/var/www/html/hello.html</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nv">$ </span><span class="nb">cat </span>vars/all/all.yml
+print_msg <span class="o">=</span> <span class="s2">"This file is managed by Ansible"</span>
+
+<span class="nv">$ </span><span class="nb">cat </span>templates/hello.html.j2
+<span class="o">{{</span> print_msg <span class="o">}}</span>
+The system kernel is: <span class="o">{{</span> ansible_hostname <span class="o">}}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">\'{% EXPR %}'</code> - for expressions or logic.</li>
+  <li><code class="language-plaintext highlighter-rouge">\'{{ EXPR }}'</code> - outputs results of expressions or variables</li>
+  <li><code class="language-plaintext highlighter-rouge">\'{# COMMENT #}'</code> - comments</li>
+</ul>
+
+<p>We can manage a jinja file using loops and conditions.</p>
+
+<h2 id="using-loops">Using Loops</h2>
+
+<div class="language-jinja highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">{# Check list with the models of auto #}</span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">model</span> <span class="ow">in</span> <span class="nv">models</span> <span class="k">if</span> <span class="ow">not</span> <span class="nv">model</span> <span class="o">==</span> <span class="s2">"BMW"</span> <span class="cp">%}</span>
+Line <span class="cp">{{</span> <span class="nv">loop.index</span> <span class="cp">}}</span> - <span class="cp">{{</span> <span class="nv">model</span> <span class="cp">}}</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+</code></pre></div></div>
+
+<p>Or let’s print all defined hostnames</p>
+
+<div class="language-jinja highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span> <span class="k">for</span> <span class="nv">server_name</span> <span class="ow">in</span> <span class="nv">groups</span><span class="p">[</span><span class="s1">'servers'</span><span class="p">]</span> <span class="cp">%}</span>
+<span class="cp">{{</span> <span class="nv">server_name</span> <span class="cp">}}</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+</code></pre></div></div>
+
+<p>Or classic task, define /etc/hosts file:</p>
+
+<div class="language-jinja highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span> <span class="k">for</span> <span class="nv">host</span> <span class="ow">in</span> <span class="nv">groups</span><span class="p">[</span><span class="s1">'all'</span><span class="p">]</span> <span class="cp">%}</span>
+<span class="cp">{{</span> <span class="nv">hostvars</span><span class="p">[</span><span class="nv">host</span><span class="p">][</span><span class="s1">'ansible_facts'</span><span class="p">][</span><span class="s1">'default_ipv4'</span><span class="p">][</span><span class="s1">'address'</span><span class="p">]</span> <span class="cp">}}</span> <span class="cp">{{</span> <span class="nv">hostvars</span><span class="p">[</span><span class="nv">host</span><span class="p">][</span><span class="s1">'ansible_facts'</span><span class="p">][</span><span class="s1">'fqdn'</span><span class="p">]</span> <span class="cp">}}</span> <span class="cp">{{</span> <span class="nv">hostvars</span><span class="p">[</span><span class="nv">host</span><span class="p">][</span><span class="s1">'ansible_facts'</span><span class="p">][</span><span class="s1">'hostname'</span><span class="p">]</span> <span class="cp">}}</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span>
+</code></pre></div></div>
+
+<h2 id="using-condition">Using condition:</h2>
+
+<div class="language-jinja highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span> <span class="k">if</span> <span class="nv">finished</span> <span class="cp">%}</span>
+<span class="cp">{{</span> <span class="nv">print_me</span> <span class="cp">}}</span>
+<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+</code></pre></div></div>
+
+<p>Additionally, in jinja template we can apply some filters to express the output to yaml or json or to get expression from yaml and json. These filters are: <code class="language-plaintext highlighter-rouge">to_json</code>, <code class="language-plaintext highlighter-rouge">to_yaml</code>, <code class="language-plaintext highlighter-rouge">to_nice_yaml</code>, <code class="language-plaintext highlighter-rouge">to_nice_json</code>, <code class="language-plaintext highlighter-rouge">from_json</code>, <code class="language-plaintext highlighter-rouge">from_yaml</code>.</p>
+
+<h2 id="reference">Reference</h2>
+<ul>
+  <li><a href="https://docs.ansible.com/ansible/2.9/user_guide/playbooks_filters.html">Ansible Playbook Filters</a></li>
+  <li><a href="https://docs.ansible.com/ansible/2.9/modules/template_module.html">Ansible Templates</a></li>
+</ul>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/site/tags/#ansible" class="page__taxonomy-item p-category" rel="tag">ansible</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-05-05T20:00:00+02:00">May 5, 2022</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/site/ansible-troubleshooting/" class="pagination--pager" title="Troubleshooting in Ansible
+">Previous</a>
+    
+    
+      <a href="/site/kubernets-install/" class="pagination--pager" title="Kubernetes installation. (Not finished)
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-collections/" rel="permalink">Basics of Ansible collections
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-18T09:00:00+02:00">May 18, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-basic-storage-management/" rel="permalink">Basics of storage management using Ansible
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-15T14:00:00+02:00">May 15, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/kubernets-install/" rel="permalink">Kubernetes installation. (Not finished)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-10T09:00:00+02:00">May 10, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-troubleshooting/" rel="permalink">Troubleshooting in Ansible
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-04-23T09:00:00+02:00">April 23, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/site/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 notes. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/site/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/site/assets/js/lunr/lunr.min.js"></script>
+<script src="/site/assets/js/lunr/lunr-store.js"></script>
+<script src="/site/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,717 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>My experience of Openshift 4.9 installation on Proxmox with a restricted network - notes</title>
+<meta name="description" content="">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="notes">
+<meta property="og:title" content="My experience of Openshift 4.9 installation on Proxmox with a restricted network">
+<meta property="og:url" content="http://localhost:4000/site/installing-openshift4.9/">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-01-15T20:00:00+01:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/site/installing-openshift4.9/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "",
+      "url": "http://localhost:4000/site/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/site/feed.xml" type="application/atom+xml" rel="alternate" title="notes Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/site/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/site/">
+          notes
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/site/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">My experience of Openshift 4.9 installation on Proxmox with a restricted network</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          <a href="/site/"><span class="nav__sub-title">Start page</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/tags/"><span class="nav__sub-title">Tags</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/year-archive/"><span class="nav__sub-title">Archive</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/_pages/about/"><span class="nav__sub-title">About</span></a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+
+    
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="My experience of Openshift 4.9 installation on Proxmox with a restricted network">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2022-01-15T20:00:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/site/installing-openshift4.9/" class="u-url" itemprop="url">My experience of Openshift 4.9 installation on Proxmox with a restricted network
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-01-15T20:00:00+01:00">January 15, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#preparing-environment">Preparing environment</a></li><li><a href="#preparing-for-installation">Preparing for installation</a><ul><li><a href="#obtaining-openshift-installer-and-token">Obtaining Openshift installer and token</a></li><li><a href="#install-coreos-and-openshift">Install CoreOS and Openshift</a></li><li><a href="#bootstrap-installation">Bootstrap installation</a></li><li><a href="#master-node-installation">Master node installation</a></li><li><a href="#worker-nodes">Worker nodes</a></li><li><a href="#final-result">Final result</a></li></ul></li><li><a href="#reference">Reference:</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+<p>In this post I tried to describe my experience that I had during Openshift 4.9 installation at my home lab. Redhat allows to use Openshift during 60 days for free without support.</p>
+
+<h2 id="preparing-environment">Preparing environment</h2>
+
+<ul>
+  <li>Set up DNS and DHCP</li>
+  <li>Set up proxy</li>
+  <li>Download RHCOS (https://console.redhat.com/openshift/install/metal/user-provisioned)</li>
+  <li>Create bare metal environment. In my case I use Proxmox virtualization platform</li>
+  <li>Install http server</li>
+  <li>Install haproxy</li>
+  <li></li>
+</ul>
+
+<h2 id="preparing-for-installation">Preparing for installation</h2>
+<p>For Openshift installation it is necessary to have following:</p>
+<ul>
+  <li>DNS and DHCP services</li>
+  <li>HTTP server. In my case I installed httpd server</li>
+  <li>Loadbalacer. I use Haproxy</li>
+</ul>
+
+<p>All these services are running on Linux machine (in my case it is last version of CentOS 8). I named it ocp-services.</p>
+
+<p>For installation and configuration of mentioned services I used ansible. Roles are available here: https://github.com/votamrima/ansible_activity</p>
+
+<p>At my home lab Openshift nodes are being run on Proxmox virtualisation platform. There are 6 nodes: 1 - bootstrap node, 3 master nodes, 2 worker nodes.</p>
+
+<h3 id="obtaining-openshift-installer-and-token">Obtaining Openshift installer and token</h3>
+<p>Register at Red Hat portal.</p>
+
+<p>Installer, token and Redhat CoreOS are able to download from https://console.redhat.com/openshift/install/metal/user-provisioned.</p>
+
+<p>Unpack downloanded zip into <code class="language-plaintext highlighter-rouge">/usr/local/bin/</code>.</p>
+
+<p>Create a folder where will be generated igns. In my case it is <code class="language-plaintext highlighter-rouge">/opt/try/install_dir/</code>.</p>
+
+<p>Create <code class="language-plaintext highlighter-rouge">install-config.yaml</code> in <code class="language-plaintext highlighter-rouge">/opt/try/install_dir/</code>. Sample for install-config.yaml is able to find here: https://docs.openshift.com/container-platform/4.9/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html#installation-bare-metal-config-yaml_installing-restricted-networks-bare-metal.</p>
+
+<p>Edit created file. Add copied from Redhat portal token into the file.</p>
+
+<p>Create manifests:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openshift-install create manifests <span class="nt">--dir</span> /opt/try/install_dir/
+</code></pre></div></div>
+
+<p>Modify the created cluster-scheduler-02-config.yml manifest file to make the control plane nodes schedulable by updating <em>mastersSchedulable</em> value to true. This option will deactivate scheduling control plane nodes by default:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sed</span> <span class="nt">-i</span> <span class="s1">'s/mastersSchedulable: true/mastersSchedulable: false/'</span> /opt/try/install_dir/manifests/cluster-scheduler-02-config.yml
+</code></pre></div></div>
+
+<p>Create ignition files:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openshift-install create ignition-configs <span class="nt">--dir</span> /opt/try/install_dir/
+</code></pre></div></div>
+
+<p>Copy created ignition files to apache httpd folder. In my case it is <code class="language-plaintext highlighter-rouge">/var/www/html/okd/</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo cp</span> <span class="nt">-Rf</span> install_dir/<span class="k">*</span> /var/www/html/okd/
+</code></pre></div></div>
+
+<h3 id="install-coreos-and-openshift">Install CoreOS and Openshift</h3>
+
+<p>Create virtual machines on your virtual platform. Each node will run on seperated VM. In my case, as I mentioned above I used Proxmox and I have created 6 virtual machines - 1 bootstrap node, 3 for master nodes, 2 for worker nodes. All machines have following parameters: CPU - 4 core, memory - 16GB, hard drive - 100 GB, one phisycal network interface.</p>
+
+<p>Start each machine and load up the downloaded RHCOS iso image.</p>
+
+<p>When RHCOS is loaded you should install ign file that you have created before. Type following commands for the following machines accordingly. The structure of the command is <code class="language-plaintext highlighter-rouge">sudo coreos-installer install --ignition-url=&lt;url with ignition file&gt; &lt;partition for installation&gt; --insecure-ignition</code></p>
+
+<p>In my case I used following commands for installing a bootstrap node:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>coreos-installer <span class="nb">install</span> <span class="nt">--ignition-url</span><span class="o">=</span>http://192.168.11.61:8080/okd/bootstrap.ign /dev/sda <span class="nt">--insecure-ignition</span>
+</code></pre></div></div>
+
+<p>For installing master node:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>coreos-installer <span class="nb">install</span> <span class="nt">--ignition-url</span><span class="o">=</span>http://192.168.11.61:8080/okd/master.ign /dev/sda <span class="nt">--insecure-ignition</span>
+</code></pre></div></div>
+
+<p>For installing worker node:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>coreos-installer <span class="nb">install</span> <span class="nt">--ignition-url</span><span class="o">=</span>http://192.168.11.61:8080/okd/worker.ign /dev/sda <span class="nt">--insecure-ignition</span>
+</code></pre></div></div>
+
+<p>Wait until all ignitions will be installed.</p>
+
+<p>Restart all nodes.</p>
+
+<p>And wait until Openshift will be installed. On my home lab installation continued more than 1,5 hour.</p>
+
+<h3 id="bootstrap-installation">Bootstrap installation</h3>
+
+<p>To monitor the bootstrap process Red Hat recommends to use <code class="language-plaintext highlighter-rouge">$ ./openshift-install --dir &lt;installation_directory&gt; wait-for bootstrap-complete --log-level=info</code> command. Unfortunatelly, in my case it does not work. Every time this commands ended with error. Although, configuration was correct and installation process continued. Moreover, I wanted to observe bootstap process in detail. Therefore, I run <code class="language-plaintext highlighter-rouge">journalctl</code> on the host (using ssh and with core user). For bootstrap node I typed following:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@ocp-services ~]# ssh core@192.168.11.66
+<span class="o">[</span>core@ocp-bootstrap ~]# <span class="nb">sudo</span> <span class="nt">-i</span>
+<span class="o">[</span>root@ocp-bootstrap ~]# journalctl <span class="nt">-b</span> <span class="nt">-f</span> <span class="nt">-u</span> release-image.service <span class="nt">-u</span> bootkube.service
+</code></pre></div></div>
+
+<p>Additionally, I regularly observed running containers as well:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>root@ocp-bootstrap ~]# crictl ps <span class="nt">-a</span>
+CONTAINER           IMAGE                                                                                                                    CREATED              STATE               NAME                        ATTEMPT             POD ID
+e6466af3587aa       quay.io/openshift-release-dev/ocp-release@sha256:bb1987fb718f81fb30bec4e0e1cd5772945269b77006576b02546cf84c77498e        About a minute ago   Running             cluster-version-operator    0                   811748d44e1d8
+c24e9d6dbf475       d5d10803f3ebd3ef51495518565dedc1c8c3b722a016026c613fc22dba95ea90                                                         About a minute ago   Running             cloud-credential-operator   0                   b01a7b4cfc1ef
+41c1b7d1ab749       28ea52b98c63aa5dd899d67bf267a3b7dd623f5a694b97a56793bb12597e2de9                                                         2 minutes ago        Running             machine-config-server       0                   40b5c46667d10
+66e72fc96cd44       28ea52b98c63aa5dd899d67bf267a3b7dd623f5a694b97a56793bb12597e2de9                                                         2 minutes ago        Exited              machine-config-controller   0                   40b5c46667d10
+58a422a9e4320       quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:fd41b7237cac235fead9bda6dc9bf5c6cbde163ebf9d9249f33065d5ceadded0   4 minutes ago        Running             etcd                        0                   90ed4068c2c5d
+<span class="o">[</span>root@ocp-bootstrap ~]# 
+</code></pre></div></div>
+
+<p>Wait for the end of bootstrap process.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-b</span> <span class="nt">-f</span> <span class="nt">-u</span> release-image.service <span class="nt">-u</span> bootkube.service
+........
+bootkube.service: Succeeded.
+</code></pre></div></div>
+
+<h3 id="master-node-installation">Master node installation</h3>
+
+<p>During bootstrap node installation, I did restart master and worker nodes. This speeds up installation of master and worker nodes (I do not reason).</p>
+
+<p>To monitor master and working nodes I used journalctl too. Additionally, was checked the status of containers regulary:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-b</span> <span class="nt">-f</span>
+crictl ps <span class="nt">-a</span>
+</code></pre></div></div>
+
+<p>Wait for master nodes installation to be deployed</p>
+
+<p>For checking if openshift is run and up, see the stats page of loadbalancer (in my case it is haproxy). There are all nodes should be green.</p>
+
+<h3 id="worker-nodes">Worker nodes</h3>
+
+<p>Before starting deploying worker node, shutdown bootstap node and deactivate it from loadbalancer.</p>
+
+<p>When master nodes are successfuly installed and in stats page all master nodes are green, the next step is signing csrs.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#check for pending certificates:</span>
+<span class="o">[</span>admin@ocp-services ~]<span class="nv">$ </span>oc get csr 
+
+
+<span class="c">#check and sing all pending certificates:</span>
+<span class="o">[</span>admin@ocp-services ~]<span class="nv">$ </span>oc get csr <span class="nt">-ojson</span> | jq <span class="nt">-r</span> <span class="s1">'.items[] | select(.status == {} ) | .metadata.name'</span> | xargs oc adm certificate approve
+</code></pre></div></div>
+
+<p>Before running <code class="language-plaintext highlighter-rouge">oc</code> command do not forget to export KUBECONFIG variable in ocp-services machine.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">KUBECONFIG</span><span class="o">=</span>/opt/try/install_dir/auth/kubeconfig
+</code></pre></div></div>
+
+<p>During deployment of worker nodes, regularly check for new pending csr’s and sign new generated ones.</p>
+
+<h3 id="final-result">Final result</h3>
+<p>Finally, when all nodes are being deployed, check for url of openshift console:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#check for openshift console url</span>
+oc <span class="nb">whoami</span> <span class="nt">--show-console</span>
+</code></pre></div></div>
+
+<p>Log in to Openshift using default kubeadmin user. Password is being generated during creation of manifests and ignition files. <code class="language-plaintext highlighter-rouge">/opt/try/install_dir/auth/kubeadmin-password</code></p>
+
+<h2 id="reference">Reference:</h2>
+<p><a href="https://docs.openshift.com/container-platform/4.9/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html">Installing a user-provisioned bare metal cluster on a restricted network. Redhat documentation</a></p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/site/tags/#openshift" class="page__taxonomy-item p-category" rel="tag">openshift</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-01-15T20:00:00+01:00">January 15, 2022</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/site/windows11-requirements-error/" class="pagination--pager" title="Fixing “Cannot Install Windows 11” error during installation
+">Previous</a>
+    
+    
+      <a href="/site/openshift49-gracefull-restart/" class="pagination--pager" title="Stop and start Openshift 4 cluster
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-collections/" rel="permalink">Basics of Ansible collections
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-18T09:00:00+02:00">May 18, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-basic-storage-management/" rel="permalink">Basics of storage management using Ansible
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-15T14:00:00+02:00">May 15, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/kubernets-install/" rel="permalink">Kubernetes installation. (Not finished)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-10T09:00:00+02:00">May 10, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-jinja2-templates/" rel="permalink">Ansible Jinj2 templates
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-05T20:00:00+02:00">May 5, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/site/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 notes. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/site/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/site/assets/js/lunr/lunr.min.js"></script>
+<script src="/site/assets/js/lunr/lunr-store.js"></script>
+<script src="/site/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

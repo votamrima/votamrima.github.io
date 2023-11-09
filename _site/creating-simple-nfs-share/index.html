@@ -1,0 +1,659 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Creating a simple NFS share on centos - notes</title>
+<meta name="description" content="In this post is noted a way of creating a simple NFS share server on centos 8 machine.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="notes">
+<meta property="og:title" content="Creating a simple NFS share on centos">
+<meta property="og:url" content="http://localhost:4000/site/creating-simple-nfs-share/">
+
+
+  <meta property="og:description" content="In this post is noted a way of creating a simple NFS share server on centos 8 machine.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-11-06T23:38:00+01:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/site/creating-simple-nfs-share/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "",
+      "url": "http://localhost:4000/site/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/site/feed.xml" type="application/atom+xml" rel="alternate" title="notes Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/site/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/site/">
+          notes
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/site/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Creating a simple NFS share on centos</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          <a href="/site/"><span class="nav__sub-title">Start page</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/tags/"><span class="nav__sub-title">Tags</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/year-archive/"><span class="nav__sub-title">Archive</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/site/_pages/about/"><span class="nav__sub-title">About</span></a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+
+    
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Creating a simple NFS share on centos">
+    <meta itemprop="description" content="In this post is noted a way of creating a simple NFS share server on centos 8 machine.">
+    <meta itemprop="datePublished" content="2020-11-06T23:38:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/site/creating-simple-nfs-share/" class="u-url" itemprop="url">Creating a simple NFS share on centos
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2020-11-06T23:38:00+01:00">November 6, 2020</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              
+
+            </nav>
+          </aside>
+        
+        
+<p>In this post is noted a way of creating a simple NFS share server on centos 8 machine.</p>
+
+<p><strong>1. Installing NFS</strong></p>
+
+<p>On the server side we should install <code class="language-plaintext highlighter-rouge">nfs-utils</code> packet:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@nfs-server ~]# yum install nfs-utils
+</code></pre></div></div>
+
+<p>and start/enable <code class="language-plaintext highlighter-rouge">nfs-server</code> service</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@nfs-server ~]# systemctl start nfs-server
+[root@nfs-server ~]# ^start^enable
+systemctl enable nfs-server
+Created symlink /etc/systemd/system/multi-user.target.wants/nfs-server.service → /usr/lib/systemd/system/nfs-server.service.
+[root@nfs-server ~]# 
+</code></pre></div></div>
+
+<ol>
+  <li>Create a necessary directory and set <code class="language-plaintext highlighter-rouge">nobody</code> as an owner. Additionally, enable SELinux boolean <code class="language-plaintext highlighter-rouge">nfs_export_all_rw</code></li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir /opt/myshare
+[root@nfs-server opt]# chown nobody /opt/myshare
+[root@nfs-server opt]# setsebool -P nfs_export_all_rw 1
+</code></pre></div></div>
+
+<ol>
+  <li>Exporting the defined directory. Define prepared directory and subnets in /etc/exportfs file. Additionally, some options for exporting should be defined along with subnets too.
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@nfs-server ~]# vim /etc/exports
+/opt/myshare   192.168.11.0/24(rw,sync)
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>More options you can find in <code class="language-plaintext highlighter-rouge">man exports</code>. Some options are following:</p>
+<ul>
+  <li>rw</li>
+  <li>sync</li>
+  <li>all_squash - Map all uids and gids from clients to the anonymous user.</li>
+  <li>no_all_squash - used to map all UIDs and GIDs from client requests to identical UIDs and GIDs on the NFS server.</li>
+  <li>root_squash – Map requests from uid/gid 0 to the anonymous uid/gid</li>
+</ul>
+
+<ol>
+  <li>Export the defined in /etc/exports directories:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@nfs-server ~]# exportfs -arv
+exporting 192.168.11.0/24:/opt/myshare
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>Here <code class="language-plaintext highlighter-rouge">-a</code> means export all defined directories
+<code class="language-plaintext highlighter-rouge">-r</code> means reexport exported directories
+<code class="language-plaintext highlighter-rouge">-v</code> enable verbouse mode</p>
+
+<ol>
+  <li>To check an exported list use <code class="language-plaintext highlighter-rouge">-s</code> flag:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@nfs-server ~]# exportfs -s
+/opt/myshare  192.168.11.0/24(sync,wdelay,hide,no_subtree_check,sec=sys,rw,secure,root_squash,no_all_squash)
+[root@nfs-server ~]# 
+</code></pre></div>    </div>
+  </li>
+  <li>Enable NFS services in firewalld:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@nfs-server ~]# firewall-cmd --permanent --add-service=nfs
+success
+[root@nfs-server ~]# 
+[root@nfs-server ~]# 
+[root@nfs-server ~]# firewall-cmd --permanent --add-service=mountd
+success
+[root@nfs-server ~]# firewall-cmd --permanent --add-service=rpc-bind
+success
+[root@nfs-server ~]# 
+[root@nfs-server ~]# 
+[root@nfs-server ~]# firewall-cmd --reload
+success
+[root@nfs-server ~]# 
+</code></pre></div>    </div>
+  </li>
+  <li>Mount a share on the client. Create a folder on the client machine for mounting nfs folder and add a mouting details in the /etc/fstab:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@workstation ~]# mkdir /opt/nfs-share
+[root@workstation ~]# vim /etc/fstab
+......
+192.168.11.61:/opt/myshare /opt/nfs-share nfs defaults 0 0
+</code></pre></div>    </div>
+  </li>
+  <li>And mount a share:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount -a
+</code></pre></div>    </div>
+  </li>
+  <li>Check if it is mounted successfully:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@workstation ~]# df -h
+.......
+192.168.11.61:/opt/myshare                45G  3.4G   42G   8% /opt/nfs-share
+</code></pre></div>    </div>
+  </li>
+  <li>Moreover, you can mount a folder manually, without adding an entry in the /etc/fstab:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount -t nfs  192.168.11.61:/opt/myshare /opt/nfs-share
+</code></pre></div>    </div>
+  </li>
+  <li>In order to check available shares on the remote server you can use a <code class="language-plaintext highlighter-rouge">showmount</code> command:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@workstation ~]# showmount -e 192.168.11.61 ##This is a remote nfs server
+Export list for 192.168.11.61:
+/opt/myshare 192.168.11.0/24
+[root@workstation ~]# 
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/site/tags/#linux" class="page__taxonomy-item p-category" rel="tag">linux</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2020-11-06T23:38:00+01:00">November 6, 2020</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/site/reseting-root-password/" class="pagination--pager" title="root password reseting in centos
+">Previous</a>
+    
+    
+      <a href="/site/basic-sql-joins/" class="pagination--pager" title="Basic SQL Joins
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-collections/" rel="permalink">Basics of Ansible collections
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-18T09:00:00+02:00">May 18, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-basic-storage-management/" rel="permalink">Basics of storage management using Ansible
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-15T14:00:00+02:00">May 15, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/kubernets-install/" rel="permalink">Kubernetes installation. (Not finished)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-10T09:00:00+02:00">May 10, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/site/ansible-jinja2-templates/" rel="permalink">Ansible Jinj2 templates
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-05-05T20:00:00+02:00">May 5, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/site/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 notes. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/site/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/site/assets/js/lunr/lunr.min.js"></script>
+<script src="/site/assets/js/lunr/lunr-store.js"></script>
+<script src="/site/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

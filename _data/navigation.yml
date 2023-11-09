@@ -1,0 +1,25 @@
+# main links
+
+
+docs:
+  - title: "Start page"
+    url: /
+  - title: "Tags"
+    url: /tags/
+  - title: "Archive"
+    url: /year-archive/
+  - title: About
+    url: /_pages/about/
+
+pages:
+  - title: About
+    url: /_pages/
+
+#docs:
+#  - title: Getting Started
+#    children:
+#      - title: "Main page"
+#        url: /
+#      - title: "Quick-Start Guide"
+#        url: /docs/quick-start-guide/
+
