@@ -4,7 +4,7 @@ title: "Creating a Local YUM Repository on Rocky Linux"
 subtitle: ""
 date: 2023-11-10 22:50:00 +0100
 background: '/image/01.jpg'
-tags: ['yum','linux']
+tags: ['linux']
 ---
 
 {% raw %}
