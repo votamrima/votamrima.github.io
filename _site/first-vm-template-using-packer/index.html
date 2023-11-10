@@ -1,0 +1,740 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Creating a cloud-init VM Template on Proxmox using packer - Some stories from iT lab</title>
+<meta name="description" content="Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. I am going to set up VM with CentOS 8 Stream on board.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Some stories from iT lab">
+<meta property="og:title" content="Creating a cloud-init VM Template on Proxmox using packer">
+<meta property="og:url" content="http://localhost:4000/first-vm-template-using-packer/">
+
+
+  <meta property="og:description" content="Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. I am going to set up VM with CentOS 8 Stream on board.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-07-01T19:00:00+02:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/first-vm-template-using-packer/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3775066391096969"
+     crossorigin="anonymous"></script>
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Some stories from iT lab
+          
+        </a>
+        <ul class="visible-links"></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Creating a cloud-init VM Template on Proxmox using packer</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          <a href="/"><span class="nav__sub-title">Start page</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/tags/"><span class="nav__sub-title">Tags</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/year-archive/"><span class="nav__sub-title">Archive</span></a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <a href="/_pages/about/"><span class="nav__sub-title">About</span></a>
+        
+
+        
+      </li>
+    
+  </ul>
+</nav>
+
+    
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Creating a cloud-init VM Template on Proxmox using packer">
+    <meta itemprop="description" content="Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. I am going to set up VM with CentOS 8 Stream on board.">
+    <meta itemprop="datePublished" content="2022-07-01T19:00:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/first-vm-template-using-packer/" class="u-url" itemprop="url">Creating a cloud-init VM Template on Proxmox using packer
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-07-01T19:00:00+02:00">July 1, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#installing-packer">Installing Packer</a></li><li><a href="#create-a-hcl-file">Create a hcl file</a></li><li><a href="#running-packer">Running Packer</a></li><li><a href="#reference">Reference</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+<p>Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. I am going to set up VM with CentOS 8 Stream on board.</p>
+
+<h2 id="installing-packer">Installing Packer</h2>
+
+<p><a href="https://learn.hashicorp.com/tutorials/packer/get-started-install-cli">Here</a> is shown how to install Packer. Generally, I used the following steps for installing a required packages on my Fedora Workstation:</p>
+
+<p>Installing official HarshiCorp repository:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>yum-config-manager <span class="nt">--add-repo</span> https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+</code></pre></div></div>
+
+<p>If <code class="language-plaintext highlighter-rouge">yum-config-manager</code> is not available on the host, install <code class="language-plaintext highlighter-rouge">yum-utils</code> package: <code class="language-plaintext highlighter-rouge">sudo yum install -y yum-utils</code></p>
+
+<p>And install packer:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo yum -y install packer
+</code></pre></div></div>
+
+<p>And that’s it. Packer is installed. Check it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@workstation packer]<span class="nv">$ </span>packer 
+Usage: packer <span class="o">[</span><span class="nt">--version</span><span class="o">]</span> <span class="o">[</span><span class="nt">--help</span><span class="o">]</span> &lt;<span class="nb">command</span><span class="o">&gt;</span> <span class="o">[</span>&lt;args&gt;]
+
+Available commands are:
+    build           build image<span class="o">(</span>s<span class="o">)</span> from template
+    console         creates a console <span class="k">for </span>testing variable interpolation
+    fix             fixes templates from old versions of packer
+    <span class="nb">fmt             </span>Rewrites HCL2 config files to canonical format
+    hcl2_upgrade    transform a JSON template into an HCL2 configuration
+    init            Install missing plugins or upgrade plugins
+    inspect         see components of a template
+    plugins         Interact with Packer plugins and catalog
+    validate        check that a template is valid
+    version         Prints the Packer version
+
+<span class="o">[</span>admin@workstation packer]<span class="nv">$ </span>packer <span class="nt">--version</span>
+1.8.0
+<span class="o">[</span>admin@workstation packer]<span class="nv">$ </span>
+</code></pre></div></div>
+
+<h2 id="create-a-hcl-file">Create a hcl file</h2>
+
+<p>In order to set up a vm we need to declare a file with instructions for packer. There are two type of files: JSON files and HCL file.</p>
+
+<p>I used to apply following hcl file for my task. The file is starting by defining required plugins. This plugin will be installed using <code class="language-plaintext highlighter-rouge">packer init hcls/</code>. In the following part are being declared variables. I declared <code class="language-plaintext highlighter-rouge">proxmox_api_url</code>, <code class="language-plaintext highlighter-rouge">proxmox_api_token_id</code> and <code class="language-plaintext highlighter-rouge">proxmox_api_token_secret</code>. These variables are able to define in the external file, by passing as a command parameter and by defining in the the same hcl file. In my task I set the 2 variables in a external file and secret I gave in command line as a parameter.</p>
+
+<p>Second part of the file is consisting of <code class="language-plaintext highlighter-rouge">source</code> part. Here are defined main parameters of the VM, iso file, disk, network and etc.</p>
+
+<p>Third part is the building part what actually runs building process and after provisioning tasks.</p>
+
+<div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+packer <span class="p">{</span>
+  required_plugins <span class="p">{</span>
+    proxmox <span class="p">=</span> <span class="p">{</span>
+      <span class="k">version</span> <span class="p">=</span> <span class="s2">"&gt;= 1.0.6"</span>
+      <span class="k">source</span>  <span class="p">=</span> <span class="s2">"github.com/hashicorp/proxmox"</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+variable <span class="s2">"proxmox_api_url"</span> <span class="p">{</span>
+  <span class="nb">type</span> <span class="p">=</span> <span class="nb">string</span>
+<span class="p">}</span>
+
+variable <span class="s2">"proxmox_api_token_id"</span> <span class="p">{</span>
+  <span class="nb">type</span> <span class="p">=</span> <span class="nb">string</span>
+<span class="p">}</span>
+
+variable <span class="s2">"proxmox_api_token_secret"</span> <span class="p">{</span>
+  <span class="nb">type</span>      <span class="p">=</span> <span class="nb">string</span>
+  sensitive <span class="p">=</span> true
+<span class="p">}</span>
+
+<span class="k">source</span> <span class="s2">"proxmox"</span> <span class="s2">"centos8-packer"</span> <span class="p">{</span>
+  proxmox_url <span class="p">=</span> <span class="s2">"${var.proxmox_api_url}"</span>
+  username    <span class="p">=</span> <span class="s2">"${var.proxmox_api_token_id}"</span>
+  token    <span class="p">=</span> <span class="s2">"${var.proxmox_api_token_secret}"</span>
+
+  insecure_skip_tls_verify <span class="p">=</span> true
+
+  node  <span class="p">=</span> <span class="s2">"proxmox"</span>
+  vm_id <span class="p">=</span> <span class="s2">"108"</span>
+  vm_name <span class="p">=</span> <span class="s2">"centos8-packer"</span>
+  template_description <span class="p">=</span> <span class="s2">"centos8-packer description"</span>
+
+  iso_file         <span class="p">=</span> <span class="s2">"ocp1:iso/CentOS-Stream-8-x86_64-latest-dvd1.iso"</span>
+
+  iso_storage_pool <span class="p">=</span> <span class="s2">"local"</span>
+  unmount_iso      <span class="p">=</span> true
+
+  qemu_agent <span class="p">=</span> true
+
+  scsi_controller <span class="p">=</span> <span class="s2">"virtio-scsi-pci"</span>
+
+  disks <span class="p">{</span>
+    disk_size         <span class="p">=</span> <span class="s2">"15G"</span>
+    format            <span class="p">=</span> <span class="s2">"vmdk"</span>
+    storage_pool      <span class="p">=</span> <span class="s2">"ocp1"</span>
+    storage_pool_type <span class="p">=</span> <span class="s2">"directory"</span>
+    <span class="nb">type</span>              <span class="p">=</span> <span class="s2">"virtio"</span>
+  <span class="p">}</span>
+
+  cores <span class="p">=</span> <span class="s2">"2"</span>
+
+  memory <span class="p">=</span> <span class="s2">"4096"</span>
+
+  network_adapters <span class="p">{</span>
+    model <span class="p">=</span> <span class="s2">"virtio"</span>
+    bridge <span class="p">=</span> <span class="s2">"vmbr0"</span>
+    firewall <span class="p">=</span> <span class="s2">"false"</span>
+   <span class="p">}</span> 
+
+  cloud_init              <span class="p">=</span> true
+  cloud_init_storage_pool <span class="p">=</span> <span class="s2">"ocp1"</span>
+
+  boot_command <span class="p">=</span> <span class="p">[</span>
+    <span class="c">"&lt;tab&gt;&lt;bs&gt;&lt;bs&gt;&lt;bs&gt;&lt;bs&gt;&lt;bs&gt;text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.conf&lt;enter&gt;&lt;wait&gt;&lt;enter&gt;"</span>
+  <span class="p">]</span>
+  boot      <span class="p">=</span> <span class="s2">"c"</span>
+  boot_wait <span class="p">=</span> <span class="s2">"5s"</span>
+
+  http_directory <span class="p">=</span> <span class="s2">"http"</span> 
+
+  ssh_username <span class="p">=</span> <span class="s2">"admin"</span>
+  ssh_private_key_file <span class="p">=</span> <span class="s2">"~/.ssh/id_rsa"</span>
+  ssh_password <span class="p">=</span> <span class="s2">"admin"</span>
+  ssh_port <span class="p">=</span> <span class="m">22</span>
+  ssh_timeout <span class="p">=</span> <span class="s2">"30m"</span>
+
+<span class="p">}</span>
+
+build <span class="p">{</span>
+    <span class="k">source</span> <span class="s2">"proxmox.centos8-packer"</span> <span class="p">{</span>
+        name <span class="p">=</span> <span class="s2">"centos8-packer"</span>
+    <span class="p">}</span>
+
+    provisioner <span class="s2">"shell"</span> <span class="p">{</span>
+      inline <span class="p">=</span> <span class="p">[</span>
+        <span class="c">"echo Installing Updates",</span>
+        <span class="c">"yum update -y",</span>
+        <span class="c">"yum install -y cloud-init qemu-guest-agent cloud-utils-growpart gdisk",</span>
+      <span class="p">]</span>
+
+      <span class="k">only</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"proxmox"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>By running packer creates a temporary http server using a randomly generated port. Such approach allows to download a kicstart file during installation and set up a machine. Kickstart file is located in <code class="language-plaintext highlighter-rouge">http</code> folder (<code class="language-plaintext highlighter-rouge">http_directory = "http"</code>). The kickstart file that I used for this task is shared on github. <a href="https://github.com/votamrima/terraforming/blob/master/packer/http/ks.conf">Link</a></p>
+
+<h2 id="running-packer">Running Packer</h2>
+
+<p>First of all we need to install required plugin for packer.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@workstation packer]<span class="nv">$ </span>packer init hcls/
+Installed plugin github.com/hashicorp/proxmox v1.0.8 <span class="k">in</span> <span class="s2">"/home/admin/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.0.8_x5.0_linux_amd64"</span>
+</code></pre></div></div>
+
+<p>And check installed plugin:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@workstation packer]<span class="nv">$ </span>packer plugins installed
+/home/admin/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.0.8_x5.0_linux_amd64
+</code></pre></div></div>
+
+<p>Next step is setting up a machine.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>admin@workstation packer]<span class="nv">$ </span>packer build <span class="nt">-var-file</span><span class="o">=</span><span class="s1">'creds.pkr.hcl'</span> <span class="nt">-var</span> <span class="nv">proxmox_api_token_secret</span><span class="o">=</span><span class="s2">"&lt;my-secret&gt;"</span> hcls/proxmox-centos.pkr.hcl
+proxmox.centos8-packer: output will be <span class="k">in </span>this color.
+
+<span class="o">==&gt;</span> proxmox.centos8-packer: Creating VM
+<span class="o">==&gt;</span> proxmox.centos8-packer: Starting VM
+<span class="o">==&gt;</span> proxmox.centos8-packer: Starting HTTP server on port 8665
+<span class="o">==&gt;</span> proxmox.centos8-packer: Waiting 5s <span class="k">for </span>boot
+<span class="o">==&gt;</span> proxmox.centos8-packer: Typing the boot <span class="nb">command</span>
+<span class="o">==&gt;</span> proxmox.centos8-packer: Waiting <span class="k">for </span>SSH to become available...
+<span class="o">==&gt;</span> proxmox.centos8-packer: Connected to SSH!
+<span class="o">==&gt;</span> proxmox.centos8-packer: Stopping VM
+<span class="o">==&gt;</span> proxmox.centos8-packer: Converting VM to template
+<span class="o">==&gt;</span> proxmox.centos8-packer: Adding a cloud-init cdrom <span class="k">in </span>storage pool ocp1
+Build <span class="s1">'proxmox.centos8-packer'</span> finished after 8 minutes 35 seconds.
+
+<span class="o">==&gt;</span> Wait completed after 8 minutes 35 seconds
+
+<span class="o">==&gt;</span> Builds finished. The artifacts of successful builds are:
+<span class="nt">--</span><span class="o">&gt;</span> proxmox.centos8-packer: A template was created: 108
+
+<span class="o">[</span>admin@workstation packer]<span class="nv">$ </span>
+
+</code></pre></div></div>
+<h2 id="reference">Reference</h2>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#packer" class="page__taxonomy-item p-category" rel="tag">packer</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-07-01T19:00:00+02:00">July 1, 2022</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/first-touch-with-helm/" class="pagination--pager" title="First steps in helm
+">Previous</a>
+    
+    
+      <a href="/fedora-template-proxmox-manually/" class="pagination--pager" title="Creating fedora linux cloud init template for proxmox manually
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/creating-local-yum-repo/" rel="permalink">Creating a Local YUM Repository on Rocky Linux
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2023-11-10T18:15:00+01:00">November 10, 2023</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/applied-dnsname-as-hostname/" rel="permalink">How I set DNS name as a hostname
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2023-11-07T22:50:00+01:00">November 7, 2023</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/excel-automation-set-timedate-automatically/" rel="permalink">excel automation: enabling and using macros for date-time  stamps
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2023-10-31T22:50:00+01:00">October 31, 2023</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/fedora-template-proxmox-manually/" rel="permalink">Creating fedora linux cloud init template for proxmox manually
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-08-29T19:00:00+02:00">August 29, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 Some stories from iT lab. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Simple HTTPS Server using python - Some stories from iT lab</title>
+<!-- begin _includes/seo.html --><title>excel automation: enabling and using macros for date-time  stamps - Some stories from iT lab</title>
 <meta name="description" content="">
 
 
@@ -17,8 +17,8 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="Some stories from iT lab">
-<meta property="og:title" content="Simple HTTPS Server using python">
-<meta property="og:url" content="http://localhost:4000/a-simple-python-server/">
+<meta property="og:title" content="excel automation: enabling and using macros for date-time  stamps">
+<meta property="og:url" content="http://localhost:4000/excel-automation-set-timedate-automatically/">
 
 
   <meta property="og:description" content="">
@@ -29,7 +29,7 @@
 
 
 
-  <meta property="article:published_time" content="2019-08-06T00:38:00+02:00">
+  <meta property="article:published_time" content="2023-10-31T22:50:00+01:00">
 
 
 
@@ -40,7 +40,7 @@
   
 
 
-<link rel="canonical" href="http://localhost:4000/a-simple-python-server/">
+<link rel="canonical" href="http://localhost:4000/excel-automation-set-timedate-automatically/">
 
 
 
@@ -155,7 +155,7 @@
         <span class="sep">/</span>
       
       
-        <li class="current">Simple HTTPS Server using python</li>
+        <li class="current">excel automation: enabling and using macros for date-time  stamps</li>
       
     
   </ol>
@@ -226,16 +226,16 @@
 
 
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Simple HTTPS Server using python">
+    <meta itemprop="headline" content="excel automation: enabling and using macros for date-time  stamps">
     <meta itemprop="description" content="">
-    <meta itemprop="datePublished" content="2019-08-06T00:38:00+02:00">
+    <meta itemprop="datePublished" content="2023-10-31T22:50:00+01:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
           <h1 id="page-title" class="page__title p-name" itemprop="headline">
-            <a href="http://localhost:4000/a-simple-python-server/" class="u-url" itemprop="url">Simple HTTPS Server using python
+            <a href="http://localhost:4000/excel-automation-set-timedate-automatically/" class="u-url" itemprop="url">excel automation: enabling and using macros for date-time  stamps
 </a>
           </h1>
           
@@ -246,7 +246,7 @@
       <span class="page__meta-date">
         <i class="far fa-calendar-alt" aria-hidden="true"></i>
         
-        <time datetime="2019-08-06T00:38:00+02:00">August 6, 2019</time>
+        <time datetime="2023-10-31T22:50:00+01:00">October 31, 2023</time>
       </span>
     
 
@@ -264,59 +264,75 @@
           <aside class="sidebar__right ">
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
-              
+              <ul class="toc__menu"><li><a href="#enabling-macro-enabled-file-types">Enabling Macro-Enabled File Types</a></li><li><a href="#implementing-the-macro">Implementing the Macro</a></li><li><a href="#how-it-works">How it Works</a></li><li><a href="#reference">Reference</a></li></ul>
 
             </nav>
           </aside>
         
         
-<p>Here below I am going to shortly describe the process of setting up a simple https server on python</p>
+<p>To enable and work with macro-enabled files in Excel and ensure the macros run correctly, you must follow some steps. This article provides a guide on how to enable macro-enabled file types and how to apply a specific VBA macro.</p>
 
-<ol>
-  <li>Generating key and cert files with Openssl:</li>
-</ol>
+<h2 id="enabling-macro-enabled-file-types">Enabling Macro-Enabled File Types</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@test crazytests]# openssl req -x509 -newkey rsa:4096 -keyout testkey.pem -out testcert.pem
-Generating a 4096 bit RSA private key
-.......++
-..............................................................................................................................................................................................................................++
-writing new private key to 'testkey.pem'
-Enter PEM pass phrase:
-Verifying - Enter PEM pass phrase:
------
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
------
-Country Name (2 letter code) [XX]:DE
-State or Province Name (full name) []:
-Locality Name (eg, city) [Default City]:
-Organization Name (eg, company) [Default Company Ltd]:
-Organizational Unit Name (eg, section) []:
-Common Name (eg, your name or your server's hostname) []: new.test.my
-Email Address []:
-[root@test crazytests]#
-</code></pre></div></div>
+<p><strong>Save as Macro-Enabled Workbook</strong>:</p>
+<ul>
+  <li>After creating or editing your macros in Excel, go to <code class="language-plaintext highlighter-rouge">File</code> &gt; <code class="language-plaintext highlighter-rouge">Save As</code>.</li>
+  <li>Locate where you want to save the workbook.</li>
+  <li>Click on ‘Save as type’ dropdown and select <code class="language-plaintext highlighter-rouge">Excel Macro-Enabled Workbook (*.xlsm)</code>.</li>
+  <li>Set a name for workbook and click <code class="language-plaintext highlighter-rouge">Save</code>.</li>
+</ul>
 
-<ol>
-  <li>Write the following python code. I tested it on python 2.x. I think on python 3.x will run  too.</li>
-</ol>
+<p><strong>Enable Macros when Opening a Workbook</strong>:</p>
+<ul>
+  <li>When you open an Excel file that contains macros, you might see a security warning under the ribbon. Click on <code class="language-plaintext highlighter-rouge">Enable Content</code> to run the macros.
+&lt;!–
+<strong>Adjust Macro Settings</strong>:</li>
+  <li>Go to <code class="language-plaintext highlighter-rouge">File</code> &gt; <code class="language-plaintext highlighter-rouge">Options</code> &gt; <code class="language-plaintext highlighter-rouge">Trust Center</code>.</li>
+  <li>Click on <code class="language-plaintext highlighter-rouge">Trust Center Settings</code>.</li>
+  <li>Under <code class="language-plaintext highlighter-rouge">Macro Settings</code>, choose the desired level of security. For full functionality, you can choose <code class="language-plaintext highlighter-rouge">Enable all macros</code> (not recommended for all documents due to security risks). It’s generally better to choose <code class="language-plaintext highlighter-rouge">Disable all macros with notification</code> so you can choose when to enable macros.</li>
+  <li>Click <code class="language-plaintext highlighter-rouge">OK</code> to save your settings.
+–&gt;</li>
+</ul>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@test crazytests]# cat simple_https.py
-import BaseHTTPServer, SimpleHTTPServer
-import ssl
+<h2 id="implementing-the-macro">Implementing the Macro</h2>
 
+<p>To insert the current date and time in column A when a cell in column B is edited:</p>
 
-httpd = BaseHTTPServer.HTTPServer(('new.test.my', 4443), SimpleHTTPServer.SimpleHTTPRequestHandler)
+<ul>
+  <li>
+    <p>Open VBA editor in Excel</p>
+  </li>
+  <li>
+    <p>In the Project Explorer on the left, double-click the worksheet where you want this behavior.</p>
+  </li>
+  <li>
+    <p>In the code window, paste the following VBA code:</p>
+  </li>
+</ul>
 
-httpd_soccet = ssl.wrap_socket(httpd.socket, keyfile="testkey.pem", certfile='testcert.pem', server_side=True)
+<pre><code class="language-vba">Private Sub Worksheet_Change(ByVal Target As Range)
+    'Check if the changed cell is in column B
+    If Not Intersect(Target, Range("B:B")) Is Nothing Then
+        'Set the corresponding cell in column A to the current date and time
+        Cells(Target.Row, 1).Value = Now
+    End If
+End Sub
+</code></pre>
 
-httpd.serve_forever()
-[root@test crazytests]#
-</code></pre></div></div>
+<ul>
+  <li>Save and close the VBA editor.</li>
+</ul>
+
+<h2 id="how-it-works">How it Works</h2>
+
+<p>The provided VBA code utilizes the <code class="language-plaintext highlighter-rouge">Worksheet_Change</code> event, which is triggered whenever a change is made to the worksheet. The code checks if the edited cell is in column B. If it is, it updates the corresponding cell in column A with the current date and time.</p>
+
+<p>Remember to always be cautious when enabling macros, especially if the source of the Excel file is unknown. Macros can contain harmful code, so only enable macros from trusted sources.</p>
+
+<h2 id="reference">Reference</h2>
+<ul>
+  <li><a href="https://www.planetaexcel.ru/techniques/6/44/">Автоматическая вставка текущей даты в ячейку при вводе данных</a></li>
+</ul>
 
 
         
@@ -334,9 +350,7 @@ httpd.serve_forever()
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a><span class="sep">, </span>
-    
-      <a href="/tags/#webserver" class="page__taxonomy-item p-category" rel="tag">webserver</a>
+      <a href="/tags/#excel" class="page__taxonomy-item p-category" rel="tag">excel</a>
     
     </span>
   </p>
@@ -346,7 +360,7 @@ httpd.serve_forever()
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2019-08-06T00:38:00+02:00">August 6, 2019</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2023-10-31T22:50:00+01:00">October 31, 2023</time></p>
 
       </footer>
 
@@ -355,11 +369,11 @@ httpd.serve_forever()
       
   <nav class="pagination">
     
-      <a href="/hiera-in-puppet/" class="pagination--pager" title="Using hiera in puppet. Example: creating a folder
+      <a href="/fedora-template-proxmox-manually/" class="pagination--pager" title="Creating fedora linux cloud init template for proxmox manually
 ">Previous</a>
     
     
-      <a href="/more-space-for-boot-fs/" class="pagination--pager" title="Expanding /boot partition
+      <a href="/applied-dnsname-as-hostname/" class="pagination--pager" title="How I set DNS name as a hostname
 ">Next</a>
     
   </nav>
@@ -458,43 +472,6 @@ httpd.serve_forever()
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
-        <a href="/excel-automation-set-timedate-automatically/" rel="permalink">excel automation: enabling and using macros for date-time  stamps
-</a>
-      
-    </h2>
-    
-
-  <p class="page__meta">
-    
-      
-      <span class="page__meta-date">
-        <i class="far fa-calendar-alt" aria-hidden="true"></i>
-        
-        <time datetime="2023-10-31T22:50:00+01:00">October 31, 2023</time>
-      </span>
-    
-
-    
-
-    
-  </p>
-
-
-    <p class="archive__item-excerpt" itemprop="description">
-</p>
-  </article>
-</div>
-
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
         <a href="/fedora-template-proxmox-manually/" rel="permalink">Creating fedora linux cloud init template for proxmox manually
 </a>
       
@@ -519,6 +496,43 @@ httpd.serve_forever()
 
     <p class="archive__item-excerpt" itemprop="description">
 </p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/first-vm-template-using-packer/" rel="permalink">Creating a cloud-init VM Template on Proxmox using packer
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-07-01T19:00:00+02:00">July 1, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. ...</p>
   </article>
 </div>
 

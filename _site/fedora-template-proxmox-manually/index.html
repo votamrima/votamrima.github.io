@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Simple HTTPS Server using python - Some stories from iT lab</title>
+<!-- begin _includes/seo.html --><title>Creating fedora linux cloud init template for proxmox manually - Some stories from iT lab</title>
 <meta name="description" content="">
 
 
@@ -17,8 +17,8 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="Some stories from iT lab">
-<meta property="og:title" content="Simple HTTPS Server using python">
-<meta property="og:url" content="http://localhost:4000/a-simple-python-server/">
+<meta property="og:title" content="Creating fedora linux cloud init template for proxmox manually">
+<meta property="og:url" content="http://localhost:4000/fedora-template-proxmox-manually/">
 
 
   <meta property="og:description" content="">
@@ -29,7 +29,7 @@
 
 
 
-  <meta property="article:published_time" content="2019-08-06T00:38:00+02:00">
+  <meta property="article:published_time" content="2022-08-29T19:00:00+02:00">
 
 
 
@@ -40,7 +40,7 @@
   
 
 
-<link rel="canonical" href="http://localhost:4000/a-simple-python-server/">
+<link rel="canonical" href="http://localhost:4000/fedora-template-proxmox-manually/">
 
 
 
@@ -155,7 +155,7 @@
         <span class="sep">/</span>
       
       
-        <li class="current">Simple HTTPS Server using python</li>
+        <li class="current">Creating fedora linux cloud init template for proxmox manually</li>
       
     
   </ol>
@@ -226,16 +226,16 @@
 
 
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Simple HTTPS Server using python">
+    <meta itemprop="headline" content="Creating fedora linux cloud init template for proxmox manually">
     <meta itemprop="description" content="">
-    <meta itemprop="datePublished" content="2019-08-06T00:38:00+02:00">
+    <meta itemprop="datePublished" content="2022-08-29T19:00:00+02:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
           <h1 id="page-title" class="page__title p-name" itemprop="headline">
-            <a href="http://localhost:4000/a-simple-python-server/" class="u-url" itemprop="url">Simple HTTPS Server using python
+            <a href="http://localhost:4000/fedora-template-proxmox-manually/" class="u-url" itemprop="url">Creating fedora linux cloud init template for proxmox manually
 </a>
           </h1>
           
@@ -246,7 +246,7 @@
       <span class="page__meta-date">
         <i class="far fa-calendar-alt" aria-hidden="true"></i>
         
-        <time datetime="2019-08-06T00:38:00+02:00">August 6, 2019</time>
+        <time datetime="2022-08-29T19:00:00+02:00">August 29, 2022</time>
       </span>
     
 
@@ -264,59 +264,112 @@
           <aside class="sidebar__right ">
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
-              
+              <ul class="toc__menu"><li><a href="#creating-vm-in-terminal">Creating VM in terminal</a></li><li><a href="#reference">Reference</a></li></ul>
 
             </nav>
           </aside>
         
         
-<p>Here below I am going to shortly describe the process of setting up a simple https server on python</p>
-
 <ol>
-  <li>Generating key and cert files with Openssl:</li>
+  <li>Download fedora cloud image from https://alt.fedoraproject.org/cloud/. I used to download the last version in raw image</li>
 </ol>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@test crazytests]# openssl req -x509 -newkey rsa:4096 -keyout testkey.pem -out testcert.pem
-Generating a 4096 bit RSA private key
-.......++
-..............................................................................................................................................................................................................................++
-writing new private key to 'testkey.pem'
-Enter PEM pass phrase:
-Verifying - Enter PEM pass phrase:
------
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
------
-Country Name (2 letter code) [XX]:DE
-State or Province Name (full name) []:
-Locality Name (eg, city) [Default City]:
-Organization Name (eg, company) [Default Company Ltd]:
-Organizational Unit Name (eg, section) []:
-Common Name (eg, your name or your server's hostname) []: new.test.my
-Email Address []:
-[root@test crazytests]#
+<h2 id="creating-vm-in-terminal">Creating VM in terminal</h2>
+
+<p>A VM creating process I ran in proxmox terminal using the following commands:</p>
+
+<ol>
+  <li>Create a new VM. Here I defined a machine with internal Proxmox ID 403, with memory 4 GB, two cores and with two network interfaces. Name of the VM will fedora-cloud.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@proxmox:~# qm create 403 <span class="nt">--memory</span> 4096 <span class="nt">--cores</span> 2 <span class="nt">--name</span> fedora-cloud <span class="nt">--net0</span> virtio,bridge<span class="o">=</span>vmbr0 <span class="nt">--net1</span> virtio,bridge<span class="o">=</span>vmbr1
 </code></pre></div></div>
 
 <ol>
-  <li>Write the following python code. I tested it on python 2.x. I think on python 3.x will run  too.</li>
+  <li>Here will the downloaded raw image will be imported to the VM as a hard drive and the image will be transfered to ocp1 storage</li>
 </ol>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@test crazytests]# cat simple_https.py
-import BaseHTTPServer, SimpleHTTPServer
-import ssl
-
-
-httpd = BaseHTTPServer.HTTPServer(('new.test.my', 4443), SimpleHTTPServer.SimpleHTTPRequestHandler)
-
-httpd_soccet = ssl.wrap_socket(httpd.socket, keyfile="testkey.pem", certfile='testcert.pem', server_side=True)
-
-httpd.serve_forever()
-[root@test crazytests]#
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@proxmox:~# qm importdisk 403 /var/tmp/Fedora-Cloud-Base-36-1.5.x86_64.raw ocp1
+importing disk <span class="s1">'/var/tmp/Fedora-Cloud-Base-36-1.5.x86_64.raw'</span> to VM 403 ...
+Formatting <span class="s1">'/mnt/pve/ocp1/images/403/vm-403-disk-0.raw'</span>, <span class="nb">fmt</span><span class="o">=</span>raw <span class="nv">size</span><span class="o">=</span>5368709120
+transferred 0.0 B of 5.0 GiB <span class="o">(</span>0.00%<span class="o">)</span>
+transferred 52.2 MiB of 5.0 GiB <span class="o">(</span>1.02%<span class="o">)</span>
+transferred 103.9 MiB of 5.0 GiB <span class="o">(</span>2.03%<span class="o">)</span>
+.....
+.....
+transferred 5.0 GiB of 5.0 GiB <span class="o">(</span>100.00%<span class="o">)</span>
+transferred 5.0 GiB of 5.0 GiB <span class="o">(</span>100.00%<span class="o">)</span>
+Successfully imported disk as <span class="s1">'unused0:ocp1:403/vm-403-disk-0.raw'</span>
 </code></pre></div></div>
+
+<p>The uploaded image currently has a label unused, because it has not been attached to the the VM yet. And name of the image has been changed to <code class="language-plaintext highlighter-rouge">vm-403-disk-0.raw</code>. Let’s attach the image to the VM.</p>
+
+<ol>
+  <li>Attaching an image to the VM. I use a default SCSI controller.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@proxmox:~# qm <span class="nb">set </span>403 <span class="nt">--scsihw</span> virtio-scsi-pci <span class="nt">--scsi0</span> ocp1:403/vm-403-disk-0.raw
+update VM 403: <span class="nt">-scsi0</span> ocp1:403/vm-403-disk-0.raw <span class="nt">-scsihw</span> virtio-scsi-pci
+</code></pre></div></div>
+
+<ol>
+  <li>Add cloud-init drive</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@proxmox:~# qm <span class="nb">set </span>403 <span class="nt">--ide1</span> ocp1:cloudinit
+update VM 403: <span class="nt">-ide1</span> ocp1:cloudinit
+Formatting <span class="s1">'/mnt/pve/ocp1/images/403/vm-403-cloudinit.qcow2'</span>, <span class="nb">fmt</span><span class="o">=</span>qcow2 <span class="nv">cluster_size</span><span class="o">=</span>65536 <span class="nv">extended_l2</span><span class="o">=</span>off <span class="nv">preallocation</span><span class="o">=</span>metadata <span class="nv">compression_type</span><span class="o">=</span>zlib <span class="nv">size</span><span class="o">=</span>4194304 <span class="nv">lazy_refcounts</span><span class="o">=</span>off <span class="nv">refcount_bits</span><span class="o">=</span>16
+root@proxmox:~# 
+</code></pre></div></div>
+
+<ol>
+  <li>Make the cloudinit drive bootable and define in BIOS the boot starts from disk:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@proxmox:~# qm <span class="nb">set </span>403 <span class="nt">--boot</span> c <span class="nt">--bootdisk</span> scsi0
+update VM 403: <span class="nt">-boot</span> c <span class="nt">-bootdisk</span> scsi0
+root@proxmox:~# 
+</code></pre></div></div>
+
+<ol>
+  <li>And finally set serial to enable a web VNC. <strong>Not relevant</strong></li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@proxmox:~# qm <span class="nb">set </span>403 <span class="nt">--serial0</span> socket <span class="nt">--vga</span> serial0
+update VM 403: <span class="nt">-serial0</span> socket <span class="nt">-vga</span> serial0
+root@proxmox:~# 
+</code></pre></div></div>
+
+<ol>
+  <li>Create a template from the VM</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@proxmox:~# qm template 403
+root@proxmox:~# 
+</code></pre></div></div>
+
+<p>Cloud-init configuration is able to define before creating a template or for any single VM that are being defined from the template.</p>
+
+<ol>
+  <li>Clone a VM from the template:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@proxmox:~# qm clone 403 103 <span class="nt">--name</span> test-vm <span class="nt">--full</span>
+create full clone of drive ide1 <span class="o">(</span>ocp1:403/vm-403-cloudinit.qcow2<span class="o">)</span>
+Formatting <span class="s1">'/mnt/pve/ocp1/images/103/vm-103-cloudinit.qcow2'</span>, <span class="nb">fmt</span><span class="o">=</span>qcow2 <span class="nv">cluster_size</span><span class="o">=</span>65536 <span class="nv">extended_l2</span><span class="o">=</span>off <span class="nv">preallocation</span><span class="o">=</span>metadata <span class="nv">compression_type</span><span class="o">=</span>zlib <span class="nv">size</span><span class="o">=</span>4194304 <span class="nv">lazy_refcounts</span><span class="o">=</span>off <span class="nv">refcount_bits</span><span class="o">=</span>16
+create full clone of drive scsi0 <span class="o">(</span>ocp1:403/base-403-disk-0.raw<span class="o">)</span>
+Formatting <span class="s1">'/mnt/pve/ocp1/images/103/vm-103-disk-0.raw'</span>, <span class="nb">fmt</span><span class="o">=</span>raw <span class="nv">size</span><span class="o">=</span>5368709120
+transferred 0.0 B of 5.0 GiB <span class="o">(</span>0.00%<span class="o">)</span>
+transferred 51.7 MiB of 5.0 GiB <span class="o">(</span>1.01%<span class="o">)</span>
+.....
+transferred 5.0 GiB of 5.0 GiB <span class="o">(</span>100.00%<span class="o">)</span>
+</code></pre></div></div>
+
+<h2 id="reference">Reference</h2>
+<ul>
+  <li><a href="https://pve.proxmox.com/wiki/Cloud-Init_Support">Proxmox Cloud-Init Support</a></li>
+  <li><a href="https://docs.technotim.live/posts/cloud-init-cloud-image/">Creating cloud init cloud image</a></li>
+</ul>
 
 
         
@@ -334,9 +387,7 @@ httpd.serve_forever()
     <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
     <span itemprop="keywords">
     
-      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a><span class="sep">, </span>
-    
-      <a href="/tags/#webserver" class="page__taxonomy-item p-category" rel="tag">webserver</a>
+      <a href="/tags/#proxmox" class="page__taxonomy-item p-category" rel="tag">proxmox</a>
     
     </span>
   </p>
@@ -346,7 +397,7 @@ httpd.serve_forever()
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2019-08-06T00:38:00+02:00">August 6, 2019</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-08-29T19:00:00+02:00">August 29, 2022</time></p>
 
       </footer>
 
@@ -355,11 +406,11 @@ httpd.serve_forever()
       
   <nav class="pagination">
     
-      <a href="/hiera-in-puppet/" class="pagination--pager" title="Using hiera in puppet. Example: creating a folder
+      <a href="/first-vm-template-using-packer/" class="pagination--pager" title="Creating a cloud-init VM Template on Proxmox using packer
 ">Previous</a>
     
     
-      <a href="/more-space-for-boot-fs/" class="pagination--pager" title="Expanding /boot partition
+      <a href="/excel-automation-set-timedate-automatically/" class="pagination--pager" title="excel automation: enabling and using macros for date-time  stamps
 ">Next</a>
     
   </nav>
@@ -495,7 +546,7 @@ httpd.serve_forever()
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
-        <a href="/fedora-template-proxmox-manually/" rel="permalink">Creating fedora linux cloud init template for proxmox manually
+        <a href="/first-vm-template-using-packer/" rel="permalink">Creating a cloud-init VM Template on Proxmox using packer
 </a>
       
     </h2>
@@ -507,7 +558,7 @@ httpd.serve_forever()
       <span class="page__meta-date">
         <i class="far fa-calendar-alt" aria-hidden="true"></i>
         
-        <time datetime="2022-08-29T19:00:00+02:00">August 29, 2022</time>
+        <time datetime="2022-07-01T19:00:00+02:00">July 1, 2022</time>
       </span>
     
 
@@ -518,7 +569,7 @@ httpd.serve_forever()
 
 
     <p class="archive__item-excerpt" itemprop="description">
-</p>
+Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. ...</p>
   </article>
 </div>
 

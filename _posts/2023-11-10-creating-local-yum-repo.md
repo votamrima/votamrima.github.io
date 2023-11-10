@@ -2,7 +2,7 @@
 layout: single
 title: "Creating a Local YUM Repository on Rocky Linux"
 subtitle: ""
-date: 2023-11-10 22:50:00 +0100
+date: 2023-11-10 18:15:00 +0100
 background: '/image/01.jpg'
 tags: ['linux']
 ---

@@ -1,4 +1,707 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="http://localhost:4000/site/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/site/" rel="alternate" type="text/html" /><updated>2022-06-12T15:05:34+02:00</updated><id>http://localhost:4000/site/feed.xml</id><title type="html">notes</title><subtitle>.</subtitle><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><entry><title type="html">Basics of Ansible collections</title><link href="http://localhost:4000/site/ansible-collections/" rel="alternate" type="text/html" title="Basics of Ansible collections" /><published>2022-05-18T09:00:00+02:00</published><updated>2022-05-18T09:00:00+02:00</updated><id>http://localhost:4000/site/ansible-collections</id><content type="html" xml:base="http://localhost:4000/site/ansible-collections/">&lt;p&gt;Ansible collection provides set of roles, modules, some plugins that are able to download on ansible control host and use them in playbooks. For example, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;community.crypto&lt;/code&gt; collection provides modules for managing TLS/SSL certificates.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-11-10T18:37:05+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Some stories from iT lab</title><subtitle>.</subtitle><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><entry><title type="html">Creating a Local YUM Repository on Rocky Linux</title><link href="http://localhost:4000/creating-local-yum-repo/" rel="alternate" type="text/html" title="Creating a Local YUM Repository on Rocky Linux" /><published>2023-11-10T18:15:00+01:00</published><updated>2023-11-10T18:15:00+01:00</updated><id>http://localhost:4000/creating-local-yum-repo</id><content type="html" xml:base="http://localhost:4000/creating-local-yum-repo/">&lt;h1 id=&quot;creating-a-local-yum-repository-on-rocky-linux&quot;&gt;Creating a Local YUM Repository on Rocky Linux&lt;/h1&gt;
+
+&lt;p&gt;Local YUM repositories are crucial for systems where internet access is limited, or package deployment needs tight control. This short article guides you through setting up a local repository on Rocky Linux.&lt;/p&gt;
+
+&lt;h2 id=&quot;unpacking-rpm-file&quot;&gt;Unpacking RPM File&lt;/h2&gt;
+
+&lt;p&gt;First, unpack the desired RPM files into a specific folder. This step assumes you have already downloaded or have access to the RPM files you wish to include in your local repository.&lt;/p&gt;
+
+&lt;h2 id=&quot;installing-necessary-tools&quot;&gt;Installing Necessary Tools&lt;/h2&gt;
+
+&lt;p&gt;To create and manage your local repository, you will need yum-utils and createrepo. Install these using the following commands:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;yum &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;yum-utils createrepo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;These tools provide utilities to manage your YUM configuration and create the metadata needed for a YUM repository.&lt;/p&gt;
+
+&lt;h2 id=&quot;creating-your-local-repository&quot;&gt;Creating Your Local Repository&lt;/h2&gt;
+
+&lt;p&gt;Next, use createrepo to create a local repository. This command turns a directory of RPMs into a repository that YUM can use.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;createrepo /your/local/folder/with/rpms
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Replace &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/your/local/folder/with/rpms&lt;/code&gt; with the path to the directory where you have stored your RPM files.&lt;/p&gt;
+
+&lt;h2 id=&quot;managing-yum-cache&quot;&gt;Managing YUM Cache&lt;/h2&gt;
+
+&lt;p&gt;Before using your new repository, it’s necessary to clear YUM’s cache and create a new one. This ensures that YUM recognizes your newly created repository.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;yum clean all
+yum makecache
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;configuring-yum-to-use-the-local-repository&quot;&gt;Configuring YUM to Use the Local Repository&lt;/h2&gt;
+
+&lt;p&gt;To use your new local repository, disable all other repositories and enable your newly created one. Here’s how to do it:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;yum &lt;span class=&quot;nt&quot;&gt;--disablerepo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;*&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--enablerepo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;myrepo&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Replace myrepo with the real name of your repository. Note that this command should be followed by an action like an installation command; otherwise, it just sets up the configuration without performing any tasks.&lt;/p&gt;
+
+&lt;p&gt;If you do not know the name of the local repo, use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yum repolist&lt;/code&gt; command to get all available repos.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Setting up a local YUM repository on Rocky Linux is straightforward and extremely useful for controlled environments or offline systems. By unpacking RPMs, installing yum-utils and createrepo, initializing your local repository, managing YUM cache, and configuring YUM to use the local repository, you ensure a reliable and controlled package management setup. Remember to regularly update your local repository with new or updated RPMs as needed.&lt;/p&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="linux" /><summary type="html"></summary></entry><entry><title type="html">How I set DNS name as a hostname</title><link href="http://localhost:4000/applied-dnsname-as-hostname/" rel="alternate" type="text/html" title="How I set DNS name as a hostname" /><published>2023-11-07T22:50:00+01:00</published><updated>2023-11-07T22:50:00+01:00</updated><id>http://localhost:4000/applied-dnsname-as-hostname</id><content type="html" xml:base="http://localhost:4000/applied-dnsname-as-hostname/">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;When configuring a new Rocky VM in my home lab, I decided to experiment with setting the hostname dynamically based on the DNS resolution.&lt;/p&gt;
+
+&lt;p&gt;Here’s an overview of my process:&lt;/p&gt;
+
+&lt;h2 id=&quot;initial-attempts-with-the-dig-command&quot;&gt;Initial Attempts with the dig Command&lt;/h2&gt;
+
+&lt;p&gt;My first step involved preparing the environment for DNS queries. I installed the dnspython package to facilitate DNS lookups:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation ansible_activity]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pip &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;dnspython
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Following that, I updated the community.general collection to ensure all Ansible modules were up-to-date:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation ansible_activity]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ansible-galaxy collection &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;community.general
+Process &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;dependency map
+Starting collection &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;process
+Installing &lt;span class=&quot;s1&quot;&gt;'community.general:8.0.1'&lt;/span&gt; to &lt;span class=&quot;s1&quot;&gt;'/home/admin/.ansible/collections/ansible_collections/community/general'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;These installations were necessary prerequisites for utilizing the dig command within Ansible. However, the dig command did not return the expected DNS name, prompting me to switch to nslookup.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-the-hostname&quot;&gt;Setting the Hostname&lt;/h2&gt;
+
+&lt;h3 id=&quot;extracting-output-from-nslookup&quot;&gt;Extracting Output from nslookup&lt;/h3&gt;
+
+&lt;p&gt;To accurately retrieve the DNS name of the host, I utilized a regular expression within Ansible. Here’s the regex I applied:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;regex_search&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'name\\s+=\\s+(.*)'&lt;/span&gt;, &lt;span class=&quot;s1&quot;&gt;'\\1'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Breaking down the regex components:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;regex_search&lt;/code&gt; is an Ansible filter that conducts a regex pattern search within a string.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;name&lt;/code&gt; signals the literal string we’re searching for in the input.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\\s+&lt;/code&gt; identifies one or more whitespace characters.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;=&lt;/code&gt; is the literal equal sign.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\\s+&lt;/code&gt; (repeated) indicates additional whitespace characters following the equal sign.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(.*)&lt;/code&gt; captures all subsequent characters, denoting the target DNS name.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The entire pattern &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;name\\s+=\\s+(.*)&lt;/code&gt; is designed to locate the line that begins with “name”, followed by whitespace, an equal sign, more whitespace, and finally the DNS name.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\\1&lt;/code&gt; is a backreference to the content captured by the regex.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;|&lt;/code&gt; first ensures that if multiple matches are found, only the first (and most relevant) result is used.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;ansible-playbook-incorporating-regex&quot;&gt;Ansible Playbook Incorporating Regex&lt;/h3&gt;
+
+&lt;p&gt;The following playbook snippet implements the aforementioned regex pattern to retrieve and set the DNS name:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- name: Get the DNS name &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the host using nslookup
+  &lt;span class=&quot;nb&quot;&gt;command&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;nslookup {{ inventory_hostname }}&quot;&lt;/span&gt;
+  register: nslookup_output
+
+- name: Get the DNS name &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the host
+  set_fact:
+    dns_hostname: &lt;span class=&quot;s2&quot;&gt;&quot;{{ nslookup_output.stdout | regex_search('name&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;s+=&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;s+(.*)', '&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;1') }}&quot;&lt;/span&gt; 
+
+- name: Set the &lt;span class=&quot;nb&quot;&gt;hostname &lt;/span&gt;using shell
+  shell: &lt;span class=&quot;s2&quot;&gt;&quot;hostnamectl set-hostname {{ dns_hostname }}&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This playbook performs a DNS lookup, extracts the DNS name using the defined regex, and then uses that name to set the system’s hostname.&lt;/p&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="ansible" /><category term="linux" /><summary type="html"></summary></entry><entry><title type="html">excel automation: enabling and using macros for date-time stamps</title><link href="http://localhost:4000/excel-automation-set-timedate-automatically/" rel="alternate" type="text/html" title="excel automation: enabling and using macros for date-time stamps" /><published>2023-10-31T22:50:00+01:00</published><updated>2023-10-31T22:50:00+01:00</updated><id>http://localhost:4000/excel-automation-set-timedate-automatically</id><content type="html" xml:base="http://localhost:4000/excel-automation-set-timedate-automatically/">&lt;p&gt;To enable and work with macro-enabled files in Excel and ensure the macros run correctly, you must follow some steps. This article provides a guide on how to enable macro-enabled file types and how to apply a specific VBA macro.&lt;/p&gt;
+
+&lt;h2 id=&quot;enabling-macro-enabled-file-types&quot;&gt;Enabling Macro-Enabled File Types&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Save as Macro-Enabled Workbook&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;After creating or editing your macros in Excel, go to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;File&lt;/code&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Save As&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Locate where you want to save the workbook.&lt;/li&gt;
+  &lt;li&gt;Click on ‘Save as type’ dropdown and select &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Excel Macro-Enabled Workbook (*.xlsm)&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Set a name for workbook and click &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Save&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Enable Macros when Opening a Workbook&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;When you open an Excel file that contains macros, you might see a security warning under the ribbon. Click on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Enable Content&lt;/code&gt; to run the macros.
+&amp;lt;!–
+&lt;strong&gt;Adjust Macro Settings&lt;/strong&gt;:&lt;/li&gt;
+  &lt;li&gt;Go to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;File&lt;/code&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Options&lt;/code&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Trust Center&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Click on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Trust Center Settings&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Macro Settings&lt;/code&gt;, choose the desired level of security. For full functionality, you can choose &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Enable all macros&lt;/code&gt; (not recommended for all documents due to security risks). It’s generally better to choose &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Disable all macros with notification&lt;/code&gt; so you can choose when to enable macros.&lt;/li&gt;
+  &lt;li&gt;Click &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OK&lt;/code&gt; to save your settings.
+–&amp;gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;implementing-the-macro&quot;&gt;Implementing the Macro&lt;/h2&gt;
+
+&lt;p&gt;To insert the current date and time in column A when a cell in column B is edited:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Open VBA editor in Excel&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;In the Project Explorer on the left, double-click the worksheet where you want this behavior.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;In the code window, paste the following VBA code:&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-vba&quot;&gt;Private Sub Worksheet_Change(ByVal Target As Range)
+    'Check if the changed cell is in column B
+    If Not Intersect(Target, Range(&quot;B:B&quot;)) Is Nothing Then
+        'Set the corresponding cell in column A to the current date and time
+        Cells(Target.Row, 1).Value = Now
+    End If
+End Sub
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Save and close the VBA editor.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;how-it-works&quot;&gt;How it Works&lt;/h2&gt;
+
+&lt;p&gt;The provided VBA code utilizes the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Worksheet_Change&lt;/code&gt; event, which is triggered whenever a change is made to the worksheet. The code checks if the edited cell is in column B. If it is, it updates the corresponding cell in column A with the current date and time.&lt;/p&gt;
+
+&lt;p&gt;Remember to always be cautious when enabling macros, especially if the source of the Excel file is unknown. Macros can contain harmful code, so only enable macros from trusted sources.&lt;/p&gt;
+
+&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.planetaexcel.ru/techniques/6/44/&quot;&gt;Автоматическая вставка текущей даты в ячейку при вводе данных&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="excel" /><summary type="html"></summary></entry><entry><title type="html">Creating fedora linux cloud init template for proxmox manually</title><link href="http://localhost:4000/fedora-template-proxmox-manually/" rel="alternate" type="text/html" title="Creating fedora linux cloud init template for proxmox manually" /><published>2022-08-29T19:00:00+02:00</published><updated>2022-08-29T19:00:00+02:00</updated><id>http://localhost:4000/fedora-template-proxmox-manually</id><content type="html" xml:base="http://localhost:4000/fedora-template-proxmox-manually/">&lt;ol&gt;
+  &lt;li&gt;Download fedora cloud image from https://alt.fedoraproject.org/cloud/. I used to download the last version in raw image&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;creating-vm-in-terminal&quot;&gt;Creating VM in terminal&lt;/h2&gt;
+
+&lt;p&gt;A VM creating process I ran in proxmox terminal using the following commands:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create a new VM. Here I defined a machine with internal Proxmox ID 403, with memory 4 GB, two cores and with two network interfaces. Name of the VM will fedora-cloud.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxmox:~# qm create 403 &lt;span class=&quot;nt&quot;&gt;--memory&lt;/span&gt; 4096 &lt;span class=&quot;nt&quot;&gt;--cores&lt;/span&gt; 2 &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; fedora-cloud &lt;span class=&quot;nt&quot;&gt;--net0&lt;/span&gt; virtio,bridge&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;vmbr0 &lt;span class=&quot;nt&quot;&gt;--net1&lt;/span&gt; virtio,bridge&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;vmbr1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Here will the downloaded raw image will be imported to the VM as a hard drive and the image will be transfered to ocp1 storage&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxmox:~# qm importdisk 403 /var/tmp/Fedora-Cloud-Base-36-1.5.x86_64.raw ocp1
+importing disk &lt;span class=&quot;s1&quot;&gt;'/var/tmp/Fedora-Cloud-Base-36-1.5.x86_64.raw'&lt;/span&gt; to VM 403 ...
+Formatting &lt;span class=&quot;s1&quot;&gt;'/mnt/pve/ocp1/images/403/vm-403-disk-0.raw'&lt;/span&gt;, &lt;span class=&quot;nb&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;raw &lt;span class=&quot;nv&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5368709120
+transferred 0.0 B of 5.0 GiB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0.00%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+transferred 52.2 MiB of 5.0 GiB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1.02%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+transferred 103.9 MiB of 5.0 GiB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;2.03%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+.....
+.....
+transferred 5.0 GiB of 5.0 GiB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;100.00%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+transferred 5.0 GiB of 5.0 GiB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;100.00%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Successfully imported disk as &lt;span class=&quot;s1&quot;&gt;'unused0:ocp1:403/vm-403-disk-0.raw'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The uploaded image currently has a label unused, because it has not been attached to the the VM yet. And name of the image has been changed to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vm-403-disk-0.raw&lt;/code&gt;. Let’s attach the image to the VM.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Attaching an image to the VM. I use a default SCSI controller.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxmox:~# qm &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;403 &lt;span class=&quot;nt&quot;&gt;--scsihw&lt;/span&gt; virtio-scsi-pci &lt;span class=&quot;nt&quot;&gt;--scsi0&lt;/span&gt; ocp1:403/vm-403-disk-0.raw
+update VM 403: &lt;span class=&quot;nt&quot;&gt;-scsi0&lt;/span&gt; ocp1:403/vm-403-disk-0.raw &lt;span class=&quot;nt&quot;&gt;-scsihw&lt;/span&gt; virtio-scsi-pci
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Add cloud-init drive&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxmox:~# qm &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;403 &lt;span class=&quot;nt&quot;&gt;--ide1&lt;/span&gt; ocp1:cloudinit
+update VM 403: &lt;span class=&quot;nt&quot;&gt;-ide1&lt;/span&gt; ocp1:cloudinit
+Formatting &lt;span class=&quot;s1&quot;&gt;'/mnt/pve/ocp1/images/403/vm-403-cloudinit.qcow2'&lt;/span&gt;, &lt;span class=&quot;nb&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;qcow2 &lt;span class=&quot;nv&quot;&gt;cluster_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;65536 &lt;span class=&quot;nv&quot;&gt;extended_l2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;off &lt;span class=&quot;nv&quot;&gt;preallocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;metadata &lt;span class=&quot;nv&quot;&gt;compression_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;zlib &lt;span class=&quot;nv&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;4194304 &lt;span class=&quot;nv&quot;&gt;lazy_refcounts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;off &lt;span class=&quot;nv&quot;&gt;refcount_bits&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;16
+root@proxmox:~# 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Make the cloudinit drive bootable and define in BIOS the boot starts from disk:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxmox:~# qm &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;403 &lt;span class=&quot;nt&quot;&gt;--boot&lt;/span&gt; c &lt;span class=&quot;nt&quot;&gt;--bootdisk&lt;/span&gt; scsi0
+update VM 403: &lt;span class=&quot;nt&quot;&gt;-boot&lt;/span&gt; c &lt;span class=&quot;nt&quot;&gt;-bootdisk&lt;/span&gt; scsi0
+root@proxmox:~# 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;And finally set serial to enable a web VNC. &lt;strong&gt;Not relevant&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxmox:~# qm &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;403 &lt;span class=&quot;nt&quot;&gt;--serial0&lt;/span&gt; socket &lt;span class=&quot;nt&quot;&gt;--vga&lt;/span&gt; serial0
+update VM 403: &lt;span class=&quot;nt&quot;&gt;-serial0&lt;/span&gt; socket &lt;span class=&quot;nt&quot;&gt;-vga&lt;/span&gt; serial0
+root@proxmox:~# 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create a template from the VM&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxmox:~# qm template 403
+root@proxmox:~# 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Cloud-init configuration is able to define before creating a template or for any single VM that are being defined from the template.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Clone a VM from the template:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxmox:~# qm clone 403 103 &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; test-vm &lt;span class=&quot;nt&quot;&gt;--full&lt;/span&gt;
+create full clone of drive ide1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ocp1:403/vm-403-cloudinit.qcow2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Formatting &lt;span class=&quot;s1&quot;&gt;'/mnt/pve/ocp1/images/103/vm-103-cloudinit.qcow2'&lt;/span&gt;, &lt;span class=&quot;nb&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;qcow2 &lt;span class=&quot;nv&quot;&gt;cluster_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;65536 &lt;span class=&quot;nv&quot;&gt;extended_l2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;off &lt;span class=&quot;nv&quot;&gt;preallocation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;metadata &lt;span class=&quot;nv&quot;&gt;compression_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;zlib &lt;span class=&quot;nv&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;4194304 &lt;span class=&quot;nv&quot;&gt;lazy_refcounts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;off &lt;span class=&quot;nv&quot;&gt;refcount_bits&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;16
+create full clone of drive scsi0 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ocp1:403/base-403-disk-0.raw&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Formatting &lt;span class=&quot;s1&quot;&gt;'/mnt/pve/ocp1/images/103/vm-103-disk-0.raw'&lt;/span&gt;, &lt;span class=&quot;nb&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;raw &lt;span class=&quot;nv&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5368709120
+transferred 0.0 B of 5.0 GiB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0.00%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+transferred 51.7 MiB of 5.0 GiB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1.01%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+.....
+transferred 5.0 GiB of 5.0 GiB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;100.00%&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pve.proxmox.com/wiki/Cloud-Init_Support&quot;&gt;Proxmox Cloud-Init Support&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.technotim.live/posts/cloud-init-cloud-image/&quot;&gt;Creating cloud init cloud image&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="proxmox" /><summary type="html"></summary></entry><entry><title type="html">Creating a cloud-init VM Template on Proxmox using packer</title><link href="http://localhost:4000/first-vm-template-using-packer/" rel="alternate" type="text/html" title="Creating a cloud-init VM Template on Proxmox using packer" /><published>2022-07-01T19:00:00+02:00</published><updated>2022-07-01T19:00:00+02:00</updated><id>http://localhost:4000/first-vm-template-using-packer</id><content type="html" xml:base="http://localhost:4000/first-vm-template-using-packer/">&lt;p&gt;Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. I am going to set up VM with CentOS 8 Stream on board.&lt;/p&gt;
+
+&lt;h2 id=&quot;installing-packer&quot;&gt;Installing Packer&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://learn.hashicorp.com/tutorials/packer/get-started-install-cli&quot;&gt;Here&lt;/a&gt; is shown how to install Packer. Generally, I used the following steps for installing a required packages on my Fedora Workstation:&lt;/p&gt;
+
+&lt;p&gt;Installing official HarshiCorp repository:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum-config-manager &lt;span class=&quot;nt&quot;&gt;--add-repo&lt;/span&gt; https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yum-config-manager&lt;/code&gt; is not available on the host, install &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yum-utils&lt;/code&gt; package: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo yum install -y yum-utils&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;And install packer:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo yum -y install packer
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And that’s it. Packer is installed. Check it:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation packer]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;packer 
+Usage: packer &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--version&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &amp;lt;&lt;span class=&quot;nb&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&amp;lt;args&amp;gt;]
+
+Available commands are:
+    build           build image&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; from template
+    console         creates a console &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;testing variable interpolation
+    fix             fixes templates from old versions of packer
+    &lt;span class=&quot;nb&quot;&gt;fmt             &lt;/span&gt;Rewrites HCL2 config files to canonical format
+    hcl2_upgrade    transform a JSON template into an HCL2 configuration
+    init            Install missing plugins or upgrade plugins
+    inspect         see components of a template
+    plugins         Interact with Packer plugins and catalog
+    validate        check that a template is valid
+    version         Prints the Packer version
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation packer]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;packer &lt;span class=&quot;nt&quot;&gt;--version&lt;/span&gt;
+1.8.0
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation packer]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;create-a-hcl-file&quot;&gt;Create a hcl file&lt;/h2&gt;
+
+&lt;p&gt;In order to set up a vm we need to declare a file with instructions for packer. There are two type of files: JSON files and HCL file.&lt;/p&gt;
+
+&lt;p&gt;I used to apply following hcl file for my task. The file is starting by defining required plugins. This plugin will be installed using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;packer init hcls/&lt;/code&gt;. In the following part are being declared variables. I declared &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;proxmox_api_url&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;proxmox_api_token_id&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;proxmox_api_token_secret&lt;/code&gt;. These variables are able to define in the external file, by passing as a command parameter and by defining in the the same hcl file. In my task I set the 2 variables in a external file and secret I gave in command line as a parameter.&lt;/p&gt;
+
+&lt;p&gt;Second part of the file is consisting of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source&lt;/code&gt; part. Here are defined main parameters of the VM, iso file, disk, network and etc.&lt;/p&gt;
+
+&lt;p&gt;Third part is the building part what actually runs building process and after provisioning tasks.&lt;/p&gt;
+
+&lt;div class=&quot;language-vim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+packer &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  required_plugins &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    proxmox &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&amp;gt;= 1.0.6&quot;&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;source&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;github.com/hashicorp/proxmox&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+variable &lt;span class=&quot;s2&quot;&gt;&quot;proxmox_api_url&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;string&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+variable &lt;span class=&quot;s2&quot;&gt;&quot;proxmox_api_token_id&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;string&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+variable &lt;span class=&quot;s2&quot;&gt;&quot;proxmox_api_token_secret&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;string&lt;/span&gt;
+  sensitive &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; true
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;proxmox&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;centos8-packer&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  proxmox_url &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;${var.proxmox_api_url}&quot;&lt;/span&gt;
+  username    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;${var.proxmox_api_token_id}&quot;&lt;/span&gt;
+  token    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;${var.proxmox_api_token_secret}&quot;&lt;/span&gt;
+
+  insecure_skip_tls_verify &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; true
+
+  node  &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;proxmox&quot;&lt;/span&gt;
+  vm_id &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;108&quot;&lt;/span&gt;
+  vm_name &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;centos8-packer&quot;&lt;/span&gt;
+  template_description &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;centos8-packer description&quot;&lt;/span&gt;
+
+  iso_file         &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ocp1:iso/CentOS-Stream-8-x86_64-latest-dvd1.iso&quot;&lt;/span&gt;
+
+  iso_storage_pool &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;local&quot;&lt;/span&gt;
+  unmount_iso      &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; true
+
+  qemu_agent &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; true
+
+  scsi_controller &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;virtio-scsi-pci&quot;&lt;/span&gt;
+
+  disks &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    disk_size         &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;15G&quot;&lt;/span&gt;
+    format            &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;vmdk&quot;&lt;/span&gt;
+    storage_pool      &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ocp1&quot;&lt;/span&gt;
+    storage_pool_type &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;directory&quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;              &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;virtio&quot;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  cores &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;2&quot;&lt;/span&gt;
+
+  memory &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;4096&quot;&lt;/span&gt;
+
+  network_adapters &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    model &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;virtio&quot;&lt;/span&gt;
+    bridge &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;vmbr0&quot;&lt;/span&gt;
+    firewall &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;false&quot;&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+
+  cloud_init              &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; true
+  cloud_init_storage_pool &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ocp1&quot;&lt;/span&gt;
+
+  boot_command &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;&quot;&amp;lt;tab&amp;gt;&amp;lt;bs&amp;gt;&amp;lt;bs&amp;gt;&amp;lt;bs&amp;gt;&amp;lt;bs&amp;gt;&amp;lt;bs&amp;gt;text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.conf&amp;lt;enter&amp;gt;&amp;lt;wait&amp;gt;&amp;lt;enter&amp;gt;&quot;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  boot      &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;c&quot;&lt;/span&gt;
+  boot_wait &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;5s&quot;&lt;/span&gt;
+
+  http_directory &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;http&quot;&lt;/span&gt; 
+
+  ssh_username &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;admin&quot;&lt;/span&gt;
+  ssh_private_key_file &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~/.ssh/id_rsa&quot;&lt;/span&gt;
+  ssh_password &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;admin&quot;&lt;/span&gt;
+  ssh_port &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;22&lt;/span&gt;
+  ssh_timeout &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;30m&quot;&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+build &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;proxmox.centos8-packer&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        name &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;centos8-packer&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    provisioner &lt;span class=&quot;s2&quot;&gt;&quot;shell&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      inline &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;&quot;echo Installing Updates&quot;,&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;&quot;yum update -y&quot;,&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;&quot;yum install -y cloud-init qemu-guest-agent cloud-utils-growpart gdisk&quot;,&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+      &lt;span class=&quot;k&quot;&gt;only&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;proxmox&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;By running packer creates a temporary http server using a randomly generated port. Such approach allows to download a kicstart file during installation and set up a machine. Kickstart file is located in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http&lt;/code&gt; folder (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http_directory = &quot;http&quot;&lt;/code&gt;). The kickstart file that I used for this task is shared on github. &lt;a href=&quot;https://github.com/votamrima/terraforming/blob/master/packer/http/ks.conf&quot;&gt;Link&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;running-packer&quot;&gt;Running Packer&lt;/h2&gt;
+
+&lt;p&gt;First of all we need to install required plugin for packer.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation packer]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;packer init hcls/
+Installed plugin github.com/hashicorp/proxmox v1.0.8 &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/home/admin/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.0.8_x5.0_linux_amd64&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And check installed plugin:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation packer]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;packer plugins installed
+/home/admin/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.0.8_x5.0_linux_amd64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next step is setting up a machine.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation packer]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;packer build &lt;span class=&quot;nt&quot;&gt;-var-file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'creds.pkr.hcl'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;proxmox_api_token_secret&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;my-secret&amp;gt;&quot;&lt;/span&gt; hcls/proxmox-centos.pkr.hcl
+proxmox.centos8-packer: output will be &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;this color.
+
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Creating VM
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Starting VM
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Starting HTTP server on port 8665
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Waiting 5s &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;boot
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Typing the boot &lt;span class=&quot;nb&quot;&gt;command&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Waiting &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;SSH to become available...
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Connected to SSH!
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Stopping VM
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Converting VM to template
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; proxmox.centos8-packer: Adding a cloud-init cdrom &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;storage pool ocp1
+Build &lt;span class=&quot;s1&quot;&gt;'proxmox.centos8-packer'&lt;/span&gt; finished after 8 minutes 35 seconds.
+
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; Wait completed after 8 minutes 35 seconds
+
+&lt;span class=&quot;o&quot;&gt;==&amp;gt;&lt;/span&gt; Builds finished. The artifacts of successful builds are:
+&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; proxmox.centos8-packer: A template was created: 108
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation packer]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="packer" /><summary type="html">Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. I am going to set up VM with CentOS 8 Stream on board.</summary></entry><entry><title type="html">First steps in helm</title><link href="http://localhost:4000/first-touch-with-helm/" rel="alternate" type="text/html" title="First steps in helm" /><published>2022-06-19T19:00:00+02:00</published><updated>2022-06-19T19:00:00+02:00</updated><id>http://localhost:4000/first-touch-with-helm</id><content type="html" xml:base="http://localhost:4000/first-touch-with-helm/">&lt;p&gt;Here I would like to describe my first steps in learning helm.&lt;/p&gt;
+
+&lt;h2 id=&quot;installation&quot;&gt;Installation&lt;/h2&gt;
+
+&lt;p&gt;I installed Helm using following instruction:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Downloaded the latest version from the website: &lt;a href=&quot;https://github.com/helm/helm/releases&quot;&gt;https://github.com/helm/helm/releases&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Unpacked the archive: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tar fzx helm-v3.9.0-linux-amd64.tar.gz&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Set following string into ~/.bashrc&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;HELM_PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/opt/helm/linux-amd64&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;:&lt;span class=&quot;nv&quot;&gt;$HELM_PATH&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;using-helm&quot;&gt;Using Helm&lt;/h2&gt;
+
+&lt;p&gt;Adding a new repo:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman helm]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;helm repo add bitnami https://charts.bitnami.com/bitnami
+&lt;span class=&quot;s2&quot;&gt;&quot;bitnami&quot;&lt;/span&gt; has been added to your repositories
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Listing all existing repos on the machine:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman helm]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;helm repo add bitnami https://charts.bitnami.com/bitnami
+&lt;span class=&quot;s2&quot;&gt;&quot;bitnami&quot;&lt;/span&gt; has been added to your repositories
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;create-helm-chart&quot;&gt;Create helm chart&lt;/h2&gt;
+
+&lt;p&gt;First of all I run helm create command:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation first-chart]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;helm create first-chart
+Creating first-chart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Secondly, customized some values in values.yml file. This is my first chart therefore I did edit some few lines.&lt;/p&gt;
+
+&lt;p&gt;So, was set &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nameOverride&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fullnameOverride&lt;/code&gt; values:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;nameOverride&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;first-chart&quot;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;fullnameOverride&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;first-chart&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, was updated name value in serviceAccount:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;serviceAccount&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;annotations&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;{}&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;firstapp&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And finally, I changed service type from default &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ClusterIP&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NodePort&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;service&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;NodePort&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To install this helm chart I run the following command:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation first-chart]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;helm &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;first-chart first-chart/ &lt;span class=&quot;nt&quot;&gt;--values&lt;/span&gt; first-chart/values.yaml 
+NAME: first-chart
+LAST DEPLOYED: Sun Jun 19 17:23:24 2022
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+NOTES:
+1. Get the application URL by running these commands:
+  &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;NODE_PORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;kubectl get &lt;span class=&quot;nt&quot;&gt;--namespace&lt;/span&gt; default &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;jsonpath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;{.spec.ports[0].nodePort}&quot;&lt;/span&gt; services first-chart&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;NODE_IP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;kubectl get nodes &lt;span class=&quot;nt&quot;&gt;--namespace&lt;/span&gt; default &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;jsonpath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;{.items[0].status.addresses[0].address}&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;http://&lt;span class=&quot;nv&quot;&gt;$NODE_IP&lt;/span&gt;:&lt;span class=&quot;nv&quot;&gt;$NODE_PORT&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation first-chart]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get pods
+NAME                           READY   STATUS              RESTARTS   AGE
+first-chart-6cd58dc9ff-bh9lw   0/1     ContainerCreating   0          11s
+myhello-5586c5c9bf-zmktx       1/1     Running             3          3d
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation first-chart]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get pods
+NAME                           READY   STATUS              RESTARTS   AGE
+first-chart-6cd58dc9ff-bh9lw   0/1     ContainerCreating   0          15s
+myhello-5586c5c9bf-zmktx       1/1     Running             3          3d
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation first-chart]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;watch kubectl get pods
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And check the status of the kubernetes pod:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation first-chart]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+first-chart-6cd58dc9ff-bh9lw   1/1     Running   0          17s
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation first-chart]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://helm.sh/docs&quot;&gt;Helm documentation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://phoenixnap.com/kb/create-helm-chart&quot;&gt;How To Create A Helm Chart&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="helm" /><summary type="html"></summary></entry><entry><title type="html">How I deployed my first app in kubernetes</title><link href="http://localhost:4000/deploy-simple-app-in-kubernetes/" rel="alternate" type="text/html" title="How I deployed my first app in kubernetes" /><published>2022-06-01T09:00:00+02:00</published><updated>2022-06-01T09:00:00+02:00</updated><id>http://localhost:4000/deploy-simple-app-in-kubernetes</id><content type="html" xml:base="http://localhost:4000/deploy-simple-app-in-kubernetes/">&lt;p&gt;In this post I am going to describe how I deployed my python service on kubernetes and how I realized connection to external database.&lt;/p&gt;
+
+&lt;h2 id=&quot;about-application&quot;&gt;About application&lt;/h2&gt;
+
+&lt;p&gt;The test application is based on FastAPI module. Main purpose of the service is handling incomming requests and save them into the databse. For database system I used Postgres.&lt;/p&gt;
+
+&lt;p&gt;Connection values and other variables were defined in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.env&lt;/code&gt; file located in application running folder.&lt;/p&gt;
+
+&lt;h2 id=&quot;deploy-application&quot;&gt;Deploy application&lt;/h2&gt;
+
+&lt;p&gt;First of all it was created a namespace:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl create namespace newsbase
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, deployed a secret file for pulling an image for the images registry. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auth.json&lt;/code&gt; file I found in /run/user/1000/containers/auth.json of the machine where the image registry is runnning:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl create secret generic regcred &lt;span class=&quot;nt&quot;&gt;--from-file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;.dockerconfigjson&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;../auth.json &lt;span class=&quot;nt&quot;&gt;--type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;kubernetes.io/dockerconfigjson &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; newsbase
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, prepare deployment.yml file and apply it afterwards:&lt;/p&gt;
+
+&lt;p&gt;Content of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deployment.yml&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;apps/v1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Deployment&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;matchLabels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;tier&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;track&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;stable&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;track&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;stable&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;containers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;registry.ocp.home.lab:5000/newsbase:1.0&quot;&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;containerPort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;9080&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TCP&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;imagePullSecrets&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;regcred&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This deployment.yml file describes following:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;application and namespace name is newsbase;&lt;/li&gt;
+  &lt;li&gt;it will be running 3 pods: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;replicas: 3&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;image will be deployed from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;registry.ocp.home.lab:5000/newsbase:1.0&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;port &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9080&lt;/code&gt; will be exposed&lt;/li&gt;
+  &lt;li&gt;secret named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;regcred&lt;/code&gt; will be to access to the image registry;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And apply &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deployment.yml&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation newsbase]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; deployment.yml 
+deployment.apps/newsbase created
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Check if pods have been running:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation newsbase]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get pods &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; newsbase
+NAME                        READY   STATUS    RESTARTS   AGE
+newsbase-7c4bb87566-ghmv8   1/1     Running   1          5m
+newsbase-7c4bb87566-jqnnr   1/1     Running   1          5m
+newsbase-7c4bb87566-pqw68   1/1     Running   1          5m
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@workstation newsbase]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;activate-service-for-application&quot;&gt;Activate service for application&lt;/h2&gt;
+
+&lt;p&gt;In order to access to the application I created service resource.&lt;/p&gt;
+
+&lt;p&gt;Content of the service.yml is following:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Service&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;9080&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;nodePort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;30080&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;NodePort&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To apply a service run the similar command with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; argument:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; service.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;apply-endpoint-resource&quot;&gt;Apply endpoint resource&lt;/h2&gt;
+
+&lt;p&gt;Endpoint I need configure connection to external database. Here is the yaml file of the resource&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Service&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connection-to-db&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;clusterIP&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;None&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;5432&lt;/span&gt;
+
+&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Endpoints&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connection-to-db&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;newsbase&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;subsets&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;addresses&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ip&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.11.62&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;5432&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connection-to-db&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/63344920/access-external-database-from-kubernetes&quot;&gt;access-external-database-from-kubernetes&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="kubernetes" /><summary type="html">In this post I am going to describe how I deployed my python service on kubernetes and how I realized connection to external database.</summary></entry><entry><title type="html">Basics of Ansible collections</title><link href="http://localhost:4000/ansible-collections/" rel="alternate" type="text/html" title="Basics of Ansible collections" /><published>2022-05-18T09:00:00+02:00</published><updated>2022-05-18T09:00:00+02:00</updated><id>http://localhost:4000/ansible-collections</id><content type="html" xml:base="http://localhost:4000/ansible-collections/">&lt;p&gt;Ansible collection provides set of roles, modules, some plugins that are able to download on ansible control host and use them in playbooks. For example, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;community.crypto&lt;/code&gt; collection provides modules for managing TLS/SSL certificates.&lt;/p&gt;
 
 &lt;p&gt;Collections are supported by Ansible starting with version 2.9.&lt;/p&gt;
 
@@ -133,7 +836,7 @@ ansible-galaxy collection &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://docs.ansible.com/ansible/2.9/user_guide/collections_using.html&quot;&gt;Ansible user guide&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;Other sources&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="ansible" /><summary type="html"></summary></entry><entry><title type="html">Basics of storage management using Ansible</title><link href="http://localhost:4000/site/ansible-basic-storage-management/" rel="alternate" type="text/html" title="Basics of storage management using Ansible" /><published>2022-05-15T14:00:00+02:00</published><updated>2022-05-15T14:00:00+02:00</updated><id>http://localhost:4000/site/ansible-basic-storage-management</id><content type="html" xml:base="http://localhost:4000/site/ansible-basic-storage-management/">&lt;p&gt;Generally, there are available 5 modules that allow to manage storage: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parted&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lvg&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lvol&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filesystem&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mount&lt;/code&gt;.&lt;/p&gt;
+&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="ansible" /><summary type="html"></summary></entry><entry><title type="html">Basics of storage management using Ansible</title><link href="http://localhost:4000/ansible-basic-storage-management/" rel="alternate" type="text/html" title="Basics of storage management using Ansible" /><published>2022-05-15T14:00:00+02:00</published><updated>2022-05-15T14:00:00+02:00</updated><id>http://localhost:4000/ansible-basic-storage-management</id><content type="html" xml:base="http://localhost:4000/ansible-basic-storage-management/">&lt;p&gt;Generally, there are available 5 modules that allow to manage storage: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parted&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lvg&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lvol&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filesystem&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mount&lt;/code&gt;.&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;parted&lt;/code&gt; module creates partition.&lt;/li&gt;
@@ -224,7 +927,7 @@ ansible-galaxy collection &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;
 &lt;h3 id=&quot;reference&quot;&gt;Reference:&lt;/h3&gt;
 &lt;ul&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ansible-doc&lt;/code&gt; command&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="ansible" /><summary type="html"></summary></entry><entry><title type="html">Kubernetes installation. (Not finished)</title><link href="http://localhost:4000/site/kubernets-install/" rel="alternate" type="text/html" title="Kubernetes installation. (Not finished)" /><published>2022-05-10T09:00:00+02:00</published><updated>2022-05-10T09:00:00+02:00</updated><id>http://localhost:4000/site/kubernets-install</id><content type="html" xml:base="http://localhost:4000/site/kubernets-install/">&lt;p&gt;In this post I describe the installation process of a simple Kubernetes cluster. This post has not been finished yet.&lt;/p&gt;
+&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="ansible" /><summary type="html"></summary></entry><entry><title type="html">Kubernetes installation. (Not finished)</title><link href="http://localhost:4000/kubernets-install/" rel="alternate" type="text/html" title="Kubernetes installation. (Not finished)" /><published>2022-05-10T09:00:00+02:00</published><updated>2022-05-10T09:00:00+02:00</updated><id>http://localhost:4000/kubernets-install</id><content type="html" xml:base="http://localhost:4000/kubernets-install/">&lt;p&gt;In this post I describe the installation process of a simple Kubernetes cluster. This post has not been finished yet.&lt;/p&gt;
 
 &lt;p&gt;Cluster concists from 3 nodes: 1 master node, 2 worker nodes, based on Fedora 35 and all VMs are running at Proxmox.&lt;/p&gt;
 
@@ -446,712 +1149,4 @@ kube-flannel-ds-slmth                               1/1     Running   0         
 
 &lt;p&gt;&lt;strong&gt;This post is not finished.&lt;/strong&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="kubernetes" /><summary type="html"></summary></entry><entry><title type="html">Ansible Jinj2 templates</title><link href="http://localhost:4000/site/ansible-jinja2-templates/" rel="alternate" type="text/html" title="Ansible Jinj2 templates" /><published>2022-05-05T20:00:00+02:00</published><updated>2022-05-05T20:00:00+02:00</updated><id>http://localhost:4000/site/ansible-jinja2-templates</id><content type="html" xml:base="http://localhost:4000/site/ansible-jinja2-templates/">&lt;p&gt;Jinja templating helps to standartize and to template files such as config and system roles. Here is basic syntax.&lt;/p&gt;
-
-&lt;p&gt;Using template module:&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Deploy hello.html&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;templates/hello.html.j2&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/var/www/html/hello.html&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;vars/all/all.yml
-print_msg &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;This file is managed by Ansible&quot;&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;templates/hello.html.j2
-&lt;span class=&quot;o&quot;&gt;{{&lt;/span&gt; print_msg &lt;span class=&quot;o&quot;&gt;}}&lt;/span&gt;
-The system kernel is: &lt;span class=&quot;o&quot;&gt;{{&lt;/span&gt; ansible_hostname &lt;span class=&quot;o&quot;&gt;}}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\'{% EXPR %}'&lt;/code&gt; - for expressions or logic.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\'{{ EXPR }}'&lt;/code&gt; - outputs results of expressions or variables&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;\'{# COMMENT #}'&lt;/code&gt; - comments&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;We can manage a jinja file using loops and conditions.&lt;/p&gt;
-
-&lt;h2 id=&quot;using-loops&quot;&gt;Using Loops&lt;/h2&gt;
-
-&lt;div class=&quot;language-jinja highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;{# Check list with the models of auto #}&lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;{%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;models&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;BMW&quot;&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%}&lt;/span&gt;
-Line &lt;span class=&quot;cp&quot;&gt;{{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;loop.index&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;}}&lt;/span&gt; - &lt;span class=&quot;cp&quot;&gt;{{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;}}&lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;{%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;endfor&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Or let’s print all defined hostnames&lt;/p&gt;
-
-&lt;div class=&quot;language-jinja highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;{%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;server_name&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;groups&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'servers'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%}&lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;{{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;server_name&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;}}&lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;{%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;endfor&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Or classic task, define /etc/hosts file:&lt;/p&gt;
-
-&lt;div class=&quot;language-jinja highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;{%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;groups&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'all'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%}&lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;{{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;hostvars&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ansible_facts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'default_ipv4'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'address'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;}}&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;{{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;hostvars&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ansible_facts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'fqdn'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;}}&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;{{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;hostvars&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'ansible_facts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'hostname'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;}}&lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;{%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;endfor&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;using-condition&quot;&gt;Using condition:&lt;/h2&gt;
-
-&lt;div class=&quot;language-jinja highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;{%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;finished&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%}&lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;{{&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;print_me&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;}}&lt;/span&gt;
-&lt;span class=&quot;cp&quot;&gt;{%&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;endif&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;%}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Additionally, in jinja template we can apply some filters to express the output to yaml or json or to get expression from yaml and json. These filters are: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;to_json&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;to_yaml&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;to_nice_yaml&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;to_nice_json&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;from_json&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;from_yaml&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.ansible.com/ansible/2.9/user_guide/playbooks_filters.html&quot;&gt;Ansible Playbook Filters&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.ansible.com/ansible/2.9/modules/template_module.html&quot;&gt;Ansible Templates&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="ansible" /><summary type="html"></summary></entry><entry><title type="html">Troubleshooting in Ansible</title><link href="http://localhost:4000/site/ansible-troubleshooting/" rel="alternate" type="text/html" title="Troubleshooting in Ansible" /><published>2022-04-23T09:00:00+02:00</published><updated>2022-04-23T09:00:00+02:00</updated><id>http://localhost:4000/site/ansible-troubleshooting</id><content type="html" xml:base="http://localhost:4000/site/ansible-troubleshooting/">&lt;p&gt;In this post I am about troubleshooting of ansible playbooks. Ansible provides several ways of managing playbook. Some of them are: log configuration, defining some options such as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--step&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-v&lt;/code&gt; and defining running management in playbook using such modules as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fail&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;assert&lt;/code&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;log-file-configuration&quot;&gt;Log file configuration&lt;/h2&gt;
-
-&lt;p&gt;Unfortunatelly, logging is not configured in Ansible by default. However, we can configure it.&lt;/p&gt;
-
-&lt;p&gt;There are two ways to activate logging:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Set &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;log_path&lt;/code&gt; parameter in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;default&lt;/code&gt; section of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ansible.cfg&lt;/code&gt; file&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-ini highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;err&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;ansible.cfg&lt;/span&gt;
-&lt;span class=&quot;nn&quot;&gt;[default]&lt;/span&gt;
-&lt;span class=&quot;py&quot;&gt;log_path&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/var/log/ansible-logs/ansible.log&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;It is recommended to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;logrotate&lt;/code&gt; to manage the logs if they will be written in /var/log directory.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;set environment variable &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ANSIBLE_LOG_PATH&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;managing-problems&quot;&gt;Managing problems&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--syntax-check&lt;/code&gt; - checks the syntax in the playbook&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ansible-playbook myplay.yml &lt;span class=&quot;nt&quot;&gt;--syntax-check&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--step&lt;/code&gt; - using this option we can step to a specific task in a playbook&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ansible-playbook myplay.yml &lt;span class=&quot;nt&quot;&gt;--step&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--start-at-task&lt;/code&gt; - with this option we can start execution of a playbook from a specific task&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ansible-playbook myplay.yml &lt;span class=&quot;nt&quot;&gt;--start-at-task&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;We can debug execution of a playbook using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-v&lt;/code&gt; parameter. There are 4 levels of verbosity: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-v&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--vv&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--vvv&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--vvvv&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--check&lt;/code&gt; - option executes a playbook without making changes to the managed host. This option we can define by typing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-C&lt;/code&gt; too.&lt;/p&gt;
-
-&lt;p&gt;Moreover, we can control &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--check&lt;/code&gt; option individually.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;This task will be alway run in checking mode:&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;always run in check mode&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;shell&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;hostname&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;check_mode&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;yes&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;This task will not run in check mode even if &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--check&lt;/code&gt; option is defined in ansible-playbook command&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;always run in check mode&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;shell&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;hostname&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;check_mode&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;no&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--diff&lt;/code&gt; - option shows changes made to template files.&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ansible-playbook myplay.yml &lt;span class=&quot;nt&quot;&gt;--check&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--diff&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;troubleshooting-using-modules&quot;&gt;Troubleshooting using modules&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;script&lt;/code&gt; module executes a script against managed hosts. This script have to locate on the control node. Executing fails if script ends with the non-zero code.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-  &lt;span class=&quot;na&quot;&gt;tasks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Run my script&lt;/span&gt; 
-      &lt;span class=&quot;na&quot;&gt;script&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;run_my_script&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;uri&lt;/code&gt; module helps to check some http services&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-  &lt;span class=&quot;na&quot;&gt;tasks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;check my API&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;uri&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://myapi.home.lab&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;return_content&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;yes&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;register&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;answer&lt;/span&gt;
-
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;fail&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Service&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;is&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;not&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;up'&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;when&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'UP'&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;not&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;in&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;answer.content&quot;&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stat&lt;/code&gt; - collects information about files and folders&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-  &lt;span class=&quot;na&quot;&gt;tasks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Check if /opt/app/hello.py file exists&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;stat&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/opt/app/hello.py&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;register&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;answer&lt;/span&gt;
-
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;hello.py file does not exist&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;fail&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;when&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;answer.stat.exists&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;assert&lt;/code&gt; module we can use alternatively to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fail&lt;/code&gt; module. Here, in order to customize the message we can use either &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;success_msg&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fail_msg&lt;/code&gt; options.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-  &lt;span class=&quot;na&quot;&gt;tasks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Check if /opt/app/hello.py file exists&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;stat&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/opt/app/hello.py&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;register&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;answer&lt;/span&gt;
-
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;hello.py file does not exist&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;assert&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;that&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;not answer.stat.exists&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;reference&quot;&gt;Reference:&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.ansible.com/ansible/2.9/reference_appendices/test_strategies.html&quot;&gt;https://docs.ansible.com/ansible/2.9/reference_appendices/test_strategies.html&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.ansible.com/ansible/2.9/user_guide/playbooks_checkmode.html&quot;&gt;https://docs.ansible.com/ansible/2.9/user_guide/playbooks_checkmode.html&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://google.com&quot;&gt;Google&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="ansible" /><summary type="html"></summary></entry><entry><title type="html">Private container registry on podman</title><link href="http://localhost:4000/site/private-container-registry/" rel="alternate" type="text/html" title="Private container registry on podman" /><published>2022-03-28T21:00:00+02:00</published><updated>2022-03-28T21:00:00+02:00</updated><id>http://localhost:4000/site/private-container-registry</id><content type="html" xml:base="http://localhost:4000/site/private-container-registry/">&lt;p&gt;It is very easy to set up a simple container registry on podman. Here below I show how to set up a local simple container registry for personal use.&lt;/p&gt;
-
-&lt;h2 id=&quot;preparation&quot;&gt;Preparation&lt;/h2&gt;
-
-&lt;p&gt;If podman and htpasswd packages are not installed on the host, install them:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;dnf provides htpasswd
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; password &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;admin: 
-Last metadata expiration check: 1:10:40 ago on Mon 11 Apr 2022 06:12:44 PM CEST.
-httpd-tools-2.4.37-30.module_el8.3.0+462+ba287492.0.1.x86_64 : Tools &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;use with the Apache HTTP Server
-Repo        : appstream
-Matched from:
-Filename    : /usr/bin/htpasswd
-
-httpd-tools-2.4.37-39.module_el8.4.0+778+c970deab.x86_64 : Tools &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;use with the Apache HTTP Server
-Repo        : appstream
-Matched from:
-Filename    : /usr/bin/htpasswd
-
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;httpd-tools podman
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Create a file with credentials:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;htpasswd &lt;span class=&quot;nt&quot;&gt;-bc&lt;/span&gt; auth admin admin
-Adding password &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;user admin
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;auth 
-admin:&lt;span class=&quot;nv&quot;&gt;$apr1$OQzj4eaY$ipt3p40Vipneb2PTn1W7e0&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Define local folders that will be mounted to registry container. I am going to mount 2 folders: one for data, another one for credentials file. For data will be used &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/registry/volume&lt;/code&gt; and for credentials - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/registry/auth&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Create TLS certificate:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;openssl req &lt;span class=&quot;nt&quot;&gt;-newkey&lt;/span&gt; rsa:4096 &lt;span class=&quot;nt&quot;&gt;-nodes&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-sha256&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-keyout&lt;/span&gt; /opt/registry/tls/domain.key &lt;span class=&quot;nt&quot;&gt;-x509&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-days&lt;/span&gt; 365 &lt;span class=&quot;nt&quot;&gt;-subj&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/CN=registry.ocp.home.lab&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-addext&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;subjectAltName = DNS:registry.ocp.home.lab&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-out&lt;/span&gt; /opt/registry/tls/domain.crt
-Generating a RSA private key
-..............................++++
-................................................................................................................................................................................................................................................................++++
-writing new private key to &lt;span class=&quot;s1&quot;&gt;'/opt/registry/tls/domain.key'&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The initialized certificate should be trusted. In Red Hat family system you need to copy the created certificate to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/pki/ca-trust/source/anchors/&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo cp &lt;/span&gt;domain.crt /etc/pki/ca-trust/source/anchors/
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;update-ca-trust
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;trust list | &lt;span class=&quot;nb&quot;&gt;grep &lt;/span&gt;registry
-    label: registry.ocp.home.lab
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;run-container&quot;&gt;Run container&lt;/h2&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman run &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; registry &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 5000:5000 &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; /opt/registry/volume:/var/lib/registry &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; /opt/registry/auth:/opt/auth &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;REGISTRY_AUTH=htpasswd&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;REGISTRY_AUTH_HTPASSWD_PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/opt/auth/auth &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; /opt/registry/tls:/certs &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;REGISTRY_HTTP_TLS_KEY=/certs/domain.key&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;REGISTRY_COMPATIBILITY_SCHEMA1_ENABLED&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;   &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; docker.io/library/registry:latest
-773638fc8df066bcba844ad13189ebfbc09f14439391e68729aaf3f01e161ff2
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman ps &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
-CONTAINER ID  IMAGE                              COMMAND               CREATED        STATUS                   PORTS                   NAMES
-773638fc8df0  docker.io/library/registry:latest  /etc/docker/regis...  3 seconds ago  Up 3 seconds ago         0.0.0.0:5000-&amp;gt;5000/tcp  registry
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Set correct SELinux context For the mounted volumes (/opt/registry/volume and /opt/registry/auth). Or disable SELinux.&lt;/li&gt;
-  &lt;li&gt;Open port 5000 in firewall. Or disable the local firewall.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;log-inout-to-registry&quot;&gt;Log in/out to registry&lt;/h2&gt;
-
-&lt;p&gt;And now let’s try to log in to the registry:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman &lt;span class=&quot;nb&quot;&gt;logout&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--all&lt;/span&gt;
-Removed login credentials &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;all registries
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And try log out:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman tls]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman &lt;span class=&quot;nb&quot;&gt;logout &lt;/span&gt;registry.ocp.home.lab:5000
-Removed login credentials &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;registry.ocp.home.lab:5000
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;After successfull login, podman stores credentials file in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/run/user/1000/containers/auth.json&lt;/code&gt;. Here, I just copied that file and will use for future login:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman &lt;span class=&quot;nb&quot;&gt;logout &lt;/span&gt;registry.ocp.home.lab:5000
-Removed login credentials &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;registry.ocp.home.lab:5000
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; /run/user/1000/containers/auth.json &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman login registry.ocp.home.lab:5000 &lt;span class=&quot;nt&quot;&gt;--authfile&lt;/span&gt; auth.json 
-Authenticating with existing credentials &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;registry.ocp.home.lab:5000
-Existing credentials are valid. Already logged &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;to registry.ocp.home.lab:5000
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;pull-and-push-container&quot;&gt;Pull and push container&lt;/h2&gt;
-
-&lt;p&gt;Let’s try to pull an image to the registry:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman images
-REPOSITORY                                 TAG         IMAGE ID      CREATED      SIZE
-localhost/newsbase                         latest      f8e04e34b36d  5 days ago   1.04 GB
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I am going to push the image &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;newsbase&lt;/code&gt; from localhost. First of all, use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;podman tag&lt;/code&gt; to tag the image for the registry.&lt;/p&gt;
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman tag newsbase registry.ocp.home.lab:5000/newsbase:1.0
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman images
-REPOSITORY                                 TAG         IMAGE ID      CREATED      SIZE
-localhost/newsbase                         latest      f8e04e34b36d  5 days ago   1.04 GB
-registry.ocp.home.lab:5000/newsbase        1.0         f8e04e34b36d  5 days ago   1.04 GB
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And then push it to the registry:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman push registry.ocp.home.lab:5000/newsbase:1.0
-Getting image &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;signatures
-Copying blob 1edf512cf84d &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;  
-......
-Copying config f8e04e34b3 &lt;span class=&quot;k&quot;&gt;done
-&lt;/span&gt;Writing manifest to image destination
-Storing signatures
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Remove newsbase image from the local images list and pull that from the registry back:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman pull registry.ocp.home.lab:5000/newsbase:1.0
-Trying to pull registry.ocp.home.lab:5000/newsbase:1.0...
-Getting image &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;signatures
-........
-Copying blob 9a6655d6eaed &lt;span class=&quot;k&quot;&gt;done  
-&lt;/span&gt;Copying config f8e04e34b3 &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;  
-.........
-Writing manifest to image destination
-Storing signatures
-f8e04e34b36dddd6de5d4e5cd02051385b10ff6a66e847a3ab989d3f5565ccda
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman auth]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman images
-REPOSITORY                                 TAG         IMAGE ID      CREATED      SIZE
-registry.ocp.home.lab:5000/newsbase        1.0         f8e04e34b36d  5 days ago   1.04 GB
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.redhat.com/sysadmin/simple-container-registry&quot;&gt;How to implement a simple personal/private Linux container image registry for internal use&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="podman" /><category term="container" /><summary type="html"></summary></entry><entry><title type="html">Stop and start Openshift 4 cluster</title><link href="http://localhost:4000/site/openshift49-gracefull-restart/" rel="alternate" type="text/html" title="Stop and start Openshift 4 cluster" /><published>2022-02-10T20:00:00+01:00</published><updated>2022-02-10T20:00:00+01:00</updated><id>http://localhost:4000/site/openshift49-gracefull-restart</id><content type="html" xml:base="http://localhost:4000/site/openshift49-gracefull-restart/">&lt;p&gt;In this post I describe shortly how to shutdown and start up Openshift cluster.&lt;/p&gt;
-
-&lt;h2 id=&quot;preparation&quot;&gt;Preparation&lt;/h2&gt;
-
-&lt;p&gt;Check if all nodes are properly running:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;oc get nodes &lt;span class=&quot;nt&quot;&gt;--show-labels&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Check if all pods in all projects are working properly. Save the current state:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;oc get pods &lt;span class=&quot;nt&quot;&gt;--all-namespaces&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Additionally, you can create backup of namespaces. See &lt;a href=&quot;https://velero.io&quot;&gt;velero&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;shutdown-cluster&quot;&gt;Shutdown cluster:&lt;/h2&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Gracefully shutdown all worker nodes: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shutdown -h now&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Gracefully shutdown Infra nodes: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shutdown -h now&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Gracefully shutdown all masters: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shutdown -h now&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;start-cluster&quot;&gt;Start cluster:&lt;/h2&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Start master nodes.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Start infra nodes.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Start worker node.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Check if nodes are started: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;oc get nodes&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Check if pods are working: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;oc get pods --all-namespaces&lt;/code&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;reference&quot;&gt;Reference:&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.redhat.com/en/blog/how-stop-and-start-production-openshift-cluster&quot;&gt;How To: Stop and start a production OpenShift Cluster&lt;/a&gt;&lt;/p&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="openshift" /><summary type="html"></summary></entry><entry><title type="html">My experience of Openshift 4.9 installation on Proxmox with a restricted network</title><link href="http://localhost:4000/site/installing-openshift4.9/" rel="alternate" type="text/html" title="My experience of Openshift 4.9 installation on Proxmox with a restricted network" /><published>2022-01-15T20:00:00+01:00</published><updated>2022-01-15T20:00:00+01:00</updated><id>http://localhost:4000/site/installing-openshift4.9</id><content type="html" xml:base="http://localhost:4000/site/installing-openshift4.9/">&lt;p&gt;In this post I tried to describe my experience that I had during Openshift 4.9 installation at my home lab. Redhat allows to use Openshift during 60 days for free without support.&lt;/p&gt;
-
-&lt;h2 id=&quot;preparing-environment&quot;&gt;Preparing environment&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Set up DNS and DHCP&lt;/li&gt;
-  &lt;li&gt;Set up proxy&lt;/li&gt;
-  &lt;li&gt;Download RHCOS (https://console.redhat.com/openshift/install/metal/user-provisioned)&lt;/li&gt;
-  &lt;li&gt;Create bare metal environment. In my case I use Proxmox virtualization platform&lt;/li&gt;
-  &lt;li&gt;Install http server&lt;/li&gt;
-  &lt;li&gt;Install haproxy&lt;/li&gt;
-  &lt;li&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;preparing-for-installation&quot;&gt;Preparing for installation&lt;/h2&gt;
-&lt;p&gt;For Openshift installation it is necessary to have following:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;DNS and DHCP services&lt;/li&gt;
-  &lt;li&gt;HTTP server. In my case I installed httpd server&lt;/li&gt;
-  &lt;li&gt;Loadbalacer. I use Haproxy&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;All these services are running on Linux machine (in my case it is last version of CentOS 8). I named it ocp-services.&lt;/p&gt;
-
-&lt;p&gt;For installation and configuration of mentioned services I used ansible. Roles are available here: https://github.com/votamrima/ansible_activity&lt;/p&gt;
-
-&lt;p&gt;At my home lab Openshift nodes are being run on Proxmox virtualisation platform. There are 6 nodes: 1 - bootstrap node, 3 master nodes, 2 worker nodes.&lt;/p&gt;
-
-&lt;h3 id=&quot;obtaining-openshift-installer-and-token&quot;&gt;Obtaining Openshift installer and token&lt;/h3&gt;
-&lt;p&gt;Register at Red Hat portal.&lt;/p&gt;
-
-&lt;p&gt;Installer, token and Redhat CoreOS are able to download from https://console.redhat.com/openshift/install/metal/user-provisioned.&lt;/p&gt;
-
-&lt;p&gt;Unpack downloanded zip into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/local/bin/&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Create a folder where will be generated igns. In my case it is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/try/install_dir/&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Create &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;install-config.yaml&lt;/code&gt; in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/try/install_dir/&lt;/code&gt;. Sample for install-config.yaml is able to find here: https://docs.openshift.com/container-platform/4.9/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html#installation-bare-metal-config-yaml_installing-restricted-networks-bare-metal.&lt;/p&gt;
-
-&lt;p&gt;Edit created file. Add copied from Redhat portal token into the file.&lt;/p&gt;
-
-&lt;p&gt;Create manifests:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;openshift-install create manifests &lt;span class=&quot;nt&quot;&gt;--dir&lt;/span&gt; /opt/try/install_dir/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Modify the created cluster-scheduler-02-config.yml manifest file to make the control plane nodes schedulable by updating &lt;em&gt;mastersSchedulable&lt;/em&gt; value to true. This option will deactivate scheduling control plane nodes by default:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'s/mastersSchedulable: true/mastersSchedulable: false/'&lt;/span&gt; /opt/try/install_dir/manifests/cluster-scheduler-02-config.yml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Create ignition files:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;openshift-install create ignition-configs &lt;span class=&quot;nt&quot;&gt;--dir&lt;/span&gt; /opt/try/install_dir/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Copy created ignition files to apache httpd folder. In my case it is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/www/html/okd/&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo cp&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-Rf&lt;/span&gt; install_dir/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; /var/www/html/okd/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;install-coreos-and-openshift&quot;&gt;Install CoreOS and Openshift&lt;/h3&gt;
-
-&lt;p&gt;Create virtual machines on your virtual platform. Each node will run on seperated VM. In my case, as I mentioned above I used Proxmox and I have created 6 virtual machines - 1 bootstrap node, 3 for master nodes, 2 for worker nodes. All machines have following parameters: CPU - 4 core, memory - 16GB, hard drive - 100 GB, one phisycal network interface.&lt;/p&gt;
-
-&lt;p&gt;Start each machine and load up the downloaded RHCOS iso image.&lt;/p&gt;
-
-&lt;p&gt;When RHCOS is loaded you should install ign file that you have created before. Type following commands for the following machines accordingly. The structure of the command is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo coreos-installer install --ignition-url=&amp;lt;url with ignition file&amp;gt; &amp;lt;partition for installation&amp;gt; --insecure-ignition&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;In my case I used following commands for installing a bootstrap node:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;coreos-installer &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--ignition-url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;http://192.168.11.61:8080/okd/bootstrap.ign /dev/sda &lt;span class=&quot;nt&quot;&gt;--insecure-ignition&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;For installing master node:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;coreos-installer &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--ignition-url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;http://192.168.11.61:8080/okd/master.ign /dev/sda &lt;span class=&quot;nt&quot;&gt;--insecure-ignition&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;For installing worker node:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;coreos-installer &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--ignition-url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;http://192.168.11.61:8080/okd/worker.ign /dev/sda &lt;span class=&quot;nt&quot;&gt;--insecure-ignition&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Wait until all ignitions will be installed.&lt;/p&gt;
-
-&lt;p&gt;Restart all nodes.&lt;/p&gt;
-
-&lt;p&gt;And wait until Openshift will be installed. On my home lab installation continued more than 1,5 hour.&lt;/p&gt;
-
-&lt;h3 id=&quot;bootstrap-installation&quot;&gt;Bootstrap installation&lt;/h3&gt;
-
-&lt;p&gt;To monitor the bootstrap process Red Hat recommends to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ ./openshift-install --dir &amp;lt;installation_directory&amp;gt; wait-for bootstrap-complete --log-level=info&lt;/code&gt; command. Unfortunatelly, in my case it does not work. Every time this commands ended with error. Although, configuration was correct and installation process continued. Moreover, I wanted to observe bootstap process in detail. Therefore, I run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;journalctl&lt;/code&gt; on the host (using ssh and with core user). For bootstrap node I typed following:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@ocp-services ~]# ssh core@192.168.11.66
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;core@ocp-bootstrap ~]# &lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@ocp-bootstrap ~]# journalctl &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; release-image.service &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; bootkube.service
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Additionally, I regularly observed running containers as well:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@ocp-bootstrap ~]# crictl ps &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
-CONTAINER           IMAGE                                                                                                                    CREATED              STATE               NAME                        ATTEMPT             POD ID
-e6466af3587aa       quay.io/openshift-release-dev/ocp-release@sha256:bb1987fb718f81fb30bec4e0e1cd5772945269b77006576b02546cf84c77498e        About a minute ago   Running             cluster-version-operator    0                   811748d44e1d8
-c24e9d6dbf475       d5d10803f3ebd3ef51495518565dedc1c8c3b722a016026c613fc22dba95ea90                                                         About a minute ago   Running             cloud-credential-operator   0                   b01a7b4cfc1ef
-41c1b7d1ab749       28ea52b98c63aa5dd899d67bf267a3b7dd623f5a694b97a56793bb12597e2de9                                                         2 minutes ago        Running             machine-config-server       0                   40b5c46667d10
-66e72fc96cd44       28ea52b98c63aa5dd899d67bf267a3b7dd623f5a694b97a56793bb12597e2de9                                                         2 minutes ago        Exited              machine-config-controller   0                   40b5c46667d10
-58a422a9e4320       quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:fd41b7237cac235fead9bda6dc9bf5c6cbde163ebf9d9249f33065d5ceadded0   4 minutes ago        Running             etcd                        0                   90ed4068c2c5d
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@ocp-bootstrap ~]# 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Wait for the end of bootstrap process.&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;journalctl &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; release-image.service &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; bootkube.service
-........
-bootkube.service: Succeeded.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;master-node-installation&quot;&gt;Master node installation&lt;/h3&gt;
-
-&lt;p&gt;During bootstrap node installation, I did restart master and worker nodes. This speeds up installation of master and worker nodes (I do not reason).&lt;/p&gt;
-
-&lt;p&gt;To monitor master and working nodes I used journalctl too. Additionally, was checked the status of containers regulary:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;journalctl &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt;
-crictl ps &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Wait for master nodes installation to be deployed&lt;/p&gt;
-
-&lt;p&gt;For checking if openshift is run and up, see the stats page of loadbalancer (in my case it is haproxy). There are all nodes should be green.&lt;/p&gt;
-
-&lt;h3 id=&quot;worker-nodes&quot;&gt;Worker nodes&lt;/h3&gt;
-
-&lt;p&gt;Before starting deploying worker node, shutdown bootstap node and deactivate it from loadbalancer.&lt;/p&gt;
-
-&lt;p&gt;When master nodes are successfuly installed and in stats page all master nodes are green, the next step is signing csrs.&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#check for pending certificates:&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@ocp-services ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;oc get csr 
-
-
-&lt;span class=&quot;c&quot;&gt;#check and sing all pending certificates:&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@ocp-services ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;oc get csr &lt;span class=&quot;nt&quot;&gt;-ojson&lt;/span&gt; | jq &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'.items[] | select(.status == {} ) | .metadata.name'&lt;/span&gt; | xargs oc adm certificate approve
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Before running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;oc&lt;/code&gt; command do not forget to export KUBECONFIG variable in ocp-services machine.&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;KUBECONFIG&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/opt/try/install_dir/auth/kubeconfig
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;During deployment of worker nodes, regularly check for new pending csr’s and sign new generated ones.&lt;/p&gt;
-
-&lt;h3 id=&quot;final-result&quot;&gt;Final result&lt;/h3&gt;
-&lt;p&gt;Finally, when all nodes are being deployed, check for url of openshift console:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#check for openshift console url&lt;/span&gt;
-oc &lt;span class=&quot;nb&quot;&gt;whoami&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--show-console&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Log in to Openshift using default kubeadmin user. Password is being generated during creation of manifests and ignition files. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/opt/try/install_dir/auth/kubeadmin-password&lt;/code&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;reference&quot;&gt;Reference:&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://docs.openshift.com/container-platform/4.9/installing/installing_bare_metal/installing-restricted-networks-bare-metal.html&quot;&gt;Installing a user-provisioned bare metal cluster on a restricted network. Redhat documentation&lt;/a&gt;&lt;/p&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="openshift" /><summary type="html"></summary></entry><entry><title type="html">Fixing “Cannot Install Windows 11” error during installation</title><link href="http://localhost:4000/site/windows11-requirements-error/" rel="alternate" type="text/html" title="Fixing “Cannot Install Windows 11” error during installation" /><published>2022-01-02T18:40:00+01:00</published><updated>2022-01-02T18:40:00+01:00</updated><id>http://localhost:4000/site/windows11-requirements-error</id><content type="html" xml:base="http://localhost:4000/site/windows11-requirements-error/">&lt;h2 id=&quot;problem&quot;&gt;Problem&lt;/h2&gt;
-&lt;p&gt;Today I tried to install Windows 11 on my virtual platform and during installation faced with the following problem:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic1.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;solution&quot;&gt;Solution&lt;/h2&gt;
-
-&lt;p&gt;In this screen type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Shift + F10&lt;/code&gt; at the same time to open a command promt. Then in command line type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;regedit&lt;/code&gt;:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic2.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;In the opened Registry Editor window, go to HKEY_LOCAL_MACHINE -&amp;gt; SYSTEM -&amp;gt; Setup.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic3.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Right click on Setup and then create a New -&amp;gt; Key. Give some name to created key. I named it “MyConfig”. &lt;strong&gt;!!!! Give “LabConfig” name. !!!&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic4.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Click right button on the blank space of the window and choose: New -&amp;gt; DWORD (32-bit) Value.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic5.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Rename created value to BypassTPMCheck. Thenk double-click on the on the created object and change Value date to 1.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic6.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Create more DWORDS values and give them following names: BypassCPUCheck, BypassRAMCheck and BypassSecureBootCheck. The value data of all created objects should be 1.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic7.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Close all opened windows.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic8.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;And click on “Install now” button.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;images/../../images/windows11-requirements-error/pic9.png&quot; alt=&quot;Image&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;That’s it.&lt;/p&gt;
-
-&lt;h2 id=&quot;reference&quot;&gt;Reference:&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=sCLJYNI77Bk&quot;&gt;How to Fix Cannot Install Windows 11 on VMware Workstation&lt;/a&gt;&lt;/p&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="windows" /><summary type="html"></summary></entry><entry><title type="html">Creating systemd tasks for applications and podman rootless containers</title><link href="http://localhost:4000/site/create-systemctl-service/" rel="alternate" type="text/html" title="Creating systemd tasks for applications and podman rootless containers" /><published>2021-12-15T07:15:00+01:00</published><updated>2021-12-15T07:15:00+01:00</updated><id>http://localhost:4000/site/create-systemctl-service</id><content type="html" xml:base="http://localhost:4000/site/create-systemctl-service/">&lt;p&gt;Here I describe a procees of creating a simple service startup job at linux.&lt;/p&gt;
-
-&lt;h2 id=&quot;sample-systemd-file&quot;&gt;Sample systemd file&lt;/h2&gt;
-
-&lt;p&gt;Here below is shown a sample service file for systemctl&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Unit]
-&lt;span class=&quot;nv&quot;&gt;Description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Description &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;application
-&lt;span class=&quot;nv&quot;&gt;After&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;network.target
-
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Service]
-&lt;span class=&quot;nv&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;user&amp;gt;
-&lt;span class=&quot;nv&quot;&gt;Group&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;group&amp;gt;
-&lt;span class=&quot;nv&quot;&gt;WorkingDirectory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;path where running file is located&amp;gt;
-&lt;span class=&quot;nv&quot;&gt;Environment&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;path with environment variable PATH &lt;span class=&quot;s2&quot;&gt;&quot;PATH=/location&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;EnvironmentFile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;path to environment file&amp;gt;
-&lt;span class=&quot;nv&quot;&gt;ExecStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;a &lt;span class=&quot;nb&quot;&gt;command &lt;/span&gt;with necessary parameters to start application&amp;gt;
-
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Install]
-&lt;span class=&quot;nv&quot;&gt;WantedBy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;multi-user.target
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;running-and-activating-tasks&quot;&gt;Running and activating tasks&lt;/h2&gt;
-
-&lt;p&gt;A service file should be located under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/system&lt;/code&gt; folder. A service file can be named anyhow, but extension of the file should be ended with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.service&lt;/code&gt;. For instance: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/system/testapp.service&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;When file is created reload daemon:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl daemon-reload
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And start application:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl start testapp.service
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;If application has to be started automatically, do not do not forget to enable it:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;testapp.service
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;running-rootless-containers&quot;&gt;Running rootless containers&lt;/h2&gt;
-
-&lt;p&gt;In order to automate starting and stopping a rootless container on podman I followed these steps:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Generating systemd unit file using and update it:&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;podman generate systemd &lt;span class=&quot;nt&quot;&gt;--new&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--files&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; registry
-/home/admin/container-registry.service
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;After update file looks like as following:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-&lt;span class=&quot;se&quot;&gt;\#&lt;/span&gt; container-registry2.service
-
-&lt;span class=&quot;se&quot;&gt;\#&lt;/span&gt; autogenerated by Podman 4.0.2
-
-&lt;span class=&quot;se&quot;&gt;\#&lt;/span&gt; Mon Jun  6 19:38:56 CEST 2022
-
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Unit]
-&lt;span class=&quot;nv&quot;&gt;Description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;Podman container-registry2.service
-&lt;span class=&quot;nv&quot;&gt;Documentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;man:podman-generate-systemd&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;Wants&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;network-online.target
-&lt;span class=&quot;nv&quot;&gt;After&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;network-online.target
-&lt;span class=&quot;nv&quot;&gt;RequiresMountsFor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;%t/containers
-
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Service]
-&lt;span class=&quot;nv&quot;&gt;Environment&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PODMAN_SYSTEMD_UNIT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;%n
-&lt;span class=&quot;nv&quot;&gt;Restart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;on-failure
-&lt;span class=&quot;nv&quot;&gt;TimeoutStopSec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;70
-&lt;span class=&quot;nv&quot;&gt;ExecStartPre&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/bin/rm &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; %t/%n.ctr-id
-&lt;span class=&quot;nv&quot;&gt;ExecStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/bin/podman start registry2
-&lt;span class=&quot;nv&quot;&gt;ExecStop&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/bin/podman stop registry2
-&lt;span class=&quot;nv&quot;&gt;Type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;notify
-&lt;span class=&quot;nv&quot;&gt;NotifyAccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;all
-
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Install]
-&lt;span class=&quot;nv&quot;&gt;WantedBy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;default.target
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Installation generated unit file&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;For rootless container I need to store the unit file in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.config/systemd/user/&lt;/code&gt;. For the root container copy the file to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/system/&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cp &lt;/span&gt;container-registry.service ~/.config/systemd/user/registry.service
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Then, for running the user services placed in $HOME/.config/systemd/user, enable service using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--user&lt;/code&gt; parameter:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;systemctl &lt;span class=&quot;nt&quot;&gt;--user&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;registry.service
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Activate controlling the systemd login for admin:&lt;/p&gt;
-
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;admin@podman ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;loginctl enable-linger admin
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;That’s it.&lt;/p&gt;
-
-&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.podman.io/en/latest/markdown/podman-generate-systemd.1.html&quot;&gt;podman generate systemd&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;other resources&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="linux" /><category term="podman" /><category term="container" /><summary type="html"></summary></entry></feed>
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;</content><author><name>{&quot;name&quot;=&gt;nil, &quot;avatar&quot;=&gt;nil, &quot;bio&quot;=&gt;&quot;&quot;, &quot;location&quot;=&gt;nil, &quot;email&quot;=&gt;nil}</name></author><category term="kubernetes" /><summary type="html"></summary></entry></feed>

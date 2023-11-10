@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Simple HTTPS Server using python - Some stories from iT lab</title>
+<!-- begin _includes/seo.html --><title>Creating a Local YUM Repository on Rocky Linux - Some stories from iT lab</title>
 <meta name="description" content="">
 
 
@@ -17,8 +17,8 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="Some stories from iT lab">
-<meta property="og:title" content="Simple HTTPS Server using python">
-<meta property="og:url" content="http://localhost:4000/a-simple-python-server/">
+<meta property="og:title" content="Creating a Local YUM Repository on Rocky Linux">
+<meta property="og:url" content="http://localhost:4000/creating-local-yum-repo/">
 
 
   <meta property="og:description" content="">
@@ -29,7 +29,7 @@
 
 
 
-  <meta property="article:published_time" content="2019-08-06T00:38:00+02:00">
+  <meta property="article:published_time" content="2023-11-10T18:15:00+01:00">
 
 
 
@@ -40,7 +40,7 @@
   
 
 
-<link rel="canonical" href="http://localhost:4000/a-simple-python-server/">
+<link rel="canonical" href="http://localhost:4000/creating-local-yum-repo/">
 
 
 
@@ -155,7 +155,7 @@
         <span class="sep">/</span>
       
       
-        <li class="current">Simple HTTPS Server using python</li>
+        <li class="current">Creating a Local YUM Repository on Rocky Linux</li>
       
     
   </ol>
@@ -226,169 +226,19 @@
 
 
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Simple HTTPS Server using python">
+    <meta itemprop="headline" content="Creating a Local YUM Repository on Rocky Linux">
     <meta itemprop="description" content="">
-    <meta itemprop="datePublished" content="2019-08-06T00:38:00+02:00">
+    <meta itemprop="datePublished" content="2023-11-10T18:15:00+01:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
           <h1 id="page-title" class="page__title p-name" itemprop="headline">
-            <a href="http://localhost:4000/a-simple-python-server/" class="u-url" itemprop="url">Simple HTTPS Server using python
+            <a href="http://localhost:4000/creating-local-yum-repo/" class="u-url" itemprop="url">Creating a Local YUM Repository on Rocky Linux
 </a>
           </h1>
           
-
-  <p class="page__meta">
-    
-      
-      <span class="page__meta-date">
-        <i class="far fa-calendar-alt" aria-hidden="true"></i>
-        
-        <time datetime="2019-08-06T00:38:00+02:00">August 6, 2019</time>
-      </span>
-    
-
-    
-
-    
-  </p>
-
-
-        </header>
-      
-
-      <section class="page__content e-content" itemprop="text">
-        
-          <aside class="sidebar__right ">
-            <nav class="toc">
-              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
-              
-
-            </nav>
-          </aside>
-        
-        
-<p>Here below I am going to shortly describe the process of setting up a simple https server on python</p>
-
-<ol>
-  <li>Generating key and cert files with Openssl:</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@test crazytests]# openssl req -x509 -newkey rsa:4096 -keyout testkey.pem -out testcert.pem
-Generating a 4096 bit RSA private key
-.......++
-..............................................................................................................................................................................................................................++
-writing new private key to 'testkey.pem'
-Enter PEM pass phrase:
-Verifying - Enter PEM pass phrase:
------
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter '.', the field will be left blank.
------
-Country Name (2 letter code) [XX]:DE
-State or Province Name (full name) []:
-Locality Name (eg, city) [Default City]:
-Organization Name (eg, company) [Default Company Ltd]:
-Organizational Unit Name (eg, section) []:
-Common Name (eg, your name or your server's hostname) []: new.test.my
-Email Address []:
-[root@test crazytests]#
-</code></pre></div></div>
-
-<ol>
-  <li>Write the following python code. I tested it on python 2.x. I think on python 3.x will run  too.</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@test crazytests]# cat simple_https.py
-import BaseHTTPServer, SimpleHTTPServer
-import ssl
-
-
-httpd = BaseHTTPServer.HTTPServer(('new.test.my', 4443), SimpleHTTPServer.SimpleHTTPRequestHandler)
-
-httpd_soccet = ssl.wrap_socket(httpd.socket, keyfile="testkey.pem", certfile='testcert.pem', server_side=True)
-
-httpd.serve_forever()
-[root@test crazytests]#
-</code></pre></div></div>
-
-
-        
-      </section>
-
-      <footer class="page__meta">
-        
-        
-  
-
-
-  
-
-  <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
-    <span itemprop="keywords">
-    
-      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a><span class="sep">, </span>
-    
-      <a href="/tags/#webserver" class="page__taxonomy-item p-category" rel="tag">webserver</a>
-    
-    </span>
-  </p>
-
-
-
-
-        
-
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2019-08-06T00:38:00+02:00">August 6, 2019</time></p>
-
-      </footer>
-
-      
-
-      
-  <nav class="pagination">
-    
-      <a href="/hiera-in-puppet/" class="pagination--pager" title="Using hiera in puppet. Example: creating a folder
-">Previous</a>
-    
-    
-      <a href="/more-space-for-boot-fs/" class="pagination--pager" title="Expanding /boot partition
-">Next</a>
-    
-  </nav>
-
-    </div>
-
-    
-  </article>
-
-  
-  
-    <div class="page__related">
-      <h2 class="page__related-title">You may also enjoy</h2>
-      <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/creating-local-yum-repo/" rel="permalink">Creating a Local YUM Repository on Rocky Linux
-</a>
-      
-    </h2>
-    
 
   <p class="page__meta">
     
@@ -406,11 +256,122 @@ httpd.serve_forever()
   </p>
 
 
-    <p class="archive__item-excerpt" itemprop="description">
-</p>
-  </article>
-</div>
+        </header>
+      
 
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#creating-a-local-yum-repository-on-rocky-linux">Creating a Local YUM Repository on Rocky Linux</a><ul><li><a href="#unpacking-rpm-file">Unpacking RPM File</a></li><li><a href="#installing-necessary-tools">Installing Necessary Tools</a></li><li><a href="#creating-your-local-repository">Creating Your Local Repository</a></li><li><a href="#managing-yum-cache">Managing YUM Cache</a></li><li><a href="#configuring-yum-to-use-the-local-repository">Configuring YUM to Use the Local Repository</a></li><li><a href="#conclusion">Conclusion</a></li></ul></li></ul>
+
+            </nav>
+          </aside>
+        
+        
+<h1 id="creating-a-local-yum-repository-on-rocky-linux">Creating a Local YUM Repository on Rocky Linux</h1>
+
+<p>Local YUM repositories are crucial for systems where internet access is limited, or package deployment needs tight control. This short article guides you through setting up a local repository on Rocky Linux.</p>
+
+<h2 id="unpacking-rpm-file">Unpacking RPM File</h2>
+
+<p>First, unpack the desired RPM files into a specific folder. This step assumes you have already downloaded or have access to the RPM files you wish to include in your local repository.</p>
+
+<h2 id="installing-necessary-tools">Installing Necessary Tools</h2>
+
+<p>To create and manage your local repository, you will need yum-utils and createrepo. Install these using the following commands:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum <span class="nb">install </span>yum-utils createrepo
+</code></pre></div></div>
+
+<p>These tools provide utilities to manage your YUM configuration and create the metadata needed for a YUM repository.</p>
+
+<h2 id="creating-your-local-repository">Creating Your Local Repository</h2>
+
+<p>Next, use createrepo to create a local repository. This command turns a directory of RPMs into a repository that YUM can use.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>createrepo /your/local/folder/with/rpms
+</code></pre></div></div>
+
+<p>Replace <code class="language-plaintext highlighter-rouge">/your/local/folder/with/rpms</code> with the path to the directory where you have stored your RPM files.</p>
+
+<h2 id="managing-yum-cache">Managing YUM Cache</h2>
+
+<p>Before using your new repository, it’s necessary to clear YUM’s cache and create a new one. This ensures that YUM recognizes your newly created repository.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum clean all
+yum makecache
+</code></pre></div></div>
+
+<h2 id="configuring-yum-to-use-the-local-repository">Configuring YUM to Use the Local Repository</h2>
+
+<p>To use your new local repository, disable all other repositories and enable your newly created one. Here’s how to do it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum <span class="nt">--disablerepo</span><span class="o">=</span><span class="s2">"*"</span> <span class="nt">--enablerepo</span><span class="o">=</span><span class="s2">"myrepo"</span>
+</code></pre></div></div>
+
+<p>Replace myrepo with the real name of your repository. Note that this command should be followed by an action like an installation command; otherwise, it just sets up the configuration without performing any tasks.</p>
+
+<p>If you do not know the name of the local repo, use <code class="language-plaintext highlighter-rouge">yum repolist</code> command to get all available repos.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Setting up a local YUM repository on Rocky Linux is straightforward and extremely useful for controlled environments or offline systems. By unpacking RPMs, installing yum-utils and createrepo, initializing your local repository, managing YUM cache, and configuring YUM to use the local repository, you ensure a reliable and controlled package management setup. Remember to regularly update your local repository with new or updated RPMs as needed.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#linux" class="page__taxonomy-item p-category" rel="tag">linux</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2023-11-10T18:15:00+01:00">November 10, 2023</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/applied-dnsname-as-hostname/" class="pagination--pager" title="How I set DNS name as a hostname
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
         
           
 
@@ -519,6 +480,43 @@ httpd.serve_forever()
 
     <p class="archive__item-excerpt" itemprop="description">
 </p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/first-vm-template-using-packer/" rel="permalink">Creating a cloud-init VM Template on Proxmox using packer
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2022-07-01T19:00:00+02:00">July 1, 2022</time>
+      </span>
+    
+
+    
+
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. ...</p>
   </article>
 </div>
 
