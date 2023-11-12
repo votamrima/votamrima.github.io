@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Creating a cloud-init VM Template on Proxmox using packer"
+title: "Building a Proxmox VM Template with Packer and CentOS 8 Stream"
 subtitle: ""
 date: 2022-07-01 18:00:00 +0100
 background: '/image/01.jpg'
@@ -8,44 +8,39 @@ tags: ['packer']
 ---
 
 {% raw %}
-Recently I built up a virtual machine template on Proxmox using Packer. Here below I am going to show which steps were followed in order to achive the aim. I am going to set up VM with CentOS 8 Stream on board.
+
+In this article, I share my experience of creating a virtual machine template on Proxmox using Packer, focusing on setting up a VM with CentOS 8 Stream.
+
 
 ## Installing Packer
 
-[Here](https://learn.hashicorp.com/tutorials/packer/get-started-install-cli) is shown how to install Packer. Generally, I used the following steps for installing a required packages on my Fedora Workstation:
+To begin, Packer needs to be installed. You can find detailed instructions on installing Packer [Here](https://learn.hashicorp.com/tutorials/packer/get-started-install-cli). On my Fedora Workstation, I followed these steps:
 
-Installing official HarshiCorp repository:
+
+### Installing official HarshiCorp repository:
+
+Add the repository:
 
 ````bash
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 ````
 
-If ``yum-config-manager`` is not available on the host, install ``yum-utils`` package: ``sudo yum install -y yum-utils``
+If ``yum-config-manager`` is not available, install ``yum-utils`` package: 
 
-And install packer:
+````bash
+sudo yum install -y yum-utils
+````
+
+## Installing Packer
+Then, install Packer:
 
 ````
 sudo yum -y install packer
 ````
 
-And that's it. Packer is installed. Check it:
+Verify the installation:
 
 ````bash
-[admin@workstation packer]$ packer 
-Usage: packer [--version] [--help] <command> [<args>]
-
-Available commands are:
-    build           build image(s) from template
-    console         creates a console for testing variable interpolation
-    fix             fixes templates from old versions of packer
-    fmt             Rewrites HCL2 config files to canonical format
-    hcl2_upgrade    transform a JSON template into an HCL2 configuration
-    init            Install missing plugins or upgrade plugins
-    inspect         see components of a template
-    plugins         Interact with Packer plugins and catalog
-    validate        check that a template is valid
-    version         Prints the Packer version
-
 [admin@workstation packer]$ packer --version
 1.8.0
 [admin@workstation packer]$ 
@@ -53,16 +48,18 @@ Available commands are:
 
 ## Create a hcl file 
 
-In order to set up a vm we need to declare a file with instructions for packer. There are two type of files: JSON files and HCL file. 
+Packer requires a file with instructions for setting up the VM. I used an HCL file for my setup, starting with defining required plugins and then declaring variables like ``proxmox_api_url``, ``proxmox_api_token_id``, and ``proxmox_api_token_secret``.
 
-I used to apply following hcl file for my task. The file is starting by defining required plugins. This plugin will be installed using ``packer init hcls/``. In the following part are being declared variables. I declared ``proxmox_api_url``, ``proxmox_api_token_id`` and ``proxmox_api_token_secret``. These variables are able to define in the external file, by passing as a command parameter and by defining in the the same hcl file. In my task I set the 2 variables in a external file and secret I gave in command line as a parameter.
+### HCL File Structure
+The file is structured into three main parts:
 
-Second part of the file is consisting of ``source`` part. Here are defined main parameters of the VM, iso file, disk, network and etc. 
+* Required Plugins: Defining the Proxmox plugin to be installed.
+* Variables: Specifying API URLs and tokens.
+* Source: Main parameters of the VM, including the ISO file, disk, and network configurations.
+* Build: Running the build process and provisioning tasks.
 
-Third part is the building part what actually runs building process and after provisioning tasks.
 
 ````vim
-
 packer {
   required_plugins {
     proxmox = {
@@ -159,52 +156,38 @@ build {
     }
 }
 ````
-
-By running packer creates a temporary http server using a randomly generated port. Such approach allows to download a kicstart file during installation and set up a machine. Kickstart file is located in ``http`` folder (``http_directory = "http" ``). The kickstart file that I used for this task is shared on github. [Link](https://github.com/votamrima/terraforming/blob/master/packer/http/ks.conf)
+This setup also involves a temporary HTTP server by Packer for downloading the Kickstart file during installation, which is located in the http folder.
 
 ## Running Packer
 
-First of all we need to install required plugin for packer.
+First, install the required plugin for Packer:
 
 ````bash
 [admin@workstation packer]$ packer init hcls/
 Installed plugin github.com/hashicorp/proxmox v1.0.8 in "/home/admin/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.0.8_x5.0_linux_amd64"
 ````
 
-And check installed plugin:
+Verify the installed plugin:
 
 ````bash
 [admin@workstation packer]$ packer plugins installed
 /home/admin/.config/packer/plugins/github.com/hashicorp/proxmox/packer-plugin-proxmox_v1.0.8_x5.0_linux_amd64
 ````
 
-Next step is setting up a machine.
+And finaly, initiate setting up the machine:
 
 ````bash
 [admin@workstation packer]$ packer build -var-file='creds.pkr.hcl' -var proxmox_api_token_secret="<my-secret>" hcls/proxmox-centos.pkr.hcl
-proxmox.centos8-packer: output will be in this color.
-
-==> proxmox.centos8-packer: Creating VM
-==> proxmox.centos8-packer: Starting VM
-==> proxmox.centos8-packer: Starting HTTP server on port 8665
-==> proxmox.centos8-packer: Waiting 5s for boot
-==> proxmox.centos8-packer: Typing the boot command
-==> proxmox.centos8-packer: Waiting for SSH to become available...
-==> proxmox.centos8-packer: Connected to SSH!
-==> proxmox.centos8-packer: Stopping VM
-==> proxmox.centos8-packer: Converting VM to template
-==> proxmox.centos8-packer: Adding a cloud-init cdrom in storage pool ocp1
-Build 'proxmox.centos8-packer' finished after 8 minutes 35 seconds.
-
-==> Wait completed after 8 minutes 35 seconds
-
+.......
+.......
+.......
 ==> Builds finished. The artifacts of successful builds are:
 --> proxmox.centos8-packer: A template was created: 108
 
 [admin@workstation packer]$ 
-
 ````
-## Reference
 
+## Conclusion
+Using Packer with Proxmox to create a VM template with CentOS 8 Stream can be an efficient and streamlined process. By following the steps outlined above, I  created a reusable VM template for various applications.
 
 {% endraw %}

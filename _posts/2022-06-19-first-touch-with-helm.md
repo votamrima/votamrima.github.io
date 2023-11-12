@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "First steps in helm"
+title: "My First Experience with Helm"
 subtitle: ""
 date: 2022-06-19 18:00:00 +0100
 background: '/image/01.jpg'
@@ -9,15 +9,16 @@ tags: ['helm']
 
 {% raw %}
 
-Here I would like to describe my first steps in learning helm.  
+In this article, I'd like to share my initial activity using Helm, a powerful tool for managing Kubernetes applications. Helm simplifies deploying and managing complex Kubernetes applications with its package management features. Here’s how I got started with it.
+
 
 ## Installation
 
-I installed Helm using following instruction:
+I began by installing Helm, following these steps:
 
-1. Downloaded the latest version from the website: [https://github.com/helm/helm/releases](https://github.com/helm/helm/releases)
-2. Unpacked the archive: ``tar fzx helm-v3.9.0-linux-amd64.tar.gz``
-3. Set following string into ~/.bashrc
+1. Download: I downloaded the latest version of Helm from [official repository](https://github.com/helm/helm/releases)
+2. Unpack the Archive: I used the command ``tar fzx helm-v3.9.0-linux-amd64.tar.gz`` to unpack the downloaded file.
+3. Update ``~/.bashrc``: To ensure Helm was available in my command line, I added it to my ``PATH`` in the ``~/.bashrc`` file:
 
 ````bash
 HELM_PATH="/opt/helm/linux-amd64"
@@ -26,40 +27,39 @@ PATH=$PATH:$HELM_PATH
 
 ## Using Helm
 
-Adding a new repo:
+### Adding a New Repository
+
+To add a new repository, I used the following command:
 
 ````bash
 [admin@podman helm]$ helm repo add bitnami https://charts.bitnami.com/bitnami
 "bitnami" has been added to your repositories
 ````
 
-Listing all existing repos on the machine: 
-
-````bash
-[admin@podman helm]$ helm repo add bitnami https://charts.bitnami.com/bitnami
-"bitnami" has been added to your repositories
-````
+### Listing Existing Repositories
+I checked the existing repositories on my machine using the same command as above. It confirmed that the Bitnami repo was successfully added.
 
 
-## Create helm chart
+## Creating a Helm Chart
+I took these steps to create my first Helm chart:
 
-First of all I run helm create command:
+1. Initialize the Chart:
 
 ````bash
 [admin@workstation first-chart]$ helm create first-chart
 Creating first-chart
 ````
 
-Secondly, customized some values in values.yml file. This is my first chart therefore I did edit some few lines. 
+2. Customize ``values.yml``: As a beginner, I made simple edits to the ``values.yml`` file:
 
-So, was set ``nameOverride`` and ``fullnameOverride`` values:
+* Set ``nameOverride`` and ``fullnameOverride``:
 
 ````yaml
 nameOverride: "first-chart"
 fullnameOverride: "first-chart"
 ````
 
-Then, was updated name value in serviceAccount:
+* Updated the ``serviceAccount`` name:
 
 ````yaml
 serviceAccount:
@@ -68,7 +68,7 @@ serviceAccount:
   name: "firstapp"
 ````
 
-And finally, I changed service type from default ``ClusterIP`` to ``NodePort``:
+* Changed the service type from ``ClusterIP`` to ``NodePort``:
 
 ````yaml
 service:
@@ -76,7 +76,9 @@ service:
   port: 80
 ````
 
-To install this helm chart I run the following command:
+## Deploying the Chart
+
+To deploy the chart, I ran:
 
 ````bash
 [admin@workstation first-chart]$ helm install first-chart first-chart/ --values first-chart/values.yaml 
@@ -90,18 +92,11 @@ NOTES:
   export NODE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].nodePort}" services first-chart)
   export NODE_IP=$(kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}")
   echo http://$NODE_IP:$NODE_PORT
-[admin@workstation first-chart]$ kubectl get pods
-NAME                           READY   STATUS              RESTARTS   AGE
-first-chart-6cd58dc9ff-bh9lw   0/1     ContainerCreating   0          11s
-myhello-5586c5c9bf-zmktx       1/1     Running             3          3d
-[admin@workstation first-chart]$ kubectl get pods
-NAME                           READY   STATUS              RESTARTS   AGE
-first-chart-6cd58dc9ff-bh9lw   0/1     ContainerCreating   0          15s
-myhello-5586c5c9bf-zmktx       1/1     Running             3          3d
-[admin@workstation first-chart]$ watch kubectl get pods
+[admin@workstation first-chart]$ 
 ````
 
-And check the status of the kubernetes pod:
+### Checking Kubernetes Pod Status
+Finally, I checked the status of the Kubernetes pod:
 
 ````bash
 [admin@workstation first-chart]$ kubectl get pods
@@ -111,6 +106,9 @@ first-chart-6cd58dc9ff-bh9lw   1/1     Running   0          17s
 
 ````
 
+To continuously monitor the pods it would be usefull to use the ``watch`` command.
+
+This was my introduction to Helm. 
 
 ## References
 - [Helm documentation](https://helm.sh/docs)
