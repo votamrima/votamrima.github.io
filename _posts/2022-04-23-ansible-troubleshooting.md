@@ -9,12 +9,11 @@ tags: ['ansible']
 
 {% raw %}
 
+In this post, I am discussing troubleshooting of Ansible playbooks. Ansible provides several methods for managing playbooks. These include log configuration, specifying options like ``--step``, ``-v``, and controlling playbook execution using modules like ``fail`` or ``assert``.
 
-In this post I am about troubleshooting of ansible playbooks. Ansible provides several ways of managing playbook. Some of them are: log configuration, defining some options such as ``--step``, ``-v`` and defining running management in playbook using such modules as ``fail`` or ``assert``
+## Log File Configuration
 
-## Log file configuration
-
-Unfortunatelly, logging is not configured in Ansible by default. However, we can configure it. 
+Unfortunately, logging is not configured in Ansible by default. However, we can configure it. There are two ways to activate logging:
 
 There are two ways to activate logging:
 
@@ -25,11 +24,9 @@ cat ansible.cfg
 [default]
 log_path = /var/log/ansible-logs/ansible.log
 ````
-
-It is recommended to use ``logrotate`` to manage the logs if they will be written in /var/log directory.
-
 * set environment variable ``$ANSIBLE_LOG_PATH``
 
+**NOTE:** It is strongly recommended to use ``logrotate`` to manage the logs if they will be written in /var/log directory.
 
 ## Managing problems
 
@@ -39,13 +36,11 @@ It is recommended to use ``logrotate`` to manage the logs if they will be writte
 ansible-playbook myplay.yml --syntax-check
 ````
 
-
 ``--step`` - using this option we can step to a specific task in a playbook
 
 ````bash
 ansible-playbook myplay.yml --step
 ````
-
 
 ``--start-at-task`` - with this option we can start execution of a playbook from a specific task
 
@@ -53,14 +48,11 @@ ansible-playbook myplay.yml --step
 ansible-playbook myplay.yml --start-at-task
 ````
 
-We can debug execution of a playbook using ``-v`` parameter. There are 4 levels of verbosity: ``-v``, ``--vv``, ``--vvv``, ``--vvvv``
+Verbosity can be increased for debugging using -v parameter, with four levels of verbosity: ``-v, --vv, --vvv, --vvvv``.
 
+``--check (or -C)`` executes a playbook without making changes to the managed host. You can control this option individually:
 
-``--check`` - option executes a playbook without making changes to the managed host. This option we can define by typing ``-C`` too.
-
-Moreover, we can control ``--check`` option individually. 
-
-* This task will be alway run in checking mode:
+* Always run in check mode:
 
 ````yaml
 - name: always run in check mode
@@ -68,7 +60,7 @@ Moreover, we can control ``--check`` option individually.
   check_mode: yes
 ````
 
-* This task will not run in check mode even if ``--check`` option is defined in ansible-playbook command
+* Do not run in check mode, even if ``--check`` is specified:
 
 ````yaml
 - name: always run in check mode
@@ -76,14 +68,14 @@ Moreover, we can control ``--check`` option individually.
   check_mode: no
 ````
 
-``--diff`` - option shows changes made to template files.
+``--diff`` shows changes made to template files:
 
 ````bash
 ansible-playbook myplay.yml --check --diff
 
 ````
 
-## Troubleshooting using modules
+## Expample Troubleshooting using modules
 
 ``script`` module executes a script against managed hosts. This script have to locate on the control node. Executing fails if script ends with the non-zero code.
 
@@ -128,7 +120,7 @@ ansible-playbook myplay.yml --check --diff
 
 ````
 
-``assert `` module we can use alternatively to the ``fail`` module. Here, in order to customize the message we can use either ``success_msg`` or ``fail_msg`` options.
+The ``assert`` module can be used as an alternative to the fail module:
 
 ````yaml
 
@@ -144,6 +136,8 @@ ansible-playbook myplay.yml --check --diff
           - not answer.stat.exists
 
 ````
+
+This note provides insight into some methods and modules for troubleshooting Ansible playbooks based on personal experiences. 
 
 ## Reference:
 - [https://docs.ansible.com/ansible/2.9/reference_appendices/test_strategies.html](https://docs.ansible.com/ansible/2.9/reference_appendices/test_strategies.html)
