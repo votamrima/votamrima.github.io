@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Basics of storage management using Ansible"
+title: "Basics of Storage Management Using Ansible"
 subtitle: ""
 date: 2022-05-15 13:00:00 +0100
 background: '/image/01.jpg'
@@ -10,16 +10,21 @@ tags: ['ansible']
 
 {% raw %}
 
-Generally, there are available 5 modules that allow to manage storage: ``parted``, ``lvg``, ``lvol``, ``filesystem``, ``mount``. 
+Ansible is a powerful automation tool that simplifies complex configuration tasks. Among its many capabilities, storage management is particularly useful. This article covers the basics of storage management using Ansible, highlighting five key modules: `parted`, `lvg`, `lvol`, `filesystem`, and `mount`.
+
+## Ansible Modules for Storage Management
+
+Each of these modules plays a specific role in managing storage:
 
 - ``parted`` module creates partition.
 - ``lvg``, ``lvol`` - module are supporting to create logical volume groups.
 - ``filesystem`` - module creates a filesystem
 - ``mount`` module mounts a created partition and insert mounting config to ``/etc/fstab``. 
 
-## Code
+## Example Playbook for Storage Management
 
-Here below I share a basic playbook for managing storage:
+Below is a basic Ansible playbook demonstrating how to manage storage using these modules.
+
 
 
 ````yaml
@@ -72,8 +77,8 @@ Here below I share a basic playbook for managing storage:
     become: true
 ````
 
-
-File with variables in this example is locating in ``host_vars/machinea/vars.yml``
+## Variables File
+The playbook refers to a variables file located at ``host_vars/machinea/vars.yml``, which defines the parameters for the partitions and logical volumes.
 
 ````yaml
 partitions:
@@ -99,6 +104,11 @@ logical_volumes:
     mount_opts: noatime
     force: true
 ````
+
+This example demonstrates how Ansible can streamline the process of managing storage, from partition creation to volume mounting, with the flexibility to define and adjust parameters as needed.
+
+**Note:** The above playbook and variable configurations are based on personal experience and may need adjustments based on specific system environments and requirements.
+
 
 ### Reference:
 - ``ansible-doc`` command

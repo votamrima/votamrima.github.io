@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Basics of Ansible collections"
+title: "Understanding Ansible Collections"
 subtitle: ""
 date: 2022-05-18 08:00:00 +0100
 background: '/image/01.jpg'
@@ -9,22 +9,23 @@ tags: ['ansible']
 
 {% raw %}
 
+Ansible collections have revolutionized how Ansible content such as roles, modules, and plugins are managed, shared, and used. This article delves into the basics of Ansible collections based on personal experiences and insights.
 
-Ansible collection provides set of roles, modules, some plugins that are able to download on ansible control host and use them in playbooks. For example, ``community.crypto`` collection provides modules for managing TLS/SSL certificates. 
+## What are Ansible Collections?
+Ansible collections are a set of resources including roles, modules, and plugins that can be downloaded to an Ansible control host and used in playbooks. For instance, the ``community.crypto`` collection includes modules for managing TLS/SSL certificates. Collections have been a part of Ansible since version 2.9.
 
-Collections are supported by Ansible starting with version 2.9.
+## Main Benefits of Collections
+* Flexibility: Collections allow for a more flexible approach in managing Ansible content.
+* Modularity: Users can install only the required modules, avoiding unnecessary bloat.
+* Version Control: Specific versions of collections can be selected, offering better control over the tools and functionalities used.
 
-Main benefit of collections: 
-    - Ansible content collection gives flexibility. 
-    - we can install set of only required modules instead all available ones. 
-    - We can select specific version of the collection.
 
-### Collection sources
+### Collection Sources
+* Ansible Automation Hub: This is the official platform with collections that are reviewed, updated, and maintained by Red Hat. It's available at [Ansible Automation Hub](https://cloud.redhat.com/ansible/automation-hub/).
 
-- Ansible automation hub - official platform with collections. Red Hat officially reviews, updates, maintains collections at automation hub. The resource is available at [https://cloud.redhat.com/ansible/automation-hub/](https://cloud.redhat.com/ansible/automation-hub/)
-- Ansible Galaxy - is a somehow a market where organizations as well as developers can share their collections.
+* Ansible Galaxy: This platform acts as a marketplace where both organizations and individual developers can share their collections.
 
-By default ansible downloads collections from the galaxy. But it is able to configure in ansible.cfg file too:
+By default, Ansible downloads collections from Galaxy, but this can be configured in the ansible.cfg file:
 
 ````ini
 
@@ -41,7 +42,8 @@ url=https://galaxy.ansible.com/
 
 ````
 
-Instead of token we can use login and password as well:
+Alternatively, login credentials or environment variables can be used for authentication:
+
 
 ````ini
 [galaxy_server.automation_hub]
@@ -58,27 +60,27 @@ url=https://cloud.redhat.com/api/automation-hub/
 auth_url=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
 ````
 
-
 ````bash
 ANSIBLE_GALAXY_SERVER_<server_id>_<key>=value
 ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN='tocken'
 ````
 
+## Installing collections
 
-### Installing collections
+To install a collection:
 
 ````bash
 ansible-galaxy collection install community.crypto
 ````
 
-Moreover, collections are able to be installed from a local or remote (webserver) tar archive, as well as roles:
+Collections can also be installed from a local or remote tar archive:
 
 ````bash
 ansible-galaxy collection install /<some-path>/<collection-name>.tar
 ansible-galaxy collection install http://<webserver>/<collection-name>.tar
 ````
 
-Using requirements file is able to install collections too:
+Using a requirements file:
 
 ````yaml
 
@@ -97,7 +99,9 @@ cat requirements.yml
 
 ````
 
-### Using collections
+## Using Collections in Playbooks
+
+In playbooks, collections simplify the task of specifying roles and modules:
 
 ````yaml
 
@@ -111,10 +115,9 @@ cat requirements.yml
 
     - debug:
         msg: '{{ lookup("my_namespace.my_collection.lookup1", 'param1')| my_namespace.my_collection.filter1 }}'
-
 ````
 
-To avoid a lot of typing, you can use the collections:
+To reduce verbosity, you can specify the collection at the beginning:
 
 ````yaml
 
@@ -130,10 +133,9 @@ To avoid a lot of typing, you can use the collections:
 
     - debug:
         msg: '{{ lookup("my_namespace.my_collection.lookup1", 'param1')| my_namespace.my_collection.filter1 }}'
-
 ````
 
-Real example:
+## Real-World Example
 
 ````yaml
 
@@ -150,6 +152,9 @@ Real example:
         enabled: true
 
 ````
+
+## Conclusion
+Ansible collections offer a modular, flexible, and efficient way of managing various Ansible resources. They streamline the process of using specific roles and modules, ensuring that only necessary components are installed and maintained. With these insights and experiences, adopting collections in your Ansible playbooks can greatly enhance your automation tasks.
 
 ## References
 - [Ansible user guide](https://docs.ansible.com/ansible/2.9/user_guide/collections_using.html)

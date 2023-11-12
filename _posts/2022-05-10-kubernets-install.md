@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: singlee # to remove the article 
 title: "Kubernetes installation. (Not finished)"
 subtitle: ""
 date: 2022-05-10 08:00:00 +0100
