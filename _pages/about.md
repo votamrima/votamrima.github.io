@@ -1,6 +1,5 @@
 ---
-#layout: single
-layout: default
+layout: single
 #title: "Info"
 #subtitle: ""
 #date: 2021-11-06 23:38:00 +0100
