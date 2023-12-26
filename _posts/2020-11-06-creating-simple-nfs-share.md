@@ -7,7 +7,7 @@ date: 2020-11-06 23:38:00 +0100
 tags: ['linux']
 ---
  
- {% raw %}
+{% raw %}
 In this post, I will outline the process of creating a simple NFS share server on a CentOS 8 machine.
 
 ## Installing NFS
@@ -142,12 +142,5 @@ Export list for 192.168.11.61:
 ````
 
 Setting up an NFS share on CentOS is a straightforward process. This setup allows for flexible sharing of files and directories across different systems in a network.
-
-
-
-
-
-
-
 
 {% endraw %}
