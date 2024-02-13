@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "How I set DNS name as a hostname"
+title: "Setting the DNS name as a hostname using ansible"
 subtitle: ""
 date: 2023-11-07 22:50:00 +0100
 background: '/image/01.jpg'
