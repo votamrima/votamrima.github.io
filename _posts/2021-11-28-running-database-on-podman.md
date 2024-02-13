@@ -14,13 +14,13 @@ In this post, I'll describe how I deployed MySQL and PostgreSQL databases on Pod
 ## Deploying MySQL on Podman
 First, I installed the MySQL client on my machine:
 
-````
+````bash
 sudo yum install mysql
 ````
 
 I then prepared a directory for MySQL databases and configured SELinux permissions:
 
-````
+````bash
 mkdir /opt/homelab_projects/mysql_db_dir_noroot
 
 [admin@workstation homelab_projects]$ sudo semanage fcontext -a -t container_file_t '/opt/homelab_projects/mysql_db_dir_noroot(/*)'
@@ -34,20 +34,20 @@ drwxrwxr-x.  2 admin admin unconfined_u:object_r:container_file_t:s0  4096 Nov 2
 
 To run the MySQL container, I set environment variables, port mappings, and shared folders for the database:
 
-````
+````bash
 [admin@workstation homelab_projects]$ podman run -d --name mysql-db -e MYSQL_USER=admin -e MYSQL_PASSWORD=mysql -e MYSQL_DATABASE=words -e MYSQL_ROOT_PASSWORD=mysql -p 33306:3306 -v /opt/homelab_projects/mysql_db_dir_noroot:/var/lib/mysql/data rhscl/mysql-57-rhel7
 0fb7b0ad8de7f00acccf7ddd3ccd296836da24ef575727e99bc63a2c0cdbe11e
 ````
 
 After running the container, I verified the database creation:
 
-````
+````bash
 [admin@workstation homelab_projects]$ mysql -h 127.0.0.1 -uadmin -pmysql -P 33306
 ````
 
 Then, I deployed the database dump:
 
-````
+````bash
 [admin@workstation homelab_projects]$ mysql -h 127.0.0.1 -uadmin -pmysql -P 33306 words < db.sql 
 ````
 
