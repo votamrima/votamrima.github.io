@@ -2,7 +2,7 @@
 layout: single
 title: "Changing in Satellite download policy for all repos using hammer"
 subtitle: ""
-date: 2023-11-10 18:15:00 +0100
+date: 2024-02-13 18:15:00 +0100
 background: '/image/01.jpg'
 tags: ['linux','satellite','hammer']
 ---
