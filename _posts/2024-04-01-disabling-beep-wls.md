@@ -1,10 +1,10 @@
 ---
 layout: single
-title: "Disabling beep in Windows wsl"
+title: "Disabling beep in bash"
 subtitle: ""
 date: 2024-04-01 18:15:00 +0100
 background: '/image/01.jpg'
-tags: ['windows','wsl']
+tags: ['linux','bash']
 ---
 
 {% raw %}
