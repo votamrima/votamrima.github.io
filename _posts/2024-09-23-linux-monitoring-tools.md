@@ -9,7 +9,8 @@ tags: ['linux']
 
 {% raw %}
 
-![pic1](../images/linux-monitoring-tools/linux_observability_tools.png)
+![Image](images/../../images/linux-monitoring-tools/linux_observability_tools.png)
+
 
 
 ## Reference
