@@ -12,4 +12,7 @@ tags: ['linux']
 ![pic1](../images/linux-monitoring-tools/linux_observability_tools.png)
 
 
+## Reference
+- [https://www.brendangregg.com/linuxperf.html](https://www.brendangregg.com/linuxperf.html)
+
 {% endraw %}
