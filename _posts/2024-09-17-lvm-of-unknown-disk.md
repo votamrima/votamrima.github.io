@@ -2,7 +2,7 @@
 layout: single
 title: "Mounting an LVM of second disk"
 subtitle: ""
-date: 2023-09-15 08:15:00 +0100
+date: 2024-09-15 08:15:00 +0100
 background: '/image/01.jpg'
 tags: ['linux','lvm']
 ---
