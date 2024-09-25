@@ -55,6 +55,6 @@ In the following table are given concepts, conditions and aspects of the confide
 
 
 ## Reference
-- [https://www.brendangregg.com/linuxperf.html](https://www.brendangregg.com/linuxperf.html)
+- CISSP learning materials
 
 {% endraw %}
