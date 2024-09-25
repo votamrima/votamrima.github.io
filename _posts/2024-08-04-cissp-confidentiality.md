@@ -2,7 +2,7 @@
 layout: single
 title: "First element of the CIA Triad - Confidentiality. Notes"
 subtitle: ""
-date: 2024-09-23 08:15:00 +0100
+date: 2024-08-04 08:15:00 +0100
 background: '/image/01.jpg'
 tags: ['cissp','security']
 ---
