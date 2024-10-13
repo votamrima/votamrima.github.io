@@ -12,13 +12,13 @@ tags: ['kubernetes']
 
 I decided to reinstall a Kubernetes cluster at my homelab, and in this article, I am documenting the preparation steps I took.
 
-## Node Setup
+## Node setup
 
 The cluster consists of six nodes: three master nodes and three worker nodes. The operating system is AlmaLinux 9, with each node having a 4-core CPU and 8 GB of RAM.
 
 ## Preparation Steps
 
-### SELinux Configuration
+### SELinux configuration
 
 Set SELinux to permissive mode and update the configuration to make it persistent:
 
@@ -29,7 +29,7 @@ sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
 
 The first command changes SELinux to permissive mode until the next reboot. To make this change permanent, update the `/etc/selinux/config` file.
 
-### Stop/Disable Firewall
+### Stop/Disable firewall
 
 Stop and disable the firewall to prevent it from starting at boot:
 
@@ -49,7 +49,7 @@ swapoff -a
 sed -i '//dev/mapper/almalinux_alma9--template-swap.*swap/d' /etc/fstab
 ```
 
-### Configure Proxy Settings
+### Configure proxy settings
 
 Since all my servers are behind a proxy and do not have direct Internet access, I configured proxy settings. I added the settings to both the `bashrc` file and the `yum` (`dnf`) configuration file:
 
@@ -64,7 +64,7 @@ echo 'export http_proxy="http://192.168.11.51:3128"' >> /etc/bashrc
 echo 'export https_proxy="http://192.168.11.51:3128"' >> /etc/bashrc
 ```
 
-### Update the Host and Restart
+### Update the host and restart
 
 Install additional packages and update the host:
 
@@ -79,9 +79,9 @@ Restart the host to apply all changes and ensure the new settings take effect:
 shutdown -r now
 ```
 
-## Final Thoughts
+## Final hhoughts
 
-With these preparation steps complete, the Kubernetes cluster is ready for deployment. Properly configuring SELinux, disabling swap, and setting up proxy settings ensure that the environment is optimized for Kubernetes. The next steps will involve installing the container runtime, Kubernetes components, and setting up the first master node. 
+With these preparation steps complete, the first Kubernetes master node is ready for deployment. Properly configuring SELinux, disabling swap, and setting up proxy settings ensure that the environment is optimized for Kubernetes. The next steps will involve installing the container runtime, Kubernetes components, and setting up the first master node. 
 
 
 {% endraw %}
