@@ -1,0 +1,19 @@
+---
+layout: single
+title: "Installing Kubernetes Cluster at the Homelab: Installation"
+subtitle: ""
+date: 2024-10-05 08:15:00 +0100
+background: '/image/01.jpg'
+tags: ['kubernetes']
+---
+
+{% raw %}
+
+
+I decided to reinstall a Kubernetes cluster at my homelab, and in this article, I am documenting the preparation steps I took. This is the second part of the article. Previous one you are able to find [here](./2024-10-05-kubernetes-install-1)
+
+## 
+
+
+{% endraw %}
+

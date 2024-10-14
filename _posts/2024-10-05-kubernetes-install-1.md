@@ -64,6 +64,22 @@ echo 'export http_proxy="http://192.168.11.51:3128"' >> /etc/bashrc
 echo 'export https_proxy="http://192.168.11.51:3128"' >> /etc/bashrc
 ```
 
+### Activating Packet Forwarding
+
+The `net.ipv4.ip_forward` setting controls whether the Linux kernel forwards IPv4 packets between network interfaces. By default, this value is set to 0, which disables packet forwarding. Setting this value to 1 enables packet forwarding, which is essential for Kubernetes networking.
+
+```bash
+if ! grep -q '^net.ipv4.ip_forward' /etc/sysctl.conf; then
+  echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
+else
+  sed -i 's/^net.ipv4.ip_forward.*/net.ipv4.ip_forward = 1/' /etc/sysctl.conf
+fi
+
+# Apply the changes
+sysctl -p
+```
+
+
 ### Update the host and restart
 
 Install additional packages and update the host:
