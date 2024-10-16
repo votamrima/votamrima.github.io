@@ -18,7 +18,7 @@ The concept basically:
 
 There are 5 pillars of information security:
 - [confidentiality](./2024-08-04-cissp-confidentiality.md)
-- [Integrity]()
+- [Integrity](2024-08-05-cissp-integrity.md)
 - [Availability]()
 - [Authenticity]()
 - [Nonrepudiation]()

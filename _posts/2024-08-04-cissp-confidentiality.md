@@ -1,15 +1,17 @@
 ---
 layout: single
-title: "First element of the CIA Triad - Confidentiality. Notes"
+title: First element of the CIA Triad - Confidentiality. Notes
 subtitle: ""
 date: 2024-08-04 08:15:00 +0100
-background: '/image/01.jpg'
-tags: ['cissp','security']
+background: /image/01.jpg
+tags:
+  - cissp
+  - security
 ---
 
 {% raw %}
 
-Confidentiality is the first principle of the CIA Triad. 
+Confidentiality is the first principle of the [CIA Triad](./2024. 
 
 Confidentialit measures the protection of the secrecy of:
 	- data
