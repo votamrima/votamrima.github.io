@@ -95,7 +95,7 @@ Restart the host to apply all changes and ensure the new settings take effect:
 shutdown -r now
 ```
 
-## Final hhoughts
+## Final thoughts
 
 With these preparation steps complete, the first Kubernetes master node is ready for deployment. Properly configuring SELinux, disabling swap, and setting up proxy settings ensure that the environment is optimized for Kubernetes. The next steps will involve installing the container runtime, Kubernetes components, and setting up the first master node. 
 
