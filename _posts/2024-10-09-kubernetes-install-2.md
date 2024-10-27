@@ -2,7 +2,7 @@
 layout: single
 title: "Installing Kubernetes Cluster at the Homelab: Installation"
 subtitle: ""
-date: 2024-10-05 08:15:00 +0100
+date: 2024-10-20 08:15:00 +0100
 background: '/image/01.jpg'
 tags: ['kubernetes']
 ---
