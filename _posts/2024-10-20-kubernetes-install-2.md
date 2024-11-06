@@ -10,7 +10,7 @@ tags: ['kubernetes']
 {% raw %}
 
 
-This is the second part of the note. Previous one you are able to find [here](./2024-10-05-kubernetes-install-1)
+This is the second part of the note. Previous one you are able to find [here](2024-10-05-kubernetes-install-1)
 
 In this note I'm describing which packages and how they had been installed and configured. 
 
