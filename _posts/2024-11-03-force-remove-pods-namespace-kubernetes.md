@@ -20,13 +20,13 @@ I was installing cert-manager resources, but something went wrong, and the pods 
 
 To delete all resources in the `cert-manager` namespace, I decided to delete the namespace directly using these steps:
 
-1. Export the namespace json:
+**Export the namespace json**:
 
 ```bash
 kubectl get namespace cert-manager -o json > /tmp/cert-manager-namespace.json
 ```
 
-2. In the exported JSON, remove the finalizers field so it looks like this:
+**In the exported JSON, remove the finalizers field so it looks like this**:
 
 ```yaml
    "spec": {
@@ -34,7 +34,7 @@ kubectl get namespace cert-manager -o json > /tmp/cert-manager-namespace.json
    },   
 ```
 
-3. Replace the namespace definition:
+**Replace the namespace definition**:
 
 ```bash
 kubectl replace --raw "/api/v1/namespaces/cert-manager/finalize" -f /tmp/cert-manager-namespace.json
@@ -46,19 +46,19 @@ After these steps, the namespace was deleted, but the pods were still stuck in a
 
 To delete the orphaned pods, I proceeded with the following steps:
 
-1. Run ``kubectl proxy`` This allows communication directly with the Kubernetes API.
+**Run ``kubectl proxy`` This allows communication directly with the Kubernetes API.**
 
 ```bash
 kubectl proxy &
 ```
 
-2. Identify terminating pods:
+**Identify terminating pods:**
 
 ```bash
 kubectl get pods --field-selector=status.phase!=Terminating -n cert-manager
 ```
 
-3. Force delete all terminating pods:
+**Force delete all terminating pods:**
 
 ```bash
 kubectl get pods --field-selector=status.phase!=Terminating -n cert-manager -o json | jq -r '.items[] | "kubectl delete pod \(.metadata.name) -n \(.metadata.namespace) --grace-period=0 --force"' | sh
