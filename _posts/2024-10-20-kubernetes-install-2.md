@@ -45,6 +45,7 @@ My environment is running behind the proxy, I added proxy environment variables 
 SERVICE_FILE="/etc/systemd/system/multi-user.target.wants/containerd.service"
 PROXY_SETTINGS=$(cat <<EOF
 # {mark} ANSIBLE MANAGED BLOCK
+Environment="NO_PROXY=127.0.0.1,localhost,192.168.11.0/8,10.96.0.1/16,192.168.0.0/16
 Environment="HTTP_PROXY=http://192.168.11.51:3128"
 Environment="HTTPS_PROXY=http://192.168.11.51:3128"
 EOF
