@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Installing and configuring Rancher using Helm"
+title: "Installing and Configuring Rancher on a Kubernetes Cluster"
 subtitle: ""
 date: 2024-10-23 08:15:00 +0100
 background: '/image/01.jpg'
@@ -9,21 +9,20 @@ tags: ['kubernetes','helm']
 
 {% raw %}
 
-This note is about installing and configuring Rancher on the Kubernetes cluster. The easies way of that using Helm which I am describing in this note. 
-
+This note describes the steps to install and confige Rancher on the Kubernetes cluster. The easies way to do that is by using Helm and that is  which I would like to cover here.
 
 ## Installing helm
 
-As I use Fedora as my main Workstation, it is more preferable to me install helm using yum (or dnf) package manager. Helm is available on the official repository.
+As I use Fedora as my main Workstation, installing Helm using yum (or dnf) package manager is most convenient. Helm is available in the official repository.
 
 ````bash
 sudo yum install helm
 ````
 
-## Rancher pre-installation 
+## Rancher Pre-installation 
 
 ### Creating namespace
-For installing Rancher using helm, I created a new Kubernetes namespace where the resources will be installed. The default name of this namespace is called ``cattle-system``. It is important to name the namespace for rancher ``cattle-system``.
+To install Rancher, first create a new Kubernetes namespace where the resources will be installed. By default, this namespace should be named  ``cattle-system``.
 
 ````bash
 admin@fedora40:~$ kubectl create namespace cattle-system
