@@ -1,0 +1,233 @@
+---
+layout: single
+title: "Installing and configuring Rancher using Helm"
+subtitle: ""
+date: 2024-10-23 08:15:00 +0100
+background: '/image/01.jpg'
+tags: ['kubernetes','helm']
+---
+
+{% raw %}
+
+This note is about installing and configuring Rancher on the Kubernetes cluster. The easies way of that using Helm which I am describing in this note. 
+
+
+## Installing helm
+
+As I use Fedora as my main Workstation, it is more preferable to me install helm using yum (or dnf) package manager. Helm is available on the official repository.
+
+````bash
+sudo yum install helm
+````
+
+## Rancher pre-installation 
+
+### Creating namespace
+For installing Rancher using helm, I created a new Kubernetes namespace where the resources will be installed. The default name of this namespace is called ``cattle-system``. It is important to name the namespace for rancher ``cattle-system``.
+
+````bash
+admin@fedora40:~$ kubectl create namespace cattle-system
+namespace/cattle-system created
+````
+
+### Add helm chart repository 
+
+I added two repositories of rancher:
+
+````bash
+admin@fedora40:~$ helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+"rancher-latest" has been added to your repositories
+admin@fedora40:~$ helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+"rancher-stable" has been added to your repositories
+admin@fedora40:~$ 
+````
+
+### Configure SSL configuration
+
+The Rancher management server requires SSL/TLS configuration.
+
+According to Rancher installation documentation, there are multiple options for the source of the certificate. Most recommended are 
+- Rancher-generated TLS certificate
+- Let's Encrypt
+- Your own certificate
+
+I used to apply the first option - Rancher-generated certificate. In this case is needed to install ``cert-manager`` into the cluster.
+
+````bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.1/cert-manager.yaml
+````
+
+And check if all pods of cert-manager are running:
+
+````bash
+admin@fedora40:~$ kubectl get pods -n cert-manager
+NAME                                       READY   STATUS    RESTARTS   AGE
+cert-manager-5c887c889d-gxlsl              1/1     Running   0          5m4s
+cert-manager-cainjector-58f6855565-slkn2   1/1     Running   0          5m4s
+cert-manager-webhook-6647d6545d-psqqd      1/1     Running   0          5m4s
+admin@fedora40:~$ 
+````
+
+## Rancher installation
+
+### Specify the chart version
+
+The version of Kubernetes which I installed is - v1.31.2. 
+
+To install the Rancher I used the rancher-latest repo and run the following command.
+
+````bash
+seymur@fedora40:~$ helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=rancher.home.lab --set bootstrapPassword=admin
+Error: INSTALLATION FAILED: chart "rancher" matching 1.31.2 not found in rancher-latest index. (try 'helm repo update'): no chart version found for rancher-1.31.2
+````
+
+Unfortunatelly, there is no helm chart for my Kubernetes version available. Therefore we need to find the latest available version.
+
+````bash
+seymur@fedora40:~$ helm search repo rancher-latest/rancher --versions | head -5
+NAME                    CHART VERSION   APP VERSION     DESCRIPTION                                       
+rancher-latest/rancher  2.9.3           v2.9.3          Install Rancher Server to manage Kubernetes clu...
+rancher-latest/rancher  2.9.2           v2.9.2          Install Rancher Server to manage Kubernetes clu...
+rancher-latest/rancher  2.9.1           v2.9.1          Install Rancher Server to manage Kubernetes clu...
+rancher-latest/rancher  2.9.0           v2.9.0          Install Rancher Server to manage Kubernetes clu...
+````
+
+The latest chart to install the Rancher at this time is ``2.9.3``.
+
+Now we can re-run installation command using specified version:
+
+````bash
+seymur@fedora40:~$ helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=rancher.home.lab --set bootstrapPassword=admin --version 2.9.3
+Error: INSTALLATION FAILED: chart requires kubeVersion: < 1.31.0-0 which is incompatible with Kubernetes v1.31.2
+````
+
+And again I got back the error message. 
+
+### Remove version from chart.
+
+As an option, I would download the latest chart and check it in detail.
+
+**Download the chart:**
+
+````bash
+seymur@fedora40:~/tmp$ helm pull rancher-latest/rancher --version 2.9.3 --untar
+seymur@fedora40:~/tmp$ ll
+total 4
+drwxr-xr-x. 4 seymur seymur 4096 Nov 17 19:56 rancher
+seymur@fedora40:~/tmp$ 
+````
+
+**Delete version:**
+After short investigation, I came to opinion to delete ``kubeVersion`` parameter in ``rancher/Chart.yaml``.
+
+````yaml
+apiVersion: v2
+appVersion: v2.9.3
+description: Install Rancher Server to manage Kubernetes clusters across providers.
+home: https://rancher.com
+icon: https://github.com/rancher/ui/blob/master/public/assets/images/logos/welcome-cow.svg
+keywords:
+- rancher
+#kubeVersion: < 1.31.0-0
+maintainers:
+- email: charts@rancher.com
+  name: Rancher Labs
+name: rancher
+sources:
+- https://github.com/rancher/rancher
+- https://github.com/rancher/server-chart
+version: 2.9.3
+````
+
+And run helm install command using edited chart:
+
+````bash
+seymur@fedora40:~/tmp$ helm install rancher ./rancher --namespace cattle-system --set hostname=rancher.home.lab --set bootstrapPassword=admin
+NAME: rancher
+LAST DEPLOYED: Sun Okt 27 20:14:02 2024
+NAMESPACE: cattle-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Rancher Server has been installed.
+
+NOTE: Rancher may take several minutes to fully initialize. Please standby while Certificates are being issued, Containers are started and the Ingress rule comes up.
+
+Check out our docs at https://rancher.com/docs/
+
+If you provided your own bootstrap password during installation, browse to https://rancher.home.lab to get started.
+
+If this is the first time you installed Rancher, get started by running this command and clicking the URL it generates:
+
+echo https://rancher.home.lab/dashboard/?setup=$(kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}')
+
+To get just the bootstrap password on its own, run:
+
+
+kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
+
+
+Happy Containering!
+````
+
+And check if the rancher's containers are running
+
+````bash
+seymur@fedora40:~/tmp$ kubectl -n cattle-system rollout status deploy/rancher
+deployment "rancher" successfully rolled out
+seymur@fedora40:~/tmp$ 
+seymur@fedora40:~$ kubectl get pods -n cattle-system
+NAME                               READY   STATUS      RESTARTS   AGE
+.....
+rancher-677f7bd9b-9b7f8            1/1     Running     0          51m
+rancher-677f7bd9b-gh4m6            1/1     Running     0          51m
+rancher-677f7bd9b-zprnx            1/1     Running     0          51m
+rancher-webhook-59b598d8d5-g2px9   1/1     Running     0          29m
+seymur@fedora40:~$ 
+seymur@fedora40:~$ kubectl -n cattle-system get deploy rancher
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+rancher   3/3     3            3           54m
+````
+
+For quick check and log in to rancher following actions should be done:
+
+Forward port to localhost:
+
+````bash
+kubectl -n cattle-system port-forward svc/rancher 8443:443
+````
+
+Get the current password to enter to rancher. The default password for Rancher is "admin". For testing and learning purposes I think we can leave it. But, it is strongly recommended to use more advanced authentication options, like tokens, using service accounts, authenticating using AD or LDAP.
+````bash
+seymur@fedora40:~/tmp$ kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
+admin
+````
+
+And by typing ``https://localhost:8443`` in the browser we can use Rancher. 
+
+Nevertheless, it could not be an option for the advanced production environments. For the production purposes it is necessary to use LoadBalancer or Ingress.  
+
+
+
+````
+
+````
+````
+
+````
+
+
+````
+
+
+````
+
+## Reference:
+
+- [https://helm.sh/docs/intro/install/](https://helm.sh/docs/intro/install/)
+- [Install the Rancher Helm Chart](https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster#install-the-rancher-helm-chart)
+- [cert-manager installation](https://cert-manager.io/docs/installation/)
+
+{% endraw %}
+
