@@ -16,7 +16,7 @@ minimal_mistakes_skin    : "dark" #"default" # "air", "aqua", "contrast", "dark"
 
 # Site Settings
 locale                   : "en-US"
-title                   : "Stories from the HomeLab"
+title                    : "Stories from the HomeLab"
 #title                    : "Some stories from iT lab"
 title_separator          : "-"
 subtitle                 :  #"Welcome, dear guest. Please, keep in mind that there are not published any tutorials or learning materials. All published materials"
