@@ -24,7 +24,7 @@ openssl req -new -newkey rsa:4096 -out newcertificate.csr -config openssl_req.cn
 
 Example ``openssl_req.cnf`` file:
 
-````cnf
+````bash
 [req]
 distinguished_name = req_distinguished_name
 req_extensions = req_ext
