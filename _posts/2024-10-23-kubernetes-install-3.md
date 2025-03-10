@@ -26,6 +26,20 @@ kubeadm init --control-plane-endpoint="192.168.11.21:6443" --upload-certs --apis
 
 After executing this command, `kubeadm` will provide further instructions for setting up additional nodes and deploying the pod network.
 
+Generally, the `kubeadm init` installation follows these steps: 
+
+- `Preflight` – Ensures that the system configuration and conditions are met. At this step, `kubeadm` downloads the core container images.  
+- Generates a self-signed CA and certificates for etcd, the API server, and the proxy.  
+- Creates configuration files for the core Kubernetes services.  
+- Starts the kubelet service, which manages the running Kubelet containers.  
+- Initializes the first control node. Pods for the API server, controller manager, scheduler, and etcd are created and started.  
+- `upload-configuration` creates the `kubelet` config and `ConfigMaps` for cluster configuration.  
+- Uploads certificates to `/etc/kubernetes/pki`.  
+- Marks the node as a control node and generates a token for other nodes to join.  
+
+Another important point at this step is that `kubeadm` installs the CoreDNS and kube-proxy add-ons and brings their pods to the `Ready` state until the network service is installed.
+
+
 ### Step 2: Deploy Calico Network
 
 Once the cluster is initialized, deploy Calico for the pod network:
