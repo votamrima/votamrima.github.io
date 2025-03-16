@@ -11,6 +11,14 @@ tags: ['kubernetes','cluster']
 
 This is the some note about the analyzing Kubernetes cluster. Here are give some general comands and explanation how to do that.
 
-### 
+### Static pods
+The systemd process of the kubelet runs the static pods from the /etc/kubernetes/manifests directory.
+
+
+    path: /etc/systemd/system/multi-user.target.wants
+    path: /etc/systemd/system/multi-user.target.wants
+
+
+
 {% endraw %}
 
