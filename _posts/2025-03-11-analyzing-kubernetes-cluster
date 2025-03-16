@@ -39,8 +39,8 @@ Here is the basic example of running the static pod:
 I created a manifest on my admin host. For example I use nginx:
 
 ````bash
-seymur@fedora40:~$ kubectl run staticpod --image=nginx --dry-run=client -o yaml > /opt/kubernetes/nginx-staticpod.yaml
-seymur@fedora40:~$ less /opt/kubernetes/nginx-staticpod.yaml 
+admin@fedora40:~$ kubectl run staticpod --image=nginx --dry-run=client -o yaml > /opt/kubernetes/nginx-staticpod.yaml
+admin@fedora40:~$ less /opt/kubernetes/nginx-staticpod.yaml 
 apiVersion: v1
 kind: Pod
 metadata:
@@ -60,15 +60,15 @@ status: {}
 
 Just copy this manifest to the worker node:
 ````bash
-seymur@fedora40:~$ scp /opt/kubernetes/nginx-staticpod.yaml k-worker1:/etc/kubernetes/manifests/nginx.yml
+admin@fedora40:~$ scp /opt/kubernetes/nginx-staticpod.yaml k-worker1:/etc/kubernetes/manifests/nginx.yml
 ````
 
 And check:
 ````bash
-seymur@fedora40:~$ kubectl get pods -o wide
+admin@fedora40:~$ kubectl get pods -o wide
 NAME                              READY   STATUS    RESTARTS   AGE     IP               NODE                    NOMINATED NODE   READINESS GATES
 staticpod-kube-worker1.home.lab   1/1     Running   0          9m34s   192.168.240.43   kube-worker1.home.lab   <none>           <none>
-seymur@fedora40:~$ 
+admin@fedora40:~$ 
 ````
 
 ### Managing Node State
