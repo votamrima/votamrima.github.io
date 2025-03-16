@@ -32,6 +32,7 @@ Different vendors provide networking solutions for Kubernetes. Depending on the 
 - **Flannel** – Slightly outdated and does not support network policies.  
 - **Multus** – The default plugin in OpenShift, capable of working with multiple network plugins.  
 - **Weave** – Another commonly used network plugin that supports all essential networking features.  
+-
 
 
 
