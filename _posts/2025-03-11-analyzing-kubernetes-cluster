@@ -12,7 +12,8 @@ tags: ['kubernetes','cluster']
 This is the some note about the analyzing Kubernetes cluster. Here are give some general comands and explanation how to do that.
 
 ### Static pods
-The systemd process of the kubelet runs the static pods from the ``/etc/kubernetes/manifests`` directory.
+
+By default the kubelet, during the starting, runs the static pods from the ``/etc/kubernetes/manifests`` directory. This is the current output of the manifests at my home lab.
 
 ````bash
 [root@kube-master1 ~]# ll /etc/kubernetes/manifests/
@@ -22,10 +23,84 @@ total 16
 -rw-------. 1 root root 3335 Nov 12 00:39 kube-controller-manager.yaml
 -rw-------. 1 root root 1694 Nov 12 00:39 kube-scheduler.yaml
 ````
-As we see here, from the box in kubernetes are configured static pods for etcd, kube-apiserver, kube-controller-manager, kube-scheduler. On demand it is possible to add a new static pod by copying the manifest file in the ``/etc/kubernetes/manifests/``.
+
+As we see here, by default in kubernetes are configured static pods for etcd, kube-apiserver, kube-controller-manager, kube-scheduler.  On demand it is possible to add a new static pod by copying the manifest file in the ``/etc/kubernetes/manifests/``.
+
+The directory for static pods is defined in ``/var/lib/kubelet/config.yaml``. And on demand it is able to be chanded, by modifying the value of ``staticPodPath``. **Do it carefully!!!**
+
+Static pods are used to start the core Kubernetes services. You can run agents by using static pods even if the API server is down, too. 
+
+Static pod guarantee the the manifest will run even if API Server is down.
+
+Static pods are able to run on worker nodes.
+
+Here is the basic example of running the static pod:
+
+I created a manifest on my admin host. For example I use nginx:
+
+````bash
+seymur@fedora40:~$ kubectl run staticpod --image=nginx --dry-run=client -o yaml > /opt/kubernetes/nginx-staticpod.yaml
+seymur@fedora40:~$ less /opt/kubernetes/nginx-staticpod.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: staticpod
+  name: staticpod
+spec:
+  containers:
+  - image: nginx
+    name: staticpod
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+````
+
+Just copy this manifest to the worker node:
+````bash
+seymur@fedora40:~$ scp /opt/kubernetes/nginx-staticpod.yaml k-worker1:/etc/kubernetes/manifests/nginx.yml
+````
+
+And check:
+````bash
+seymur@fedora40:~$ kubectl get pods -o wide
+NAME                              READY   STATUS    RESTARTS   AGE     IP               NODE                    NOMINATED NODE   READINESS GATES
+staticpod-kube-worker1.home.lab   1/1     Running   0          9m34s   192.168.240.43   kube-worker1.home.lab   <none>           <none>
+seymur@fedora40:~$ 
+````
+
+### Managing Node State
+
+- ``kubernetes cordon`` is used to mark a node unscheduable. Once applied the command no pods will be started on the node.
+- ``kubernetes uncordon`` brings the node back to normal state. 
+- ``kubernetes drain`` marks a node as unscheduable and removes all running pods from it. **Use the drain very carefully!!!**
+  - This command doesn't remove pods in DaemonSet. To forcely remove them, apply ``--ignore-daemonsets`` parameter to the drain command. 
+  - ``--delete-emptydir-data`` deletes data from emptyDir Pod volumes.
+
+By using the **cordon** and **drain** is being set a taint on the nodes. A taint is a restriction that prevents pods from running and scheduling on a node. About the taint will be another note here in the blog.
+
+Once the **cordon** command is run, you can find ``Taints:  node.kubernetes.io/unschedulable:NoSchedule`` field in describtion of the node.
+
+
+### Managing node services
+
+There are 2 services on the node that run Kubernetes cluster: **kubelet** and **containerd**. Both services are managed by systemd and to manage them use ``systemctl start/stop kubelet/containerd`` command.
 
 
 
+
+
+
+````bash
+````
+````bash
+````
+````bash
+````
+````bash
+````
 
 {% endraw %}
 
