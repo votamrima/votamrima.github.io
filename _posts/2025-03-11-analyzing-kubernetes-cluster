@@ -14,9 +14,14 @@ This is the some note about the analyzing Kubernetes cluster. Here are give some
 ### Static pods
 The systemd process of the kubelet runs the static pods from the /etc/kubernetes/manifests directory.
 
-
-    path: /etc/systemd/system/multi-user.target.wants
-    path: /etc/systemd/system/multi-user.target.wants
+````bash
+[root@kube-master1 ~]# ll /etc/kubernetes/manifests/
+total 16
+-rw-------. 1 root root 2571 Nov 12 00:39 etcd.yaml
+-rw-------. 1 root root 3828 Nov 12 00:39 kube-apiserver.yaml
+-rw-------. 1 root root 3335 Nov 12 00:39 kube-controller-manager.yaml
+-rw-------. 1 root root 1694 Nov 12 00:39 kube-scheduler.yaml
+````
 
 
 
