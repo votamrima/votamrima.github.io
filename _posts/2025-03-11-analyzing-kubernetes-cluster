@@ -12,7 +12,7 @@ tags: ['kubernetes','cluster']
 This is the some note about the analyzing Kubernetes cluster. Here are give some general comands and explanation how to do that.
 
 ### Static pods
-The systemd process of the kubelet runs the static pods from the /etc/kubernetes/manifests directory.
+The systemd process of the kubelet runs the static pods from the ``/etc/kubernetes/manifests`` directory.
 
 ````bash
 [root@kube-master1 ~]# ll /etc/kubernetes/manifests/
@@ -22,6 +22,8 @@ total 16
 -rw-------. 1 root root 3335 Nov 12 00:39 kube-controller-manager.yaml
 -rw-------. 1 root root 1694 Nov 12 00:39 kube-scheduler.yaml
 ````
+As we see here, from the box in kubernetes are configured static pods for etcd, kube-apiserver, kube-controller-manager, kube-scheduler. On demand it is possible to add a new static pod by copying the manifest file in the ``/etc/kubernetes/manifests/``.
+
 
 
 
