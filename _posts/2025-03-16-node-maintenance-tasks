@@ -118,6 +118,176 @@ Deprecated: Use `etcdutl snapshot status` instead.
 +----------+----------+------------+------------+
 ````
 
+### Restoring Etcd from snapshot
+The restore procedure looks like following:
+
+- Stop core Kubernetes services. To do it, we shoul move the static pods' manifests to some other directory (Don't remove them). By doing this the core services will be disapper at the momment. Use ``crictl ps`` to verify that.
+
+````bash
+mkdir /etc/kubernetes/manifests_bckp
+mv /etc/kubernetes/manifests/* /etc/kubernetes/manifests_bckp/
+crictl ps
+````
+
+- Rename the etcd directory in ``/var/lib/etcd``.
+
+Run restore command:
+
+````bash
+./etcdctl snapshot restore /opt/etcd-backups/etcd-backup1 /var/lib/etcd
+````
+
+- Move the static Pod files 
+
+````bash
+mv /etc/kubernetes/manifests_bckp/* /etc/kubernetes/manifests/
+````
+
+- check if the etcd runs again
+
+````bash
+crictl ps
+kubectl get all
+````
+
+### Kubernetes Cluster Update
+
+Kubernetes is able to upgrade from another minor version to anothe minor version. Skipping the version is not supported. For example, directly upgrade from 1.29 to 1.32 is not supported without upgrade to 1.30 and 1.31.
+
+Here is the basic steps to proceed the upgrade:
+- Upgrade kubeadm
+- Update Kubernetes repository in ``/etc/yum.repos.d/kubernetes.repo``
+- First are upgraded control nodes, second - worker nodes. It is not necessary to upgrade all immediately. You are able to run different versions some time.
+- Use official documentation: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+
+
+- Here I updated the current version of the repository:
+
+````bash
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/
+````
+
+#### kubeadm upgrade
+Print the versions of all available versions of kubeadm:
+
+````bash
+sudo yum list --showduplicates kubeadm --disableexcludes=kubernetes
+````
+
+Installing the latest version which is available for now.
+
+````bash
+yum install kubeadm-'1.32.3-*' --disableexcludes=kubernetes
+````
+
+Verifying the current version
+
+````bash
+[root@kube-master1 ~]# kubeadm version
+kubeadm version: &version.Info{Major:"1", Minor:"32", GitVersion:"v1.32.3", GitCommit:"32cc146f75aad04beaaa245a7157eb35063a9f99", GitTreeState:"clean", BuildDate:"2025-03-11T19:57:38Z", GoVersion:"go1.23.6", Compiler:"gc", Platform:"linux/amd64"}
+````
+
+#### Running upgrade of the control node
+
+- Preparing upgrade plan:
+````bash
+kubeadm upgrade plan
+````
+- Running upgrade. It took for me max 5 minutes. 
+
+````bash
+kubeadm upgrade apply v1.32.3
+.....
+
+[upgrade] SUCCESS! A control plane node of your cluster was upgraded to "v1.32.3".
+````
+
+All these steps should be proceeded on each control node.
+
+Once the upgrade of nodes finished, check from the admin host using ``kubectl`` the current version of the nodes.
+
+````bash
+seymur@fedora40:~$ kubectl get nodes
+NAME                    STATUS   ROLES           AGE    VERSION
+kube-master1.home.lab   Ready    control-plane   125d   v1.31.2
+kube-master2.home.lab   Ready    control-plane   125d   v1.31.2
+kube-master3.home.lab   Ready    control-plane   125d   v1.31.2
+kube-worker1.home.lab   Ready    worker          125d   v1.31.2
+kube-worker2.home.lab   Ready    worker          125d   v1.31.2
+kube-worker3.home.lab   Ready    worker          125d   v1.31.2
+````
+
+It is still the previous version. In order to solve the issue, you should upgrade the kubelet and kubectl on the node VM.
+
+#### Update kubelet and kubectl
+
+Mark the node as unschedulable to set the node in maintenance
+
+````bash
+seymur@fedora40:~$ kubectl drain kube-master1.home.lab --ignore-daemonsets
+````
+
+Upgrade required packages
+
+````bash
+yum install -y kubelet-'1.32.3-*' kubectl-'1.32.3-*' --disableexcludes=kubernetes
+````
+
+Reload the kubelet service on the
+
+````bash
+systemctl daemon-reload
+systemctl restart kubelet
+````
+
+Bring the node back online by marking it schedulable:
+
+````bash
+kubectl uncordon kube-master1.home.lab
+````
+
+#### Upgrade of worker nodes
+Detailed documentation: https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/upgrading-linux-nodes/
+
+1. Update the yum repo file
+2. Update kubeadm
+
+````bash
+yum install -y kubeadm-'1.32.3-*' --disableexcludes=kubernetes
+````
+
+3. Upgrade node
+
+````bash
+kubeadm upgrade node
+````
+
+3. Drainin the host in order to set the node into maintenance
+
+````bash
+seymur@fedora40:~$ kubectl drain kube-worker1.home.lab --ignore-daemonsets 
+````
+
+4. Updating the kubelet and kubeadm
+
+````bash
+[root@kube-worker1 ~]# yum install -y kubelet-'1.32.3-*' kubectl-'1.32.3-*' --disableexcludes=kubernetes 
+````
+
+5. Reload daemon and restart kubelet
+
+````bash
+[root@kube-worker1 ~]# systemctl daemon-reload
+[root@kube-worker1 ~]# systemctl restart kubelet
+````
+
+6. Uncording the worker node
+
+````bash
+seymur@fedora40:~$ kubectl uncordon kube-worker3.home.lab 
+````
+
+
 
 ````bash
 ````
@@ -135,15 +305,6 @@ Deprecated: Use `etcdutl snapshot status` instead.
 ````
 ````bash
 ````
-````bash
-````
-````bash
-````
-````bash
-````
-````bash
-````
-
 
 
 
