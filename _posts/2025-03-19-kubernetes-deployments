@@ -1,0 +1,94 @@
+---
+layout: single
+title: "Kubernetes Deployments"
+subtitle: ""
+date: 2025-03-19 08:15:00 +0100
+background: '/image/01.jpg'
+tags: ['kubernetes']
+---
+
+{% raw %}
+
+Deployment is the standart function of Kubernetes for running applications in the pods. 
+
+Deployment based on the deployment resource which uses based on ReplicaSet manages the scalability of the application.
+
+To satisfy a zero-downtime update process is used ``RollingUpdate`` feature of deployment.
+
+````bash
+seymur@fedora40:~$ kubectl create deploy testdeploy --image nginx:1.17 --replicas=2
+deployment.apps/testdeploy created
+
+````
+
+Check deployment:
+````bash
+seymur@fedora40:~$ kubectl get all --selector app=testdeploy
+NAME                             READY   STATUS    RESTARTS   AGE
+pod/testdeploy-bf85d954f-695w8   1/1     Running   0          6m28s
+pod/testdeploy-bf85d954f-bgvkr   1/1     Running   0          6m28s
+
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/testdeploy   2/2     2            2           6m28s
+
+NAME                                   DESIRED   CURRENT   READY   AGE
+replicaset.apps/testdeploy-bf85d954f   2         2         2       6m28s
+seymur@fedora40:~$ 
+````
+
+In deployment it's possible to upscale or downscale the amount of running pods:
+````bash
+kubectl scale deployment testdeploy  --replicas 0
+kubectl scale deployment testdeploy  --replicas 4
+````
+
+The following command shows general information about the deployment - name, number of the running pods, version of the running image
+
+````bash
+seymur@fedora40:~$ kubectl get deployments.apps testdeploy -o wide
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS   IMAGES       SELECTOR
+testdeploy   4/4     4            4           3h59m   nginx        nginx:1.17   app=testdeploy
+seymur@fedora40:~$ 
+
+````
+
+
+
+
+In case if needed just the name of the using image, it could be used the following command:
+
+````bash
+seymur@fedora40:~$ kubectl get deployments.apps testdeploy -o wide -o=jsonpath='{.spec.template.spec.containers[*].image}'
+nginx:1.17seymur@fedora40:~$ 
+````
+
+
+To apply new image in the current deployment, you should change the active image. Basically this command is used to realise a deployment of the new version:
+
+````bash
+seymur@fedora40:~$ kubectl set image deployments testdeploy nginx=nginx:1.18
+deployment.apps/testdeploy image updated
+````
+
+And check if deployment is ready:
+
+````bash
+seymur@fedora40:~$ kubectl get all --selector app=testdeploy
+NAME                             READY   STATUS    RESTARTS   AGE
+pod/testdeploy-b777bc658-2vd8j   1/1     Running   0          34s
+pod/testdeploy-b777bc658-swnwl   1/1     Running   0          34s
+pod/testdeploy-b777bc658-tm4z8   1/1     Running   0          10s
+pod/testdeploy-b777bc658-z8rmm   1/1     Running   0          9s
+
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/testdeploy   4/4     4            4           4h12m
+
+NAME                                   DESIRED   CURRENT   READY   AGE
+replicaset.apps/testdeploy-b777bc658   4         4         4       34s
+replicaset.apps/testdeploy-bf85d954f   0         0         0       4h12m
+seymur@fedora40:~$
+````
+
+
+{% endraw %}
+

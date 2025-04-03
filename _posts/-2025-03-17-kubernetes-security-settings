@@ -1,0 +1,327 @@
+---
+layout: single
+title: "Kubernetes General Security Settings"
+subtitle: ""
+date: 2025-03-17 08:15:00 +0100
+background: '/image/01.jpg'
+tags: ['kubernetes', 'security']
+---
+
+{% raw %}
+
+This is the some note about the Kubernetes security settings 
+
+### Some basic understanding
+To SecurityContext belong privilege and access controlling settings for pods and containers. Some points are:
+- access control on group and user level;
+- SELinux labels;
+- Linux security capabilities;
+- AppArmor;
+- Seccomp;
+- AllowPrivilegeEscalation setting;
+- runAsNonRoot setting
+- etc.
+
+The SecurityContext can be set at the levels of pod and container. The difference you can find using the explain command: 
+
+````bash
+seymur@fedora40:~$ kubectl explain pod.spec.securityContext | less
+````
+
+````bash
+kubectl explain pod.spec.containers.securityContext | less
+````
+
+Basically, we need to create a yaml file to run securitycontexty for the container. Demo yaml is available in [kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/), which I used here. 
+
+Next, run the created securitycontext yaml file:
+````bash
+seymur@fedora40:/opt/kubernetes/securitycontext$ kubectl apply -f securitycontext.yaml 
+pod/security-context-demo created
+seymur@fedora40:/opt/kubernetes/securitycontext$ kubectl get pods 
+NAME                          READY   STATUS    RESTARTS       AGE
+mypod-kube-worker1.home.lab   1/1     Running   1 (169m ago)   18h
+security-context-demo         1/1     Running   0              7s
+````
+
+And we see, that the  demo container is started. 
+
+Let's go inside to the container and inspect the default user and group which are used to run the process in the container:
+
+````bash
+seymur@fedora40:/opt/kubernetes/securitycontext$ kubectl exec -it security-context-demo -- sh
+~ $ ps
+PID   USER     TIME  COMMAND
+    1 1000      0:00 sleep 1h
+    7 1000      0:00 sh
+   13 1000      0:00 ps
+~ $ ls -l data/
+total 0
+drwxrwsrwx    2 root     2000             6 Mar 18 11:16 demo
+~ $ 
+````
+
+As it shown, the user 1000 run the sleep command and the /data/group directory inside of the container belongs to the group 2000. 
+
+If we try to create something out of the /data/group directory I return the denied error. 
+
+````bash
+/data $ touch file
+touch: file: Permission denied
+/data $ 
+````
+
+### Kubernetes Users
+
+In Kubernetes by default doesn't exist user management service. Nevertheless, it is possible to authenticate to Kubernetes using another user and it is realized using x509 certificates. 
+The classical login/logout process is possible by appling external identity provider, like AD, LDAP and etc
+
+Here I'm goin to describe using authentication based on x509 certificates.
+
+General process of realisation this approach looks like following:
+To create a user account, the following steps need to be performed:
+- Creating public/private key pair
+- Creating Certificate (Create request, sign it using CA)
+- Creating config file that uses these keys to access to Kubernetes
+- Creating RBAC Role and RBAC RoleBinding
+
+
+**Creating certificates:**
+
+Created certifcate and signed it using Kubernetes ``ca.key``
+
+````bash
+[root@kube-worker1 ~]# openssl genrsa -out test-user.key 4096
+[root@kube-worker1 ~]# 
+[root@kube-worker1 ~]# openssl req -new -key test-user.key -out test-user.csr -subj "/CN=test/O=k8s" 
+[root@kube-worker1 ~]# 
+[root@kube-worker1 ~]# openssl x509 -req -in test-user.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out test-user.crt -days 1000
+Certificate request self-signature ok
+subject=CN=test, O=k8s
+[root@kube-worker1 ~]# ll
+total 20
+-rw-r--r--. 1 root root 1452 Mar 25 18:29 test-user.crt
+-rw-r--r--. 1 root root 1598 Mar 25 18:27 test-user.csr
+-rw-------. 1 root root 3272 Mar 25 18:27 test-user.key
+[root@kube-worker1 ~]# 
+````
+
+Additionally, I created a test user at my workstation and copied kubernetes config file into the ``~/.kube`` and copied the created certification into the folder:
+
+````bash
+cp /home/seymur/.kube/config /home/test/.kube/
+
+````
+
+Setting new user
+````bash
+test@fedora40:~$ kubectl config set-credentials test --client-certificate /tmp/test-user.crt --client-key /tmp/test-user.key 
+User "test" set.
+````
+
+Creating a new context for the new user:
+````bash
+test@fedora40:~$ kubectl config set-context test-context --cluster kubernetes --namespace staff --user test
+Context "test-context" created.
+````
+
+Switching to newly createed context
+````bash
+test@fedora40:~$ kubectl config use-context test-context 
+Switched to context "test-context".
+test@fedora40:~$ kubectl config get-contexts 
+CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
+          kubernetes-admin@kubernetes   kubernetes   kubernetes-admin   
+*         test-context                  kubernetes   test               staff
+test@fedora40:~$ 
+````
+
+Creating role for and rolebinding for the test user. This step should be procedded using admin access to cluster.
+
+````bash
+seymur@fedora40:~$ kubectl create role staff -n staff --verb=get,list,create,delete,update,patch,watch --resource=deployment,replicasets,pods 
+role.rbac.authorization.k8s.io/staff created
+seymur@fedora40:~$ 
+seymur@fedora40:~$ kubectl -n staff create rolebinding staff-role-binding --user test --role staff 
+rolebinding.rbac.authorization.k8s.io/staff-role-binding created
+seymur@fedora40:~$ 
+````
+
+You can check the current config using this command:
+
+````bash
+test@fedora40:~$ kubectl config view
+````
+
+
+
+````bash
+kubectl get pods
+kubectl config view
+````
+
+
+
+
+
+````
+````
+
+
+
+
+
+#### Service Accounts
+
+A ServiceAccount is used to authorize pods to get information from the API. By default is used a ``default`` service account which generally provides minimum access. In case if need more access, should be created a specific SA. SA
+
+### RBAC
+RBAC is Role-Based-Access-Control. 
+
+In order to enable the access to the specific Role for SA in Kuberenetes should be created RoleBinding for that. By default the SA doesn't have a specific configuration. 
+
+Here below is described a routine which I used to learn the some basic principles of RBAC.
+
+1. Creating a simple pod with a some job inside. This is creating using the default ``default`` ServiceAccount:  
+
+````bash
+seymur@fedora40:~$ kubectl run mypod --image=alpine -- sleep 3600
+pod/mypod created
+seymur@fedora40:~$ kubectl get pods
+NAME                          READY   STATUS    RESTARTS        AGE
+mypod                         1/1     Running   0               22m
+seymur@fedora40:~$ 
+````
+
+2. Checking the current ServiceAccount configuration:
+````bash
+seymur@fedora40:~$ kubectl get pods mypod -o yaml | grep serviceAccount
+  serviceAccount: default
+  serviceAccountName: default
+      - serviceAccountToken:
+````  
+
+3. Access the pod using  
+
+````bash
+   kubectl exec -it mypod -- sh
+````  
+
+Inside the pod I am going to run a request to the Kubernetes cluster. Unfortunatelly, the curtl is not installed in the pod by default, therefore I should use ``wget`` instead.
+
+````bash
+/ # wget --no-check-certificate https://kubernetes/api/v1
+Connecting to kubernetes (10.96.0.1:443)
+wget: server returned error: HTTP/1.1 403 Forbidden
+/ # 
+````
+
+As we see, the access to the cluster from the pod is not allowed.
+
+But, by passing the authorization token to the request we are able to have an access to API resources.
+
+````bash
+/ # wget --header="Authorization: Bearer $TOKEN" --no-check-certificate https://kubernetes/api/v1
+Connecting to kubernetes (10.96.0.1:443)
+saving to 'v1'
+v1                   100% |*************************************************************************************| 10742  0:00:00 ETA
+'v1' saved
+
+````
+
+But if we try to access to specific resource, it will be failed:
+
+````bash
+/ # wget --header="Authorization: Bearer $TOKEN" --no-check-certificate https://kubernetes/api/v1/namespaces/default/pods/
+Connecting to kubernetes (10.96.0.1:443)
+wget: server returned error: HTTP/1.1 403 Forbidden
+/ # 
+````
+
+To gain the access to the specific resource, we need to create a service account and bind the account to the specific role. 
+
+````bash
+seymur@fedora40:~$ kubectl create sa mysa
+serviceaccount/mysa created
+seymur@fedora40:~$ kubectl create role list-pods --resource=pods --verb=list
+role.rbac.authorization.k8s.io/list-pods created
+````
+
+Here I created a role and rolebinding for the SA
+
+````bash
+seymur@fedora40:~$ kubectl create role list-pods --resource=pods --verb=list
+role.rbac.authorization.k8s.io/list-pods created
+seymur@fedora40:~$ 
+seymur@fedora40:~$ kubectl create rolebinding list-pods --role=list-pods --serviceaccount=default:mysa
+rolebinding.rbac.authorization.k8s.io/list-pods created
+````
+
+And a new pod with the created SA:
+
+````bash
+seymur@fedora40:~$ cat /opt/kubernetes/mypod.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysapod
+spec:
+  serviceAccountName: mysa
+  containers:
+  - image: alpine
+    name: mysapod
+    command:
+    - "sleep"
+    - "3600"
+````
+
+````bash
+seymur@fedora40:~$ kubectl apply -f /opt/kubernetes/mypod.yaml 
+````
+
+And by Here we are able to get access to the pods of default namespace
+
+````bash
+/ # wget --header="Authorization: Bearer $TOKEN" --no-check-certificate https://kubernetes/api/v1/namespaces/default/pods/
+Connecting to kubernetes (10.96.0.1:443)
+saving to 'index.html'
+index.html           100% |*************************************************************************************| 39038  0:00:00 ETA
+'index.html' saved
+````
+
+
+### ClusterRole and ClusterBidngin
+
+- ClusterRoles have the similar purpose as Roles. 
+- Access for the SA or users to the ClusterRoles is applied through a ClusterRoleBinding. 
+- Roles are applied to a Namespace level, the ClusterRole are apply to the entire cluster.
+- It is possible to give a SA from a Namespace access to ClusterRole using ClusterRoleBinding.
+
+The commands to get the list of all ClusterRoles and ClusterRoleBinding are:
+
+````bash
+seymur@fedora40:~$ kubectl get clusterrole 
+seymur@fedora40:~$ kubectl get clusterrolebindings.rbac.authorization.k8s.io 
+````
+
+
+
+
+
+
+
+````bash
+````
+````bash
+````
+````bash
+````
+````bash
+````
+````bash
+````
+
+
+
+{% endraw %}
+
