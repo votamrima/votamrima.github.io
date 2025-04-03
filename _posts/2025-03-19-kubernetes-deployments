@@ -89,6 +89,8 @@ replicaset.apps/testdeploy-bf85d954f   0         0         0       4h12m
 seymur@fedora40:~$
 ````
 
+````bash
+````
 
 {% endraw %}
 
