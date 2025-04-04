@@ -1,0 +1,55 @@
+---
+layout: single
+title: "Kubernetes DaemonSets"
+subtitle: ""
+date: 2025-03-19 08:15:00 +0100
+background: '/image/01.jpg'
+tags: ['kubernetes']
+---
+
+{% raw %}
+
+- DaemonSet is a special resource that ensures starting one application instance on each cluster node.
+- DaemonSet is widely used to start agents and user workloads. For example, kube-proxy. This service should be run on all cluster and thefore for this purpose is using DaemonSets
+- For running a DaemonSet on control-plane nodes it should be configured toleration. This allows the pods to run regardless of the control-plane taints
+- DaemonSet in compare with Deployment, doesn't have ``replicas`` and ``strategy``.
+
+
+Here below is some command.
+
+To apply the DaemonSet I would create a Deployment manifest and by editing it change to DaemonSet
+
+Creating Deployment manifest without starting a deployment:
+````bash
+seymur@fedora40:/opt/kubernetes/practice$ kubectl create deployment daemon --image=nginx --dry-run=client -o yaml > daemon.yml && ll
+total 4
+-rw-r--r--. 1 seymur seymur 388 Apr  4 20:52 daemon.yml
+seymur@fedora40:/opt/kubernetes/practice$ 
+````
+
+In the created file I changed ``kind`` field to ``DeploymentSet``, erased ``replicas: 1`` and ``strategy: {}`` fields. After editing run the file:
+
+````bash
+seymur@fedora40:/opt/kubernetes/practice$ kubectl apply -f daemon.yml 
+daemonset.apps/daemon created
+seymur@fedora40:/opt/kubernetes/practice$ 
+````
+And check result:
+
+````bash
+seymur@fedora40:/opt/kubernetes/practice$ kubectl get all --selector app=daemon -o wide
+NAME               READY   STATUS    RESTARTS   AGE   IP                NODE                    NOMINATED NODE   READINESS GATES
+pod/daemon-vz224   1/1     Running   0          33s   192.168.195.174   kube-worker2.home.lab   <none>           <none>
+pod/daemon-xp9k5   1/1     Running   0          33s   192.168.240.38    kube-worker1.home.lab   <none>           <none>
+
+NAME                    DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE   CONTAINERS   IMAGES   SELECTOR
+daemonset.apps/daemon   2         2         2       2            2           <none>          34s   nginx        nginx    app=daemon
+seymur@fedora40:/opt/kubernetes/practice$ 
+````
+
+As you see, there are started 2 pods on each worker node. By default the pods aren't started on control nodes, and to realise such function it should be configured toleration on the control nodes. 
+
+
+
+{% endraw %}
+
