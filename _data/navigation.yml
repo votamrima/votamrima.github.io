@@ -28,3 +28,14 @@ pages:
 #      - title: "Quick-Start Guide"
 #        url: /docs/quick-start-guide/
 
+main:
+  - title: "Kubernetes"
+    url: /kubernetes/
+#    children:
+#      - title: "Dogs"
+#        url: /pets/dogs/
+  - title: "cars"
+    url: /cars/
+    children:
+      - title: "VW"
+        url: /pets/vw/
