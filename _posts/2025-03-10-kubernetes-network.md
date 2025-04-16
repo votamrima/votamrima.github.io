@@ -3,8 +3,10 @@ layout: single
 title: "Kubernetes Network"
 subtitle: ""
 date: 2025-03-10 08:15:00 +0100
-background: '/image/01.jpg'
+background: '/image/kubernetes-network.png'
 tags: ['kubernetes','network']
+categories:
+  - Kubernetes
 ---
 
 {% raw %}
