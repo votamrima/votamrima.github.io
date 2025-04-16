@@ -5,6 +5,8 @@ subtitle: ""
 date: 2024-11-03 08:15:00 +0100
 background: '/image/01.jpg'
 tags: ['kubernetes','helm']
+categories:
+  - Kubernetes
 ---
 
 {% raw %}
