@@ -1,0 +1,122 @@
+---
+layout: single
+title: "Stateless and Stateful Applications in Kubernetes"
+subtitle: ""
+date: 2025-03-20 08:15:00 +0100
+background: '/image/01.jpg'
+tags: ['kubernetes']
+---
+
+{% raw %}
+
+
+
+### Stateless
+
+- application doesn't store any data
+- 
+
+
+### Info - 1
+- Stateful applications are stored the data. It could be logs, database files or some other.
+- Stateful applications can be run by a Deployment. But it's recommended to start it using StatefulSet manifest.
+
+The StatefulSet manifest provides some very useful features to stateful applications:
+- it guarantees the ordering and uniqueness of the pods. The uniquees of the pod can be predicted. 
+- provides a sticky identifies for each creating pod. It means, if pod goes away for some reason, it commes back with the same identifier.
+- Pods in a StatefulSet are not interchangeable. They are rescheduled based on the identifier.
+- Additionally, the unique identifier allows to match existing volumes to replaced pod.
+
+- The volumes for the pods are added dynamically during while scheduling. 
+- The volume will not be deleted even if the StatefulSet is erased.
+- In order to manage the network identity of the pods it should be created a headless Service resource.
+- By deleting the application it is recommended to scale down the number of pods and after that delete StatefulSet. Otherway it doesn't guarantee that pods will be stopped.
+
+
+### When should be used StatefulSet:
+- when it is required:
+    - stable and unique network identifiers
+    - stable persistent storage
+    - graceful deployment and scaling 
+    - to apply automated rolling update
+
+- If none of them are needed it could be used Deployment, because it is easy to use and manage further.
+
+
+### Practice:
+
+I got a manifest of the StatefulSet from the official documentation - [https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/). 
+
+A StatefulSet manifest looks like Deployment. The big difference is, here is added a mounted volume.
+
+
+1. Create a file and copy the content 
+2. I changed the name of the using image to simple ``nginx``.
+3. Additionally
+
+Checking currently available storage class. Unfortunatelly, I don't have any.
+````bash
+seymur@fedora40:/opt/kubernetes/practice$ kubectl get storageclasses.storage.k8s.io 
+No resources found
+seymur@fedora40:/opt/kubernetes/practice$ 
+````
+
+### Creating storage class. 
+
+Download the template manifest from the [documentation](https://kubernetes.io/docs/concepts/storage/storage-classes/). 
+
+I edited a template file and run the storage class 
+
+````bash
+vim storage-class.yml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: local
+````
+
+````bash
+seymur@fedora40:/opt/kubernetes/practice$ kubectl apply -f storage-class.yml 
+storageclass.storage.k8s.io/standard created
+seymur@fedora40:/opt/kubernetes/practice$ kubectl get storageclasses.storage.k8s.io 
+NAME                 PROVISIONER   RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+standard (default)   local         Delete          Immediate           false                  150m
+seymur@fedora40:/opt/kubernetes/practice$ 
+````
+
+Now we can install StatefulSet application
+
+````bash
+
+````
+
+````bash
+
+````
+
+````bash
+
+````
+
+````bash
+
+````
+
+````bash
+
+````
+
+````bash
+
+````
+
+````bash
+
+````
+
+
+{% endraw %}
+
