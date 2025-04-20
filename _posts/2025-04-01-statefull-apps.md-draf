@@ -1,0 +1,149 @@
+---
+layout: single
+title: "Stateless and Stateful Applications in Kubernetes"
+subtitle: ""
+date: 2025-04-20 08:15:00 +0100
+#background: '/image/01.jpg'
+tags: ['kubernetes']
+categories:
+  - Kubernetes
+---
+
+{% raw %}
+
+In this post I am going to note what I did to run up a statefull application at the Kubernetes cluster. 
+
+Here I use to run nginx as a statefull application. 
+
+The specific folder in the pod will be mounted to use a local folder on the host.
+
+Here I am going to use a local storage. As I have a several nodes in kUbernetes cluster, on the each cluster will be created a storage.
+
+I do not have pre-installed default storage class.
+
+
+
+Step 1 - Creating storage class:
+
+Here is the yaml file of the storage class. This is the default description which was taken from [here](https://kubernetes.io/docs/concepts/storage/storage-classes/#local)
+
+````yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner 
+volumeBindingMode: WaitForFirstConsumer
+
+````
+
+Running the command:
+
+````bash
+[seymur@workstation practice]$ 
+[seymur@workstation practice]$ kubectl apply -f persistancevolume/storage-class.yml 
+storageclass.storage.k8s.io/local-storage created
+[seymur@workstation practice]$ kubectl get sc
+NAME            PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+local-storage   kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer   false                  7s
+[seymur@workstation practice]$ 
+````
+
+
+Step 2. Create Persistance Volume on the each host separately.
+Here I am going to create 2 persistance volumes for each worker nodes, because on each node will be run 2 pods. 1 persistant volume for one pod. In my case I have 2 hosts, and it makes 4 persistance valumes (pv). Here is the yaml structure of the singe pv.
+
+````bash
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-2-worker2
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /opt/volume
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - kube-worker2.home.lab
+````
+
+If you create a 2 pv's on the first node, it means that you will be able to run up 2 pods on the the first node. Other pods will not be started. 
+
+Local volumes do not support dynamic provisioning in Kubernetes 1.32; however a StorageClass should still be created to delay volume binding until a Pod is actually scheduled to the appropriate node. This is specified by the WaitForFirstConsumer volume binding mode.
+
+````bash
+[seymur@workstation practice]$ kubectl apply -f persistancevolume/persistentvolume11.yaml 
+persistentvolume/local-pv-1-worker1 created
+[seymur@workstation practice]$ kubectl apply -f persistancevolume/persistentvolume12.yaml
+persistentvolume/local-pv-2-worker1 created
+[seymur@workstation practice]$ kubectl get pods -o wide
+[seymur@workstation practice]$ kubectl apply -f persistancevolume/persistentvolume21.yaml 
+persistentvolume/local-pv-1-worker2 created
+[seymur@workstation practice]$ kubectl apply -f persistancevolume/persistentvolume22.yaml 
+persistentvolume/local-pv-2-worker2 created
+[seymur@workstation practice]$ 
+````
+
+````bash
+[seymur@workstation practice]$ kubectl get pv
+NAME                 CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS    VOLUMEATTRIBUTESCLASS   REASON   AGE
+local-pv-1-worker1   1Gi        RWO            Retain           Bound    default/www-nginx-0   local-storage   <unset>                          10m
+local-pv-1-worker2   1Gi        RWO            Retain           Bound    default/www-nginx-2   local-storage   <unset>                          2m
+local-pv-2-worker1   1Gi        RWO            Retain           Bound    default/www-nginx-1   local-storage   <unset>                          7m12s
+local-pv-2-worker2   1Gi        RWO            Retain           Bound    default/www-nginx-3   local-storage   <unset>                          106s
+
+````
+
+
+Step 3. Running statefull application
+Here is the yaml file. In this file is defined the instruction for running the pods, creating persistent volume claims and creating a service for deployed pods. <<What is PVS? Write the definition using simple and understanable language>>
+
+````bash
+
+````
+````bash
+[seymur@workstation practice]$ kubectl apply -f stateful2.yaml 
+statefulset.apps/nginx created
+service/nginx created
+[seymur@workstation practice]$ 
+[seymur@workstation practice]$ kubectl get pods -o wide
+NAME      READY   STATUS    RESTARTS   AGE     IP                NODE                    NOMINATED NODE   READINESS GATES
+nginx-0   1/1     Running   0          4m49s   192.168.240.41    kube-worker1.home.lab   <none>           <none>
+nginx-1   1/1     Running   0          4m47s   192.168.240.40    kube-worker1.home.lab   <none>           <none>
+nginx-2   1/1     Running   0          4m45s   192.168.195.165   kube-worker2.home.lab   <none>           <none>
+nginx-3   1/1     Running   0          3m42s   192.168.195.166   kube-worker2.home.lab   <none>           <none>
+[seymur@workstation practice]$ 
+````
+
+````bash
+[seymur@workstation practice]$ kubectl get service
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+......
+nginx        ClusterIP   None         <none>        80/TCP    5m6s
+......
+[seymur@workstation practice]$ 
+````
+
+````bash
+[seymur@workstation practice]$ kubectl get  pvc
+NAME          STATUS   VOLUME               CAPACITY   ACCESS MODES   STORAGECLASS    VOLUMEATTRIBUTESCLASS   AGE
+www-nginx-0   Bound    local-pv-1-worker1   1Gi        RWO            local-storage   <unset>                 10m
+www-nginx-1   Bound    local-pv-2-worker1   1Gi        RWO            local-storage   <unset>                 10m
+www-nginx-2   Bound    local-pv-1-worker2   1Gi        RWO            local-storage   <unset>                 10m
+www-nginx-3   Bound    local-pv-2-worker2   1Gi        RWO            local-storage   <unset>                 4m52s
+````
+
+
+{% endraw %}
+
