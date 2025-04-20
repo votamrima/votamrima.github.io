@@ -30,25 +30,25 @@ Since local volumes in Kubernetes (version 1.32 and earlier) do not support dyna
 
 Here's the YAML definition for the StorageClass which I used:
 
-```yaml
+````yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: local-storage
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
-```
+````
 
 Apply this configuration:
 
-```bash
+````yaml
 [seymur@workstation practice]$ kubectl apply -f storage-class.yml 
 storageclass.storage.k8s.io/local-storage created
 [seymur@workstation practice]$ kubectl get sc
 NAME            PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
 local-storage   kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer   false                  7s
 [seymur@workstation practice]$ 
-```
+````
 
 ## Step 2: Creating Persistent Volumes (PV)
 
@@ -56,7 +56,7 @@ My cluster consists of two worker nodes, and I intended to run two Nginx pods pe
 
 Here's an example YAML for one of the PVs:​
 
-```yaml
+````yaml
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -79,11 +79,11 @@ spec:
               operator: In
               values:
                 - kube-worker2.home.lab
-```
+````
 
 I applied each PV configuration and verified their status using:
 
-```bash
+````yaml
 kubectl apply -f persistentvolumeXX.yaml
 
 [seymur@workstation practice]$ kubectl get pv
@@ -92,7 +92,7 @@ local-pv-1-worker1   1Gi        RWO            Retain           Bound    default
 local-pv-1-worker2   1Gi        RWO            Retain           Bound    default/www-nginx-2   local-storage   <unset>                          2m
 local-pv-2-worker1   1Gi        RWO            Retain           Bound    default/www-nginx-1   local-storage   <unset>                          7m12s
 local-pv-2-worker2   1Gi        RWO            Retain           Bound    default/www-nginx-3   local-storage   <unset>                          106s
-```
+````
 
 Note: One PV supports one pod. If a node has two PVs, it supports two pods.
 
@@ -102,7 +102,7 @@ With the StorageClass and PVs in place, I proceeded to deploy the Nginx applicat
 
 Here's a YAML which I used to run Nginx application and service:
 
-```bash
+````bash
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -151,11 +151,11 @@ spec:
   clusterIP: None
   selector:
     app: nginx
-```
+````
 
 I used the following command to apply the StatefulSet and associated service:​
 
-```bash
+````bash
 [seymur@workstation practice]$ kubectl apply -f stateful2.yaml 
 statefulset.apps/nginx created
 service/nginx created
@@ -167,7 +167,7 @@ nginx-1   1/1     Running   0          4m47s   192.168.240.40    kube-worker1.ho
 nginx-2   1/1     Running   0          4m45s   192.168.195.165   kube-worker2.home.lab   <none>           <none>
 nginx-3   1/1     Running   0          3m42s   192.168.195.166   kube-worker2.home.lab   <none>           <none>
 [seymur@workstation practice]$ 
-```
+````
 
 ## Understanding PersistentVolumeClaims (PVCs) and Their Association with PersistentVolumes (PVs)
 
