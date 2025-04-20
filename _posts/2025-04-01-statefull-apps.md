@@ -41,12 +41,12 @@ volumeBindingMode: WaitForFirstConsumer
 Apply this configuration:
 
 ````yaml
-[seymur@workstation practice]$ kubectl apply -f storage-class.yml 
+[admin@workstation practice]$ kubectl apply -f storage-class.yml 
 storageclass.storage.k8s.io/local-storage created
-[seymur@workstation practice]$ kubectl get sc
+[admin@workstation practice]$ kubectl get sc
 NAME            PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
 local-storage   kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer   false                  7s
-[seymur@workstation practice]$ 
+[admin@workstation practice]$ 
 ````
 
 ## Step 2: Creating Persistent Volumes (PV)
@@ -85,7 +85,7 @@ I applied each PV configuration and verified their status using:
 ````yaml
 kubectl apply -f persistentvolumeXX.yaml
 
-[seymur@workstation practice]$ kubectl get pv
+[admin@workstation practice]$ kubectl get pv
 NAME                 CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS    VOLUMEATTRIBUTESCLASS   REASON   AGE
 local-pv-1-worker1   1Gi        RWO            Retain           Bound    default/www-nginx-0   local-storage   <unset>                          10m
 local-pv-1-worker2   1Gi        RWO            Retain           Bound    default/www-nginx-2   local-storage   <unset>                          2m
@@ -155,17 +155,17 @@ spec:
 I used the following command to apply the StatefulSet and associated service:​
 
 ````bash
-[seymur@workstation practice]$ kubectl apply -f stateful2.yaml 
+[admin@workstation practice]$ kubectl apply -f stateful2.yaml 
 statefulset.apps/nginx created
 service/nginx created
-[seymur@workstation practice]$ 
-seymur@workstation practice]$ kubectl get pods -o wide
+[admin@workstation practice]$ 
+admin@workstation practice]$ kubectl get pods -o wide
 NAME      READY   STATUS    RESTARTS   AGE     IP                NODE                    NOMINATED NODE   READINESS GATES
 nginx-0   1/1     Running   0          4m49s   192.168.240.41    kube-worker1.home.lab   <none>           <none>
 nginx-1   1/1     Running   0          4m47s   192.168.240.40    kube-worker1.home.lab   <none>           <none>
 nginx-2   1/1     Running   0          4m45s   192.168.195.165   kube-worker2.home.lab   <none>           <none>
 nginx-3   1/1     Running   0          3m42s   192.168.195.166   kube-worker2.home.lab   <none>           <none>
-[seymur@workstation practice]$ 
+[admin@workstation practice]$ 
 ````
 
 ## Understanding PersistentVolumeClaims (PVCs) and Their Association with PersistentVolumes (PVs)
