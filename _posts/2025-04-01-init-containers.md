@@ -73,7 +73,7 @@ Beyond the basic example, Init Containers can be employed for various tasks:​
 
 ## References:
 - [Mastering Init Containers in Kubernetes: Advanced Techniques and Strategies](https://k21academy.com/docker-kubernetes/mastering-init-containers-in-kubernetes-advanced-techniques-and-strategies)
-- [https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/nodes/working-with-containers#nodes-containers-init](https://docs.openshift.com/container-platform/4.8/nodes/containers/nodes-containers-init.html?utm_source=chatgpt.com)
+- [https://docs.redhat.com/en/documentation/openshift_container_platform/4.8/html/nodes/working-with-containers#nodes-containers-init](https://docs.openshift.com/container-platform/4.8/nodes/containers/nodes-containers-init.html)
 - [Kubernetes Init Containers: A Complete Guide](https://devopscube.com/kubernetes-init-containers)
 
 {% endraw %}
