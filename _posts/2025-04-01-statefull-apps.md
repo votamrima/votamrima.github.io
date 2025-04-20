@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Stateless and Stateful Applications in Kubernetes"
+title: "Running Stateful Applications on Kubernetes with Local Storage"
 subtitle: ""
 date: 2025-04-20 08:15:00 +0100
 background: '/image/01.jpg'
@@ -11,7 +11,6 @@ categories:
 
 {% raw %}
 
-# Running Stateful Applications on Kubernetes with Local Storage
 
 In this article, I will walk through how to deploy a stateful application on a Kubernetes cluster using local storage. We'll use Nginx as our example application.
 
