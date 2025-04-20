@@ -3,7 +3,7 @@ layout: single
 title: "Stateless and Stateful Applications in Kubernetes"
 subtitle: ""
 date: 2025-04-20 08:15:00 +0100
-#background: '/image/01.jpg'
+background: '/image/01.jpg'
 tags: ['kubernetes']
 categories:
   - Kubernetes
