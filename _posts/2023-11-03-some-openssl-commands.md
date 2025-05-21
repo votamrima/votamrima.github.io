@@ -47,6 +47,32 @@ DNS.2 =  alternative DNS 2
 DNS.3 =  alternative DNS 3
 ````
 
+**Creating key for ca**
+````bash
+openssl genrsa -aes256 -out ca.key 4096
+````
+
+**Creating ca certificate**
+````bash
+openssl req -x509 -new -key ca.key -sha256 -days 36500 -out ca.crt
+````
+
+**Creating key for server certificate**
+````bash
+openssl genrsa -out server.key 4096
+````
+
+**Creating request for server certificate**
+````bash
+openssl req -new -key server.key -out server.csr
+openssl req -new -key server.key -out server.csr -config openssl_req-server.cnf 
+````
+
+Signing created request 
+````bash
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 3650 -sha256 -extfile openssl_req-server.cnf 
+````
+
 
 ### Converting
 
