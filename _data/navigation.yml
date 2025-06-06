@@ -34,7 +34,7 @@ main:
 #    children:
 #      - title: "Dogs"
 #        url: /pets/dogs/
-  - title: "cars"
+  - title: "Linux"
     url: /Linux/
 #    children:
 #      - title: "VW"
