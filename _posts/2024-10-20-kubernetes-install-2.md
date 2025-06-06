@@ -105,24 +105,39 @@ version = 2
 ````
 
 - ``version = 2``: Specifies the version of the containerd configuration format being used.
+
 - ``[grpc]``: Starts the configuration section for gRPC, which is the protocol containerd uses for communication.
+
 - ``address`` = "/run/containerd/containerd.sock": Defines the Unix socket that containerd will use for gRPC communication.
+
 - ``gid = 0``: Sets the group ID that will have access to the containerd socket (0 usually represents the root group).
+
 - ``uid = 0``: Sets the user ID that will own the containerd socket (0 typically represents the root user).
+
 - ``max_recv_message_size = 16777216``: Sets the maximum size, in bytes, for incoming gRPC messages (16 MB in this case).
+
 - ``max_send_message_size = 16777216``: Sets the maximum size for outgoing gRPC messages.
+
 - ``tcp_address = ""``: Indicates that there is no TCP address configured for containerd to listen on, implying it will use the Unix socket only.
+
 - ``tcp_tls_ca, tcp_tls_cert, tcp_tls_key``: These lines set the TLS parameters for gRPC over TCP. In this case, they are empty, meaning no TLS is configured for TCP connections.
 
 - ``[plugins]``: Begins the configuration section for containerd plugins.
 
 - ``[plugins."io.containerd.grpc.v1.cri"]``: This section is for configuring the CRI (Container Runtime Interface) plugin, which allows containerd to work with Kubernetes.
+
 - ``sandbox_image = "registry.k8s.io/pause:3.10"``: Specifies the container image to use for Kubernetes pods' "pause" container, which manages the pod's network namespace.
+
 - ``[plugins."io.containerd.grpc.v1.cri".containerd]``: Configures containerd-specific settings within the CRI plugin.
+
 - ``[plugins."io.containerd.grpc.v1.cri".containerd.runtimes]``: Begins the configuration for different container runtimes managed by containerd.
+
 - ``[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]``: Configures the "runc" runtime, which is the default runtime for containerd.
+
 - ``runtime_type = "io.containerd.runc.v2"``: Specifies the runtime type for runc. Version 2 (runc.v2) provides enhanced support for container lifecycle management.
+
 - ``[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]``: Begins the options section for the "runc" runtime.
+
 - ``SystemdCgroup = true``: Configures containerd to use systemd for cgroup management, which is preferred in Kubernetes environments as it provides better resource management and compatibility.
 
 
