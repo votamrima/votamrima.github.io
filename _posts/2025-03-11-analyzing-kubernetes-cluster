@@ -9,7 +9,7 @@ tags: ['kubernetes','cluster']
 
 {% raw %}
 
-This is the some note about the analyzing Kubernetes cluster. Here are give some general comands and explanation how to do that.
+This is the some note about the analyzing Kubernetes cluster. Here are given some general comands and explanation how to do that.
 
 ### Static pods
 
@@ -87,9 +87,6 @@ Once the **cordon** command is run, you can find ``Taints:  node.kubernetes.io/u
 ### Managing node services
 
 There are 2 services on the node that run Kubernetes cluster: **kubelet** and **containerd**. Both services are managed by systemd and to manage them use ``systemctl start/stop kubelet/containerd`` command.
-
-
-
 
 
 
