@@ -5,6 +5,8 @@ subtitle: ""
 date: 2023-09-08 08:15:00 +0100
 background: '/image/01.jpg'
 tags: ['docker']
+categories:
+  - Linux
 ---
 
 {% raw %}

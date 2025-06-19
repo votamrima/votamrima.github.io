@@ -4,7 +4,9 @@ title: "Analyzing Kubernetes Cluster"
 subtitle: ""
 date: 2025-03-11 08:15:00 +0100
 background: '/image/01.jpg'
-tags: ['kubernetes','cluster']
+tags: ['kubernetes']
+categories:
+  - Kubernetes
 ---
 
 {% raw %}

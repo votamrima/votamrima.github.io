@@ -5,6 +5,8 @@ subtitle: ""
 date: 2024-09-23 08:15:00 +0100
 background: '/image/01.jpg'
 tags: ['linux','monitoring']
+categories:
+  - Linux
 ---
 
 {% raw %}
