@@ -1,6 +1,6 @@
 ---
 title: "Linux"
-permalink: /linux/
+permalink: /Linux/
 layout: category
 author_profile: false
 taxonomy: Linux
