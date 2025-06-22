@@ -96,7 +96,7 @@ Some difference from LimitRange:
 | --------------------------------------------------------- | --------------------------------------------------------------------------- |
 | Applies per **container/pod**                             | Applies to the entire **namespace**                                         |
 | Sets **default values** or **max values** per pod         | Sets **overall cap** for the namespace                                      |
-| Does **not require** the pod to specify resource requests | **Requires** pods to specify `resources.requests` and/or `resources.limits` |
+| Does **not require** the pod to specify resource requests | **Requires** pods to specify ``resources.requests`` and/or ``resources.limits`` |
 
 
 Example **ResourceQuota** declarion:
